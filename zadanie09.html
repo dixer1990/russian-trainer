@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Задание 9 ЕГЭ. Правописание корней</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#04202F; --bg2:#083A52; --bg3:#0B5170;
+    --panel:rgba(255,255,255,.06);
+    --panel-2:rgba(255,255,255,.09);
+    --panel-solid:#07293A;
+    --line:rgba(255,255,255,.16);
+    --text:#EDF7FC;
+    --dim:#A9CEDD;
+    --aqua:#5FDCD0;
+    --sand:#FFB27D;
+    --green:#4BE3A2; --green-bg:rgba(75,227,162,.15);
+    --red:#FF7C6E;   --red-bg:rgba(255,124,110,.16);
+    --amber:#FFD166;  --amber-bg:rgba(255,209,102,.14);
+
+    --f-head:'PT Serif', Georgia, serif;
+    --f-body:'PT Sans', 'Segoe UI', system-ui, sans-serif;
+    --f-mono:'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+
+    --step: clamp(1rem, .96rem + .18vw, 1.08rem);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0; min-height:100dvh; height:100dvh;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% 0%, rgba(95,220,208,.15) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 45% at 85% 12%, rgba(11,81,112,.5) 0%, transparent 60%),
+      linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:var(--f-body);
+    font-size:var(--step);
+    line-height:1.6;
+    display:flex; flex-direction:column;
+    overflow:hidden; position:relative;
+  }
+
+  /* ---------- фон ---------- */
+  .fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .rays span{
+    position:absolute;top:-15%;width:120px;height:130%;
+    background:linear-gradient(180deg, rgba(120,225,215,.10), transparent 70%);
+    transform:skewX(-12deg);filter:blur(6px);
+    animation:rayGlow 9s ease-in-out infinite;
+  }
+  .rays span:nth-child(1){left:12%;animation-delay:0s;}
+  .rays span:nth-child(2){left:36%;width:80px;animation-delay:2.2s;}
+  .rays span:nth-child(3){left:64%;width:150px;animation-delay:1.1s;}
+  .rays span:nth-child(4){left:84%;width:90px;animation-delay:3.4s;}
+  @keyframes rayGlow{0%,100%{opacity:.22;}50%{opacity:.5;}}
+
+  .bubbles i{
+    position:absolute;bottom:-40px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), rgba(120,225,215,.07) 60%, transparent 70%);
+    border:1px solid rgba(255,255,255,.10);
+    animation:bubbleRise linear infinite;
+  }
+  @keyframes bubbleRise{
+    0%{transform:translateY(0);opacity:0;}
+    12%{opacity:.6;}
+    88%{opacity:.4;}
+    100%{transform:translateY(-105dvh) translateX(26px);opacity:0;}
+  }
+  .wave{position:fixed;left:0;right:0;bottom:0;width:100%;z-index:0;pointer-events:none;}
+  .wave.w1{opacity:.28;height:190px;} .wave.w2{opacity:.18;height:145px;} .wave.w3{opacity:.11;height:105px;}
+  .wave.w1 path{animation:drift 13s linear infinite;}
+  .wave.w2 path{animation:drift 9s linear infinite reverse;}
+  .wave.w3 path{animation:drift 17s linear infinite;}
+  @keyframes drift{from{transform:translateX(0);}to{transform:translateX(-300px);}}
+  .shimmer{position:fixed;top:0;left:0;right:0;height:64px;z-index:0;pointer-events:none;
+    background:linear-gradient(180deg, rgba(160,235,225,.11), transparent);}
+
+  /* спокойный режим: гасим всё фоновое движение */
+  body.calm .rays span,
+  body.calm .bubbles i,
+  body.calm .wave path{animation:none !important;}
+  body.calm .bubbles{display:none;}
+  body.calm .slide{animation:none !important;}
+  body.calm .drop{display:none !important;}
+  @media (prefers-reduced-motion: reduce){
+    .rays span,.bubbles i,.wave path,.slide{animation:none !important;}
+    .bubbles{display:none;}
+    *{transition-duration:.01ms !important;}
+  }
+
+  /* ---------- каркас ---------- */
+  .bar{height:5px;background:rgba(255,255,255,.08);flex:0 0 auto;position:relative;z-index:3;}
+  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--aqua),#9df0e6);transition:width .35s ease;
+    box-shadow:0 0 12px rgba(95,220,208,.6);}
+
+  .stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    display:flex;align-items:flex-start;justify-content:center;
+    padding:34px 22px 28px;position:relative;z-index:1;}
+  .slide{width:100%;max-width:880px;animation:surface .45s cubic-bezier(.22,1,.36,1);}
+  @keyframes surface{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);background:rgba(4,32,47,.72);
+    backdrop-filter:blur(10px);position:relative;z-index:3;}
+  .nav button{
+    font-family:var(--f-body);font-size:.95rem;color:var(--text);
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;
+    min-height:44px;padding:0 16px;cursor:pointer;}
+  .nav button:hover:not(:disabled){border-color:var(--aqua);}
+  .nav button:disabled{opacity:.35;cursor:default;}
+  .calm-btn{font-size:.8rem;padding:0 12px;min-height:34px;}
+  .calm-btn[aria-pressed="true"]{border-color:var(--aqua);color:var(--aqua);}
+
+  :where(button,[tabindex]):focus-visible{outline:2px solid var(--aqua);outline-offset:2px;}
+
+  /* ---------- типографика ---------- */
+  h1{font-family:var(--f-head);font-weight:700;line-height:1.15;margin:0 0 14px;
+    font-size:clamp(1.6rem, 1.25rem + 1.7vw, 2.4rem);}
+  h2{font-family:var(--f-head);font-weight:700;line-height:1.2;margin:0 0 12px;
+    font-size:clamp(1.35rem, 1.1rem + 1.2vw, 1.85rem);}
+  h3{font-family:var(--f-head);font-weight:700;font-size:1.1rem;color:var(--aqua);margin:0 0 8px;}
+  p{margin:0 0 10px;}
+  .kicker{font-family:var(--f-mono);font-size:.82rem;color:var(--aqua);
+    letter-spacing:.06em;margin-bottom:8px;}
+  .lead{color:var(--dim);max-width:66ch;margin-bottom:18px;}
+  b.hl{color:var(--sand);}
+
+  /* ---------- титул ---------- */
+  .hero{min-height:min(72dvh,640px);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;gap:4px;}
+  .hero svg{width:clamp(74px,17vw,116px);height:auto;margin-bottom:14px;}
+  .hero .ring{fill:none;stroke:var(--aqua);stroke-width:2;transform-origin:60px 60px;}
+  .hero .r1{animation:pulse 3.6s ease-out infinite;}
+  .hero .r2{animation:pulse 3.6s ease-out .9s infinite;}
+  .hero .r3{animation:pulse 3.6s ease-out 1.8s infinite;}
+  @keyframes pulse{0%{transform:scale(.28);opacity:0;}25%{opacity:.85;}100%{transform:scale(1);opacity:0;}}
+  body.calm .hero .ring{animation:none;opacity:.5;}
+  .hero-sup{font-family:var(--f-mono);font-size:clamp(.76rem,2vw,.92rem);
+    letter-spacing:.32em;color:var(--dim);}
+  .hero-title{font-family:var(--f-head);font-weight:700;letter-spacing:.02em;
+    font-size:clamp(2.6rem,10vw,5.2rem);line-height:1;margin:6px 0 10px;}
+  .hero-sub{font-family:var(--f-body);color:var(--sand);max-width:30ch;
+    font-size:clamp(1rem,3vw,1.2rem);margin-bottom:26px;}
+  .start{font-family:var(--f-body);font-size:1.05rem;font-weight:700;
+    background:var(--aqua);color:#04202F;border:0;border-radius:13px;
+    min-height:52px;padding:0 34px;cursor:pointer;
+    box-shadow:0 8px 26px rgba(95,220,208,.28);}
+  .start:hover{filter:brightness(1.08);}
+
+  /* ---------- карта ---------- */
+  .map{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:11px;margin:16px 0 18px;}
+  .tile{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--aqua);
+    border-radius:12px;padding:13px 15px;text-align:left;cursor:pointer;
+    font-family:var(--f-body);color:var(--text);font-size:1rem;min-height:44px;
+    transition:border-color .15s, background .15s;}
+  .tile:hover{background:var(--panel-2);border-left-color:var(--sand);}
+  .tile b{display:block;font-family:var(--f-head);font-size:1.05rem;margin-bottom:3px;}
+  .tile span{color:var(--dim);font-size:.88rem;line-height:1.45;display:block;}
+
+  /* ---------- блоки правил ---------- */
+  .rule{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:15px 17px;margin-bottom:12px;}
+  .rule .ex{font-family:var(--f-mono);font-size:.92rem;color:var(--aqua);
+    line-height:1.75;margin:8px 0 0;word-spacing:.05em;}
+  u{text-decoration:none;color:var(--sand);font-weight:700;}
+  .rule .ex u{color:var(--sand);}
+  .steps .ex{display:block;margin-top:5px;}
+  .steps{margin:0;padding-left:1.25em;}
+  .steps li{margin-bottom:9px;}
+  .trap{background:var(--amber-bg);border:1px solid rgba(255,209,102,.32);
+    border-left:3px solid var(--amber);border-radius:11px;padding:14px 16px;margin-top:12px;
+    font-size:.98rem;}
+  .trap b{color:var(--amber);}
+  .memo{background:rgba(95,220,208,.1);border:1px dashed rgba(95,220,208,.4);
+    border-radius:10px;padding:11px 14px;margin-top:10px;
+    font-family:var(--f-mono);font-size:.95rem;color:var(--text);}
+
+  /* ---------- упражнения ---------- */
+  .instr{color:var(--dim);margin-bottom:14px;max-width:64ch;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 12px;}
+  .card .ctx{font-size:.82rem;color:var(--dim);margin-bottom:3px;line-height:1.35;}
+  .word{font-family:var(--f-mono);font-size:1.05rem;font-weight:700;
+    letter-spacing:.01em;margin-bottom:9px;word-break:keep-all;}
+  .blank{display:inline-block;min-width:1.5em;text-align:center;
+    border-bottom:2px solid var(--dim);color:var(--sand);font-size:1.18em;font-weight:700;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{font-family:var(--f-mono);font-size:1rem;font-weight:700;color:var(--text);
+    background:transparent;border:1.5px solid var(--dim);border-radius:10px;
+    min-height:44px;min-width:52px;padding:0 14px;cursor:pointer;}
+  .chip:hover:not(:disabled){border-color:var(--aqua);}
+  .chip.on{background:var(--aqua);color:#04202F;border-color:var(--aqua);}
+  .chip:disabled{cursor:default;opacity:.5;}
+  .chip.on:disabled{opacity:1;}
+  .card.ok{border-color:var(--green);background:var(--green-bg);}
+  .card.no{border-color:var(--red);background:var(--red-bg);}
+  .card.na{border-color:var(--amber);background:var(--amber-bg);}
+  .why{font-size:.92rem;line-height:1.5;margin-top:9px;padding-top:9px;
+    border-top:1px solid var(--line);color:var(--text);}
+  .why .fix{font-family:var(--f-mono);color:var(--green);font-weight:700;}
+  .flag{font-size:.8rem;font-family:var(--f-mono);margin-top:7px;}
+  .flag.na{color:var(--amber);}
+
+  /* выбор из двух слов */
+  .pick{display:flex;gap:9px;flex-wrap:wrap;}
+  .pick button{font-family:var(--f-mono);font-size:.98rem;color:var(--text);
+    background:transparent;border:1.5px solid var(--dim);border-radius:10px;
+    min-height:44px;padding:0 14px;cursor:pointer;}
+  .pick button:hover:not(:disabled){border-color:var(--aqua);}
+  .pick button.on{background:var(--aqua);color:#04202F;border-color:var(--aqua);}
+  .pick button:disabled{cursor:default;opacity:.5;}
+  .pick button.on:disabled{opacity:1;}
+
+  /* ---------- футер упражнения ---------- */
+  .foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;}
+  .btn{font-family:var(--f-body);font-size:1rem;font-weight:700;border-radius:11px;
+    min-height:46px;padding:0 20px;cursor:pointer;border:1px solid transparent;}
+  .btn.main{background:var(--aqua);color:#04202F;}
+  .btn.main:hover{filter:brightness(1.08);}
+  .btn.ghost{background:transparent;color:var(--text);border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--aqua);}
+  .score{font-family:var(--f-mono);font-size:.95rem;color:var(--dim);}
+  .score b.g{color:var(--green);} .score b.r{color:var(--red);} .score b.a{color:var(--amber);}
+
+  /* ---------- сортировка ---------- */
+  .pool{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;margin-bottom:14px;
+    padding:10px;border:1px dashed var(--line);border-radius:12px;}
+  .buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;margin-bottom:14px;}
+  .bucket{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 12px;
+    cursor:pointer;min-height:88px;}
+  .bucket:hover{border-color:var(--aqua);}
+  .bucket h4{font-family:var(--f-head);font-size:.98rem;margin:0 0 8px;color:var(--aqua);}
+  .bucket .row{display:flex;flex-wrap:wrap;gap:6px;}
+  .tok{font-family:var(--f-mono);font-size:.94rem;color:var(--text);
+    background:rgba(255,255,255,.07);border:1.5px solid var(--line);border-radius:9px;
+    min-height:40px;padding:0 12px;cursor:pointer;}
+  .tok:hover:not(:disabled){border-color:var(--aqua);}
+  .tok.sel{border-color:var(--sand);background:rgba(255,178,125,.18);}
+  .tok.ok{border-color:var(--green);background:var(--green-bg);}
+  .tok.no{border-color:var(--red);background:var(--red-bg);}
+  .tok:disabled{cursor:default;}
+  .fixlist{margin-top:10px;font-size:.93rem;line-height:1.6;}
+  .fixlist span{font-family:var(--f-mono);color:var(--green);}
+
+  /* ---------- флеш-карты ---------- */
+  .flash{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:8px;padding:24px 18px;text-align:center;cursor:pointer;margin-bottom:12px;}
+  .flash .fw{font-family:var(--f-mono);font-size:clamp(1.3rem,5vw,1.8rem);font-weight:700;}
+  .flash .fc{color:var(--dim);font-size:.92rem;}
+  .flash .fh{color:var(--aqua);font-size:.92rem;}
+  .flash .tap{color:var(--dim);font-size:.82rem;font-family:var(--f-mono);}
+  .flash-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .flash-nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+  /* ---------- найди без ошибки ---------- */
+  .words{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:9px;margin-bottom:14px;}
+  .wbtn{font-family:var(--f-mono);font-size:1rem;color:var(--text);text-align:left;
+    background:var(--panel);border:1.5px solid var(--line);border-radius:11px;
+    min-height:48px;padding:9px 13px;cursor:pointer;line-height:1.4;}
+  .wbtn:hover:not(:disabled){border-color:var(--aqua);}
+  .wbtn.on{border-color:var(--aqua);background:rgba(95,220,208,.16);}
+  .wbtn.ok{border-color:var(--green);background:var(--green-bg);}
+  .wbtn.no{border-color:var(--red);background:var(--red-bg);}
+  .wbtn:disabled{cursor:default;}
+  .wbtn em{display:block;font-family:var(--f-body);font-style:normal;
+    font-size:.84rem;color:var(--dim);margin-top:3px;}
+
+  /* ---------- ЕГЭ ---------- */
+  .ege-q{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;margin-bottom:14px;font-size:.98rem;}
+  .rows{display:flex;flex-direction:column;gap:9px;margin-bottom:14px;}
+  .erow{display:flex;gap:12px;align-items:flex-start;text-align:left;
+    background:var(--panel);border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 14px;cursor:pointer;min-height:48px;color:var(--text);}
+  .erow:hover:not(:disabled){border-color:var(--aqua);}
+  .erow.on{border-color:var(--aqua);background:rgba(95,220,208,.14);}
+  .erow.ok{border-color:var(--green);background:var(--green-bg);}
+  .erow.no{border-color:var(--red);background:var(--red-bg);}
+  .erow.miss{border-color:var(--amber);background:var(--amber-bg);}
+  .erow:disabled{cursor:default;}
+  .enum{font-family:var(--f-mono);font-weight:700;color:var(--aqua);flex:0 0 auto;}
+  .ewords{font-family:var(--f-mono);font-size:.96rem;line-height:1.75;}
+  .ewords .cx{font-family:var(--f-body);color:var(--dim);font-size:.86rem;}
+  .ekey{font-family:var(--f-body);font-size:.88rem;color:var(--dim);margin-top:5px;line-height:1.5;}
+
+  /* ---------- финал ---------- */
+  .gauges{display:flex;gap:26px;flex-wrap:wrap;justify-content:flex-start;margin:6px 0 20px;}
+  .gauge{text-align:center;}
+  .gauge svg{width:clamp(122px,32vw,152px);height:auto;}
+  .gauge .lab{font-size:.88rem;color:var(--dim);margin-top:5px;}
+  .topics{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+  .topic{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 14px;
+    border-left:3px solid var(--dim);}
+  .topic.bad{border-left-color:var(--red);}
+  .topic.mid{border-left-color:var(--amber);}
+  .topic.good{border-left-color:var(--green);}
+  .topic .tn{flex:1 1 auto;min-width:150px;}
+  .topic .tv{font-family:var(--f-mono);font-size:.95rem;color:var(--dim);}
+  .topic button{font-family:var(--f-body);font-size:.9rem;color:var(--text);
+    background:transparent;border:1px solid var(--line);border-radius:9px;
+    min-height:40px;padding:0 13px;cursor:pointer;}
+  .topic button:hover{border-color:var(--aqua);}
+  .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--sand);
+    border-radius:11px;padding:15px 17px;font-size:.96rem;}
+  .copied{color:var(--green);font-size:.92rem;font-family:var(--f-mono);}
+
+
+  /* ---------- оглавление ---------- */
+  .nav-mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;}
+  .toc-btn{background:transparent;border:1px solid var(--line);border-radius:9px;
+    color:var(--dim);font-family:var(--f-mono);font-size:.84rem;
+    padding:0 14px;min-height:40px;cursor:pointer;white-space:nowrap;}
+  .toc-btn:hover{border-color:var(--aqua);color:var(--aqua);}
+  .toc-overlay{position:fixed;inset:0;z-index:40;background:rgba(3,16,24,.9);display:none;
+    align-items:center;justify-content:center;padding:20px;}
+  .toc-overlay.open{display:flex;}
+  .toc-panel{background:var(--panel-solid);border:1px solid var(--line);border-radius:14px;
+    width:min(760px,100%);max-height:86dvh;display:flex;flex-direction:column;
+    box-shadow:0 24px 70px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.07);}
+  .toc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 18px;border-bottom:1px solid var(--line);}
+  .toc-head h2{margin:0;font-size:1.2rem;color:var(--aqua);}
+  .toc-close{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:9px;
+    min-height:40px;padding:0 15px;cursor:pointer;font-family:var(--f-body);font-weight:700;font-size:.92rem;}
+  .toc-close:hover{border-color:var(--aqua);color:var(--aqua);}
+  .toc-body{overflow-y:auto;padding:10px 12px 16px;-webkit-overflow-scrolling:touch;}
+  .toc-group{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.1em;color:var(--aqua);
+    font-weight:700;margin:14px 6px 6px;}
+  .toc-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:transparent;
+    border:1px solid transparent;border-radius:10px;color:var(--text);font-family:var(--f-body);
+    font-size:.95rem;padding:9px 10px;min-height:44px;cursor:pointer;}
+  .toc-item:hover{border-color:var(--line);background:var(--panel);}
+  .toc-item.current{border-color:var(--aqua);background:rgba(95,220,208,.12);}
+  .toc-num{font-family:var(--f-mono);font-size:.82rem;color:var(--dim);min-width:26px;}
+  .toc-name{flex:1;line-height:1.4;}
+  .toc-tag{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.05em;color:var(--dim);
+    border:1px solid var(--line);border-radius:7px;padding:2px 8px;white-space:nowrap;}
+  .toc-score{font-family:var(--f-mono);font-size:.82rem;min-width:48px;text-align:right;}
+  @media (max-width:620px){ .toc-tag{display:none;} .toc-panel{max-height:90dvh;} }
+
+  .drop{position:fixed;width:6px;height:6px;border-radius:50% 50% 50% 0;background:var(--aqua);
+    transform:translate(-50%,-50%) rotate(45deg);pointer-events:none;z-index:60;
+    animation:dropFly .5s ease-out forwards;}
+  @keyframes dropFly{to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(45deg) scale(.2);opacity:0;}}
+
+  /* ---------- телефон ---------- */
+  @media (max-width:620px){
+    .stage{padding:22px 15px 20px;}
+    .grid{grid-template-columns:1fr;}
+    .words{grid-template-columns:1fr;}
+    .map{grid-template-columns:1fr;}
+    .buckets{grid-template-columns:1fr 1fr;}
+    .gauges{gap:16px;justify-content:center;}
+  }
+  @media (max-width:400px){
+    .stage{padding:18px 12px 18px;}
+    .buckets{grid-template-columns:1fr;}
+    .nav{padding-left:10px;padding-right:10px;gap:7px;}
+    .nav button{padding:0 12px;font-size:.9rem;}
+    .rule,.card,.erow{padding-left:12px;padding-right:12px;}
+  }
+</style>
+</head>
+<body>
+  <div class="fx shimmer"></div>
+  <div class="fx rays"><span></span><span></span><span></span><span></span></div>
+  <div class="fx bubbles" id="bubbles"></div>
+  <svg class="wave w3" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,22 Q37.5,10 75,22 T150,22 T225,22 T300,22 T375,22 T450,22 T525,22 T600,22 V40 H0 Z" fill="#7be0d4"></path></svg>
+  <svg class="wave w2" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,20 Q37.5,6 75,20 T150,20 T225,20 T300,20 T375,20 T450,20 T525,20 T600,20 V40 H0 Z" fill="#5FDCD0"></path></svg>
+  <svg class="wave w1" viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,24 Q37.5,12 75,24 T150,24 T225,24 T300,24 T375,24 T450,24 T525,24 T600,24 V40 H0 Z" fill="#0B5170"></path></svg>
+
+  <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+  <div class="toc-overlay" id="tocOverlay" role="dialog" aria-modal="true" aria-label="Оглавление">
+    <div class="toc-panel">
+      <div class="toc-head"><h2>Оглавление</h2><button class="toc-close" id="tocClose" type="button">Закрыть</button></div>
+      <div class="toc-body" id="tocBody"></div>
+    </div>
+  </div>
+  <main class="stage" id="stage"></main>
+  <nav class="nav">
+    <button id="prevBtn" type="button">← Назад</button>
+    <div class="nav-mid">
+      <button class="toc-btn" id="counter" type="button" title="Открыть оглавление" aria-haspopup="dialog"></button>
+      <button class="calm-btn" id="calmBtn" type="button" aria-pressed="false" title="Спокойный режим: выключает фоновое движение">Спокойный режим</button>
+    </div>
+    <button id="nextBtn" type="button">Далее →</button>
+  </nav>
+<script>
+/* ==================== БАНКИ СЛОВ ==================== */
+
+/* --- Проверяемая безударная гласная --- */
+const P_PROV = [
+  {w:["обог","щение"],o:["а","о"],a:"а",why:"Проверочное — бог<u>А</u>тый."},
+  {w:["нагром","ждение"],o:["о","а"],a:"о",why:"Проверочное — гр<u>О</u>моздкий."},
+  {w:["неисс","каемый"],o:["я","е"],a:"я",why:"Проверочное — исс<u>Я</u>кнуть."},
+  {w:["ув","дающий"],o:["я","е"],a:"я",ctx:"цветок в вазе",why:"Проверочное — в<u>Я</u>нет. Не путать с «увЕдомить»."},
+  {w:["оскв","рнить"],o:["е","и"],a:"е",why:"Проверочное — скв<u>Е</u>рна."},
+  {w:["прис","гать"],o:["я","е"],a:"я",ctx:"на верность",why:"Проверочное — прис<u>Я</u>га."},
+  {w:["пок","яние"],o:["а","о"],a:"а",why:"Проверочное — к<u>А</u>яться."},
+  {w:["сотр","сение"],o:["я","е"],a:"я",why:"Проверочное — тр<u>Я</u>ска."},
+  {w:["оп","здать"],o:["о","а"],a:"о",why:"Проверочное — п<u>О</u>здно. «ОпАздывать» брать нельзя: в нём суффикс -ЫВА-."},
+  {w:["от","пление"],o:["о","а"],a:"о",why:"Проверочное — т<u>О</u>пит. «ОтАпливать» не подходит: суффикс -ИВА-."},
+  {w:["разм","лоть"],o:["о","а"],a:"о",why:"Проверочное — п<u>О</u>мол. «РазмАлывать» не подходит: суффикс -ЫВА-."},
+  {w:["ут","птать"],o:["о","а"],a:"о",why:"Проверочное — т<u>О</u>пчет. «УтАптывать» не подходит: суффикс -ЫВА-."}
+];
+
+/* --- Омонимичные корни: выбор слова по значению --- */
+const Q_OMON = [
+  {q:"Принижать чужие заслуги",o:["умалять","умолять"],a:"умалять",why:"От «м<u>А</u>лый» — сделать меньше."},
+  {q:"Просить о пощаде",o:["умалять","умолять"],a:"умолять",why:"От «м<u>О</u>лит» — просить."},
+  {q:"Подбирать костюм по фигуре",o:["примерять","примирять"],a:"примерять",why:"От «м<u>Е</u>рка»."},
+  {q:"Помирить поссорившихся друзей",o:["примерять","примирять"],a:"примирять",why:"От «м<u>И</u>р»."},
+  {q:"Забраться на самый верх",o:["залезать","зализать"],a:"залезать",why:"От «л<u>Е</u>зть»."},
+  {q:"Обработать языком рану",o:["залезать","зализать"],a:"зализать",why:"От «л<u>И</u>жет»."},
+  {q:"Открыть двери",o:["отворить","отварить"],a:"отворить",why:"От «ств<u>О</u>рка»."},
+  {q:"Приготовить рис в кипятке",o:["отворить","отварить"],a:"отварить",why:"От «в<u>А</u>рит»."},
+  {q:"Постоянно жить в центре города",o:["проживать","прожевать"],a:"проживать",why:"От «ж<u>И</u>ть»."},
+  {q:"Тщательно измельчить пищу зубами",o:["проживать","прожевать"],a:"прожевать",why:"От «ж<u>Ё</u>ваный»."},
+  {q:"Давний житель этих мест",o:["старожил","сторожил"],a:"старожил",why:"От «ст<u>А</u>рый»."},
+  {q:"Всю ночь охранял склад",o:["старожил","сторожил"],a:"сторожил",why:"От «ст<u>О</u>рож»."}
+];
+
+/* --- Словарные слова --- */
+const F_SLOV = [
+  {w:["б","ллетень"],a:"ю",why:"Часто пишут «бюлЛЕтень» через И — запоминаем именно Е в середине."},
+  {w:["в","негрет"],a:"и",why:"От французского vinaigre — «уксус». Отсюда И."},
+  {w:["ижд","венец"],a:"и",why:"Тот, кто живёт на чужом содержании."},
+  {w:["д","летант"],a:"и",why:"Непрофессионал. Не путать с «делать»."},
+  {w:["в","стибюль"],a:"е",why:"Просторная прихожая в общественном здании."},
+  {w:["к","морка"],a:"а",why:"Крошечная комнатка. Проверить нечем — только запомнить."},
+  {w:["об","яние"],a:"а",ctx:"личное очарование",why:"Обаяние — от «баять», говорить. Ср.: обОняние — про запах."},
+  {w:["об","няние"],a:"о",ctx:"чувство запаха",why:"Обоняние — от «вонь», запах. Ср.: обАяние — про очарование."},
+  {w:["прив","легия"],a:"и",why:"Исключительное право."},
+  {w:["прец","дент"],a:"е",why:"Случай в прошлом, служащий примером. Внутри нет буквы Н: «прецедент», а не «прецеНдент»."},
+  {w:["аккомп","немент"],a:"а",why:"Музыкальное сопровождение. Две К и одна П."},
+  {w:["недос","гаемый"],a:"я",why:"Тот, до кого не дотянуться."}
+];
+
+/* --- Чередование: ударение --- */
+const P_UDAR = [
+  {w:["заг","р"],o:["а","о"],a:"а",why:"Гар-/гор-: под ударением А."},
+  {w:["приг","рать"],o:["а","о"],a:"о",why:"Гар-/гор-: без ударения О."},
+  {w:["выг","рающий"],o:["а","о"],a:"о",why:"Гар-/гор-: без ударения О."},
+  {w:["уг","реть"],o:["а","о"],a:"о",why:"Гар-/гор-: без ударения О."},
+  {w:["з","рево"],o:["а","о"],a:"а",why:"Зар-/зор-: под ударением слышим А — её и пишем."},
+  {w:["оз","рение"],o:["а","о"],a:"а",why:"Зар-/зор-: без ударения всегда А."},
+  {w:["з","рница"],o:["а","о"],a:"а",why:"Зар-/зор-: без ударения всегда А."},
+  {w:["з","рька"],o:["а","о"],a:"о",why:"Зар-/зор-: под ударением слышим О — её и пишем."},
+  {w:["покл","ниться"],o:["а","о"],a:"о",why:"Клан-/клон-: без ударения О."},
+  {w:["кл","няться"],o:["а","о"],a:"а",why:"Клан-/клон-: под ударением А."},
+  {w:["тв","рчество"],o:["а","о"],a:"о",why:"Твар-/твор-: без ударения О."},
+  {w:["тв","рь"],o:["а","о"],a:"а",why:"Твар-/твор-: под ударением А."}
+];
+
+/* --- Чередование: суффикс -А- --- */
+const P_SUFA = [
+  {w:["заб","рать"],o:["и","е"],a:"и",why:"После корня суффикс -А- (забирАть) → И."},
+  {w:["соб","рёт"],o:["и","е"],a:"е",why:"Суффикса -А- нет → Е."},
+  {w:["зап","рать"],o:["и","е"],a:"и",why:"Есть -А- (запирАть) → И."},
+  {w:["отп","реть"],o:["и","е"],a:"е",why:"Суффикса -А- нет → Е."},
+  {w:["раст","рать"],o:["и","е"],a:"и",why:"Есть -А- (растирАть) → И."},
+  {w:["ст","реть"],o:["и","е"],a:"е",why:"Суффикса -А- нет → Е."},
+  {w:["зам","рать"],o:["и","е"],a:"и",why:"Есть -А- (замирАть) → И."},
+  {w:["зам","реть"],o:["и","е"],a:"е",why:"Суффикса -А- нет → Е."},
+  {w:["бл","стательный"],o:["и","е"],a:"и",why:"Есть -А- (блистАтельный) → И."},
+  {w:["бл","стеть"],o:["и","е"],a:"е",why:"Суффикса -А- нет → Е."},
+  {w:["прик","саться"],o:["а","о"],a:"а",why:"Кас-/кос-: есть суффикс -А- → пишем А."},
+  {w:["прик","сновение"],o:["а","о"],a:"о",why:"Кас-/кос-: дальше Н, суффикса -А- нет → пишем О."}
+];
+
+/* --- Чередование: согласная в корне --- */
+const P_SOGL = [
+  {w:["приск","кать"],o:["а","о"],a:"а",why:"Скак-/скоч-: перед К пишем А."},
+  {w:["подск","чить"],o:["а","о"],a:"о",why:"Скак-/скоч-: перед Ч пишем О."},
+  {w:["проск","чу"],o:["а","о"],a:"а",ctx:"на коне пять километров",why:"Здесь «скакать» → перед К пишем А."},
+  {w:["проск","чу"],o:["а","о"],a:"о",ctx:"поворот из-за невнимательности",why:"Здесь «проскочить» → перед Ч пишем О. Всё решает смысл."},
+  {w:["отр","сти"],o:["а","о"],a:"а",why:"Раст-/ращ-/рос-: перед СТ пишем А."},
+  {w:["нар","щение"],o:["а","о"],a:"а",why:"Раст-/ращ-/рос-: перед Щ пишем А."},
+  {w:["выр","сший"],o:["а","о"],a:"о",why:"Раст-/ращ-/рос-: нет ни СТ, ни Щ → О."},
+  {w:["водор","сли"],o:["а","о"],a:"о",why:"Перед С пишем О."},
+  {w:["недор","сль"],o:["а","о"],a:"о",why:"Перед С пишем О, хотя на слух хочется А."},
+  {w:["пол","гать"],o:["а","о"],a:"а",why:"Лаг-/лож-: перед Г пишем А."},
+  {w:["пол","жить"],o:["а","о"],a:"о",why:"Лаг-/лож-: перед Ж пишем О."},
+  {w:["прил","гательное"],o:["а","о"],a:"а",why:"Лаг-/лож-: перед Г пишем А."}
+];
+
+/* --- Чередование: значение корня --- */
+const P_ZNACH = [
+  {w:["м","кать"],o:["а","о"],a:"а",ctx:"сухарь в чай",why:"Мак- = погружать в жидкость."},
+  {w:["обм","кнуть"],o:["а","о"],a:"а",ctx:"перо в чернила",why:"Мак- = погружать в жидкость."},
+  {w:["вым","кнуть"],o:["а","о"],a:"о",ctx:"под дождём",why:"Мок- = пропускать жидкость, становиться мокрым."},
+  {w:["пром","кашка"],o:["а","о"],a:"о",why:"Мок- = впитывать влагу. Отсюда же промОкательная бумага."},
+  {w:["ур","внение"],o:["а","о"],a:"а",why:"Равн- = одинаковый: части уравнения равны."},
+  {w:["подр","вняться"],o:["а","о"],a:"а",ctx:"в строю",why:"Равн- = стать равными по линии, а не «гладкими»."},
+  {w:["подр","внять"],o:["а","о"],a:"о",ctx:"волосы",why:"Ровн- = сделать ровным, гладким."},
+  {w:["ср","внять"],o:["а","о"],a:"о",ctx:"город с землёй",why:"Ровн- = сделать плоским. Ср.: срАвнить два числа."},
+  {w:["ур","вень"],o:["а","о"],a:"о",why:"Пишем О. Слово входит в список исключений."},
+  {w:["пл","вучесть"],o:["а","о"],a:"а",why:"Плав-: почти везде А."},
+  {w:["жук-пл","вунец"],o:["а","о"],a:"а",why:"Плав-: А. Исключения — только пловец, пловчиха, плывуны."},
+  {w:["пл","вец"],o:["а","о"],a:"о",why:"Исключение: пловец, пловчиха."}
+];
+
+/* --- Чередование ИМ/ИН --- */
+const P_IMIN = [
+  {w:["сж","ать"],o:["им","ем"],a:"им",why:"Сжать → сжИМать: появился суффикс -А-, Я меняется на ИМ."},
+  {w:["пон","ать"],o:["им","ем"],a:"им",why:"Понять → понИМать."},
+  {w:["подн","ать"],o:["им","ем"],a:"им",why:"Поднять → поднИМать."},
+  {w:["отн","ать"],o:["им","ем"],a:"им",why:"Отнять → отнИМать."},
+  {w:["обн","ать"],o:["им","ем"],a:"им",why:"Обнять → обнИМать."},
+  {w:["вн","ать"],o:["им","ем"],a:"им",why:"Внять → внИМать."},
+  {w:["нач","ать"],o:["ин","ен"],a:"ин",why:"Начать → начИНать."},
+  {w:["зач","ать"],o:["ин","ен"],a:"ин",why:"Зачать → зачИНать."},
+  {w:["закл","ать"],o:["ин","ен"],a:"ин",why:"Заклясть → заклИНать."},
+  {w:["напом","ать"],o:["ин","ен"],a:"ин",why:"Напомнить → напомИНать."},
+  {w:["вн","ательный"],o:["им","ем"],a:"им",why:"Производное от «внимать» — то же чередование."},
+  {w:["зан","ательный"],o:["им","ем"],a:"им",why:"Производное от «занимать» — то же чередование."}
+];
+
+/* --- Сортировка: по типу чередования --- */
+const SORT_RECAP = {
+  buckets:["Ударение","Суффикс -А-","Согласная","Значение","ИМ/ИН"],
+  items:[
+    {t:"загорелый",b:"Ударение"},{t:"кланяться",b:"Ударение"},{t:"творчество",b:"Ударение"},
+    {t:"забирать",b:"Суффикс -А-"},{t:"прикасаться",b:"Суффикс -А-"},
+    {t:"прискакать",b:"Согласная"},{t:"приложение",b:"Согласная"},{t:"выросший",b:"Согласная"},
+    {t:"обмакнуть",b:"Значение"},{t:"сровнять",b:"Значение"},
+    {t:"понимать",b:"ИМ/ИН"},{t:"заклинать",b:"ИМ/ИН"}
+  ]
+};
+
+/* --- Исключения --- */
+const F_ISKL = [
+  {w:["р","сток"],a:"о",why:"Перед СТ по правилу ждём А, но это исключение."},
+  {w:["р","стовщик"],a:"о",why:"Исключение из раст-/рос-, как и росток."},
+  {w:["подр","стковый"],a:"о",why:"От «подросток» — того же гнезда, что росток."},
+  {w:["отр","сль"],a:"а",why:"Перед С по правилу ждём О, но это исключение."},
+  {w:["ск","чок"],a:"а",why:"Перед Ч по правилу ждём О, но это исключение."},
+  {w:["ск","чу"],a:"а",why:"Исключение, как и скачок."},
+  {w:["утв","рь"],a:"а",why:"Без ударения по правилу ждём О, но это исключение."},
+  {w:["пол","г"],a:"о",why:"Перед Г по правилу ждём А, но это исключение."},
+  {w:["изг","рь"],a:"а",why:"Без ударения ждём О, но это исключение (нагар в печи)."},
+  {w:["выг","рки"],a:"а",why:"Исключение, как изгарь и пригарь."},
+  {w:["р","внина"],a:"а",why:"Смысл «ровная», но пишется через А. Исключение."},
+  {w:["р","весник"],a:"о",why:"Смысл «равный по годам», но пишется через О. Исключение."}
+];
+
+/* --- После шипящих: И, А, У --- */
+const P_SHIP1 = [
+  {w:["ж","знь"],o:["и","ы"],a:"и",why:"После шипящих Ы не пишется."},
+  {w:["ш","рота"],o:["и","ы"],a:"и",why:"После шипящих Ы не пишется."},
+  {w:["ч","ж"],o:["и","ы"],a:"и",why:"После шипящих Ы не пишется."},
+  {w:["ящ","к"],o:["и","ы"],a:"и",why:"После шипящих Ы не пишется."},
+  {w:["ч","хотка"],o:["а","я"],a:"а",why:"После шипящих Я не пишется."},
+  {w:["щ","дить"],o:["а","я"],a:"а",why:"После шипящих Я не пишется."},
+  {w:["ж","кет"],o:["а","я"],a:"а",why:"После шипящих Я не пишется даже в заимствованиях."},
+  {w:["щ","вель"],o:["а","я"],a:"а",why:"После шипящих Я не пишется."},
+  {w:["ш","тка"],o:["у","ю"],a:"у",why:"После шипящих Ю не пишется."},
+  {w:["ч","лок"],o:["у","ю"],a:"у",why:"После шипящих Ю не пишется."},
+  {w:["брош","ра"],o:["ю","у"],a:"ю",why:"Исключение: брошюра, жюри, парашют."},
+  {w:["параш","т"],o:["ю","у"],a:"ю",why:"Исключение: брошюра, жюри, парашют."}
+];
+
+/* --- После шипящих: Ё и О --- */
+const P_SHIP2 = [
+  {w:["печ","нка"],o:["ё","о"],a:"ё",why:"Есть родственное с Е — «печЕнь»."},
+  {w:["ш","пот"],o:["ё","о"],a:"ё",why:"Есть родственное с Е — «шЕпчет»."},
+  {w:["ж","лудь"],o:["ё","о"],a:"ё",why:"Есть родственное с Е — «жЕлудей»."},
+  {w:["деш","вый"],o:["ё","о"],a:"ё",why:"Есть родственное с Е — «дешЕвле»."},
+  {w:["беч","вка"],o:["ё","о"],a:"ё",why:"Есть родственное с Е — «бечЕва»."},
+  {w:["реш","тка"],o:["ё","о"],a:"ё",why:"Есть родственное с Е — «решЕто»."},
+  {w:["крыж","вник"],o:["ё","о"],a:"о",why:"Родственного с Е нет — пишем О."},
+  {w:["трущ","ба"],o:["ё","о"],a:"о",why:"Родственного с Е нет — пишем О."},
+  {w:["ш","рох"],o:["ё","о"],a:"о",why:"Родственного с Е нет — пишем О."},
+  {w:["ч","порный"],o:["ё","о"],a:"о",why:"Родственного с Е нет — пишем О."},
+  {w:["ож","г"],o:["ё","о"],a:"о",ctx:"получил тяжёлый … руки",why:"Это существительное — пишем О."},
+  {w:["ож","г"],o:["ё","о"],a:"ё",ctx:"он … руку о плиту",why:"Это глагол — пишем Ё. Часть речи решает всё."}
+];
+
+/* --- Сортировка И / Ы после Ц --- */
+const SORT_TS = {
+  buckets:["И","Ы"],
+  items:[
+    {t:"ц…тата",b:"И"},{t:"ц…ркуль",b:"И"},{t:"панц…рь",b:"И"},
+    {t:"ц…фра",b:"И"},{t:"ц…клон",b:"И"},{t:"ц…нга",b:"И"},
+    {t:"ц…ган",b:"Ы"},{t:"ц…плёнок",b:"Ы"},{t:"на ц…почках",b:"Ы"},
+    {t:"ц…ц!",b:"Ы"},{t:"ц…кнуть",b:"Ы"},{t:"ц…пки на руках",b:"Ы"}
+  ]
+};
+
+/* --- Найди слово без ошибки --- */
+const FIND = {
+  items:[
+    {t:"отрасливой",ok:false,fix:"отраслевой"},
+    {t:"росточек",ok:true},
+    {t:"подрастковый",ok:false,fix:"подростковый"},
+    {t:"бракосочитание",ok:false,fix:"бракосочетание"},
+    {t:"обжиг",ok:true},
+    {t:"выстилка",ok:true},
+    {t:"под полагом",ok:false,fix:"под пологом"},
+    {t:"изгарь",ok:true},
+    {t:"равнение в строю",ok:true},
+    {t:"сравнять с землёй",ok:false,fix:"сровнять — сделать плоским"},
+    {t:"промакательная бумага",ok:false,fix:"промокательная"},
+    {t:"вымаченные яблоки",ok:false,fix:"вымоченные"}
+  ]
+};
+
+/* --- Контекстные ловушки --- */
+const P_TRAP = [
+  {w:["пос","деть"],o:["е","и"],a:"е",ctx:"от испуга за одну ночь",why:"От «сЕдость» — стать седым."},
+  {w:["пос","деть"],o:["е","и"],a:"и",ctx:"полчаса на скамейке",why:"От «сИдя» — провести время сидя."},
+  {w:["оз","мь"],o:["е","и"],a:"е",ctx:"удариться … головой",why:"Оземь = о зЕмлю, наречие."},
+  {w:["оз","мь"],o:["е","и"],a:"и",ctx:"зеленеющая … на поле",why:"Озимь = посевы под зИму."},
+  {w:["разр","жённый"],o:["е","я"],a:"е",ctx:"горный воздух",why:"От «рЕдкий» — ставший редким."},
+  {w:["разр","жённый"],o:["е","я"],a:"я",ctx:"пистолет без патронов",why:"От «разрЯд» — лишённый заряда."},
+  {w:["к","мпания"],o:["а","о"],a:"а",ctx:"экзаменационная",why:"Кампания = мероприятие, поход."},
+  {w:["к","мпания"],o:["а","о"],a:"о",ctx:"строительная фирма",why:"Компания = фирма или группа людей."},
+  {w:["к","сатка"],o:["а","о"],a:"а",ctx:"юркая ласточка",why:"Касатка — ласточка, от «косы» птичьего хвоста."},
+  {w:["к","сатка"],o:["а","о"],a:"о",ctx:"хищник семейства дельфиновых",why:"Косатка — морской хищник."},
+  {w:["пок","рать"],o:["а","о"],a:"а",ctx:"нарушителя закона",why:"От «кАра» — наказание."},
+  {w:["пок","рить"],o:["а","о"],a:"о",ctx:"новую вершину",why:"От «покОрность» — подчинить себе."}
+];
+
+/* --- Итоговая практика --- */
+const P_FINAL = [
+  {w:["оп","здать"],o:["о","а"],a:"о",why:"Проверяемая: пОздно. «ОпАздывать» брать нельзя."},
+  {w:["б","ллетень"],o:["ю","у"],a:"ю",why:"Словарное слово."},
+  {w:["прив","легия"],o:["и","е"],a:"и",why:"Словарное слово."},
+  {w:["заг","релый"],o:["а","о"],a:"о",why:"Гар-/гор-: без ударения О."},
+  {w:["з","рево"],o:["а","о"],a:"а",why:"Зар-/зор-: под ударением слышим А."},
+  {w:["отп","реть"],o:["и","е"],a:"е",why:"Суффикса -А- нет → Е."},
+  {w:["прик","саться"],o:["а","о"],a:"а",why:"Кас-/кос-: есть суффикс -А- → А."},
+  {w:["подск","чить"],o:["а","о"],a:"о",why:"Перед Ч пишем О."},
+  {w:["прил","жение"],o:["а","о"],a:"о",why:"Перед Ж пишем О."},
+  {w:["ср","внять"],o:["а","о"],a:"о",ctx:"с землёй",why:"Ровн- = сделать плоским."},
+  {w:["пон","ать"],o:["им","ем"],a:"им",why:"Понять → понИМать."},
+  {w:["отр","сль"],o:["а","о"],a:"а",why:"Исключение из раст-/рос-."},
+  {w:["ск","чок"],o:["а","о"],a:"а",why:"Исключение из скак-/скоч-."},
+  {w:["параш","т"],o:["ю","у"],a:"ю",why:"Исключение: брошюра, жюри, парашют."},
+  {w:["крыж","вник"],o:["ё","о"],a:"о",why:"Родственного с Е нет — пишем О."},
+  {w:["на ц","почках"],o:["ы","и"],a:"ы",why:"Исключение: цыган, цыплёнок, цыпочки, цыц."}
+];
+
+/* --- Задания формата ЕГЭ --- */
+const EGE = [
+  {right:[1,2,3], rows:[
+    [{w:["р","стение"],a:"а"},{w:["оч","ровать"],a:"а"},{w:["к","снуться"],a:"о"}],
+    [{w:["пор","вняться"],a:"а",cx:"в строю"},{w:["б","гаж"],a:"а"},{w:["ум","лять"],a:"а",cx:"заслуги"}],
+    [{w:["заб","рать"],a:"и"},{w:["в","негрет"],a:"и"},{w:["прим","рять"],a:"и",cx:"поссорившихся"}],
+    [{w:["предл","жение"],a:"о"},{w:["г","ризонт"],a:"о"},{w:["задр","жать"],a:"о"}],
+    [{w:["параш","т"],a:"ю"},{w:["выт","реть"],a:"е",cx:"стол"},{w:["пор","сль"],a:"о"}]
+  ]},
+  {right:[0,2,3], rows:[
+    [{w:["прик","сновение"],a:"о"},{w:["гр","мадный"],a:"о"},{w:["нагром","ждение"],a:"о"}],
+    [{w:["бл","стательный"],a:"и"},{w:["м","тафора"],a:"е"},{w:["в","ртеть"],a:"е"}],
+    [{w:["заг","рать"],a:"о"},{w:["возл","жить"],a:"о"},{w:["ош","ломлённый"],a:"о"}],
+    [{w:["ижд","венец"],a:"и"},{w:["зам","рать"],a:"и"},{w:["выч","тать"],a:"и"}],
+    [{w:["ц","ркуль"],a:"и"},{w:["ц","плёнок"],a:"ы"},{w:["панц","рь"],a:"и"}]
+  ]},
+  {right:[0,1,2], rows:[
+    [{w:["ск","чок"],a:"а"},{w:["отр","сль"],a:"а"},{w:["р","внина"],a:"а"}],
+    [{w:["р","сток"],a:"о"},{w:["пол","г"],a:"о"},{w:["р","весник"],a:"о"}],
+    [{w:["утв","рь"],a:"а"},{w:["изг","рь"],a:"а"},{w:["ск","чу"],a:"а"}],
+    [{w:["соч","тание"],a:"е"},{w:["оп","реться"],a:"е"},{w:["разб","гатеть"],a:"о"}],
+    [{w:["недор","сль"],a:"о"},{w:["пл","вец"],a:"о"},{w:["з","ря"],a:"а"}]
+  ]},
+  {right:[0,2], rows:[
+    [{w:["крыж","вник"],a:"о"},{w:["ш","рох"],a:"о"},{w:["ч","порный"],a:"о"}],
+    [{w:["ж","ри"],a:"ю"},{w:["брош","ра"],a:"ю"},{w:["ящ","к"],a:"и"}],
+    [{w:["печ","нка"],a:"ё"},{w:["ш","пот"],a:"ё"},{w:["ж","лтый"],a:"ё"}],
+    [{w:["ц","ган"],a:"ы"},{w:["ц","фра"],a:"и"},{w:["ц","почки"],a:"ы"}],
+    [{w:["ож","г"],a:"о",cx:"сильный ожог руки"},{w:["беч","вка"],a:"ё"},{w:["реш","тка"],a:"ё"}]
+  ]},
+  {right:[1,2], rows:[
+    [{w:["ум","лять"],a:"о",cx:"о пощаде"},{w:["подр","вняться"],a:"а",cx:"в строю"},{w:["нагром","ждение"],a:"о"}],
+    [{w:["прим","рять"],a:"е",cx:"костюм"},{w:["отп","реть"],a:"е"},{w:["в","стибюль"],a:"е"}],
+    [{w:["к","морка"],a:"а"},{w:["пор","вняться"],a:"а",cx:"с лидером"},{w:["оч","ровать"],a:"а"}],
+    [{w:["з","рница"],a:"а"},{w:["ск","кать"],a:"а"},{w:["пол","жить"],a:"о"}],
+    [{w:["ижд","венец"],a:"и"},{w:["зап","рать"],a:"и"},{w:["ц","плёнок"],a:"ы"}]
+  ]}
+];
+
+/* ==================== СЛАЙДЫ ==================== */
+
+const SLIDES = [
+  {k:"title", type:"title"},
+  {k:"map", type:"map"},
+
+  {k:"r-prov", type:"rule", sec:"Проверяемые гласные", kicker:"Блок 1 · проверяемая гласная",
+   title:"Гласную можно проверить ударением",
+   lead:"Самый частый тип в задании 9 — и самый обманчивый: ученик уверен, что проверил слово, а проверочное подобрал негодное.",
+   blocks:[
+     {h:"Как действовать", ol:[
+       "Определить <b>значение</b> слова — от него зависит, какие слова ему родственны. <span class='ex'>г<u>о</u>ра — г<u>О</u>рный (родня), г<u>о</u>ра — горн (чужое слово)</span>",
+       "Подобрать однокоренное слово так, чтобы <b>ударение упало на проверяемую гласную</b>. <span class='ex'>н<u>е</u>бесный — н<u>Е</u>бо</span>",
+       "Убедиться, что корень <b>не чередующийся</b>: у чередующихся корней проверочных слов не бывает вовсе."
+     ]}
+   ],
+   trap:"<b>Главная ловушка.</b> Для проверки нельзя брать глаголы с суффиксами -ЫВА- и -ИВА-: они сами меняют гласную в корне. Разм<u>о</u>лоть проверяем словом п<u>О</u>мол, а не «размАлывать». От<u>о</u>пление — словом т<u>О</u>пит, а не «отАпливать». Оп<u>о</u>здать — словом п<u>О</u>здно, а не «опАздывать»."},
+  {k:"p-prov", type:"practice", sec:"Проверяемые гласные", back:"r-prov",
+   title:"Практика: подбираем проверочное слово",
+   instr:"Подберите про себя проверочное слово и выберите гласную. Помните про запрет на -ЫВА-/-ИВА-.",
+   items:P_PROV},
+
+  {k:"r-omon", type:"rule", sec:"Омонимичные корни", kicker:"Блок 1 · омонимия корней",
+   title:"Слова звучат одинаково, а корни разные",
+   lead:"Пока не понят смысл, проверочное слово подобрать невозможно: одно и то же звучание обслуживают два разных корня.",
+   blocks:[
+     {h:"Как это выглядит", p:"Написание расходится ровно там, где расходится значение.",
+      ex:"ум<u>А</u>лять заслуги (м<u>А</u>лый) — ум<u>О</u>лять о пощаде (м<u>О</u>лит)<br>прим<u>Е</u>рять костюм (м<u>Е</u>рка) — прим<u>И</u>рять друзей (м<u>И</u>р)<br>ст<u>А</u>рожил этих мест (ст<u>А</u>рый) — ст<u>О</u>рожил склад (ст<u>О</u>рож)"},
+     {h:"Проверка на однокоренность", p:"Совпадение букв в корне ещё не делает слова родственными. Косить, косичка и коснуться выглядят одинаково, но это три разных корня: срезать траву, волосы, дотронуться. Точно так же гористая и обгорел — не родня: у первого проверяемый корень, у второго чередующийся."}
+   ],
+   trap:"<b>Порядок действий.</b> Сначала спрашиваем себя: «о чём вообще речь?» — и только потом подбираем проверочное слово. Если начать с подбора, рука сама потянется к похожему по звучанию, а не к родственному по смыслу."},
+  {k:"q-omon", type:"choice", sec:"Омонимичные корни", back:"r-omon",
+   title:"Практика: значение решает",
+   instr:"Прочитайте описание и выберите слово, которое ему соответствует.",
+   items:Q_OMON},
+
+  {k:"r-slov", type:"rule", sec:"Словарные слова", kicker:"Блок 2 · непроверяемая гласная",
+   title:"Слова, которые проверить нечем",
+   lead:"Третий тип орфограммы в задании 9. Правила здесь нет — есть только память, поэтому список должен быть коротким и частотным.",
+   blocks:[
+     {h:"Как их узнать", p:"Ударение на нужную гласную не ставится ни в одной родственной форме. Чаще всего это заимствования: винегрет, бюллетень, вестибюль, аккомпанемент."},
+     {h:"Пары, которые различаются значением", p:"Отдельная группа словарных слов, где обе записи существуют и выбирать приходится по смыслу.",
+      ex:"экзаменационная к<u>А</u>мпания (мероприятие) — строительная к<u>О</u>мпания (фирма)<br>к<u>А</u>сатка (ласточка) — к<u>О</u>сатка (морской хищник)<br>об<u>А</u>яние (очарование) — об<u>О</u>няние (чувство запаха)"}
+   ],
+   trap:"<b>Не учите списками по сорок слов.</b> Двенадцать частотных, прогнанных до автоматизма, дают на экзамене больше, чем сорок просмотренных один раз. Когда эти закрепятся — добавим следующие двенадцать."},
+  {k:"f-slov", type:"flash", sec:"Словарные слова", back:"r-slov",
+   title:"Флеш-карты: словарные слова",
+   instr:"Нажмите на карточку, чтобы проверить себя. Затем честно отметьте, знали вы слово или нет.",
+   items:F_SLOV},
+
+  {k:"r-udar", type:"rule", sec:"Чередование: ударение", kicker:"Блок 3 · чередование, часть 1",
+   title:"Чередование зависит от ударения",
+   lead:"У чередующихся корней проверочных слов нет — выбор буквы диктует что-то другое. В первой группе это ударение.",
+   blocks:[
+     {h:"гар- // гор-", p:"Без ударения О, под ударением А. Единственная пара, где под ударением пишем не то, что просится по общему принципу.",
+      ex:"заг<u>А</u>р, уг<u>А</u>р — заг<u>О</u>реть, приг<u>О</u>рать, выг<u>О</u>рающий"},
+     {h:"зар- // зор-", p:"Без ударения всегда А. Под ударением пишем то, что слышим.",
+      ex:"з<u>А</u>рница, оз<u>А</u>рение, з<u>А</u>ря — з<u>А</u>рево, з<u>О</u>рька, з<u>О</u>ри"},
+     {h:"клан- // клон- и твар- // твор-", p:"Без ударения О.",
+      ex:"покл<u>О</u>ниться, накл<u>О</u>нение, тв<u>О</u>рчество — но: кл<u>А</u>няться, тв<u>А</u>рь"}
+   ],
+   trap:"<b>Похожие, но чужие.</b> Не относятся к чередованию и проверяются обычным способом: гора, гористый, горевать, гордиться, горизонт, горчичник, зоркий, притворить дверь, отварить картофель. Здесь корень другой, хотя буквы те же."},
+  {k:"p-udar", type:"practice", sec:"Чередование: ударение", back:"r-udar",
+   title:"Практика: ударение в корне",
+   instr:"Определите, падает ли ударение на корень, и выберите гласную.",
+   items:P_UDAR},
+
+  {k:"r-sufa", type:"rule", sec:"Чередование: суффикс -А-", kicker:"Блок 3 · чередование, часть 2",
+   title:"Чередование зависит от суффикса -А-",
+   lead:"Здесь всё решает то, что стоит сразу за корнем.",
+   blocks:[
+     {h:"Правило", p:"Есть суффикс -А- после корня — пишем И. Нет суффикса -А- — пишем Е.",
+      ex:"заб<u>И</u>рать (есть -а-) — б<u>Е</u>ру (нет -а-)"},
+     {h:"Какие корни так работают", p:"бер-//бир-, пер-//пир-, дер-//дир-, тер-//тир-, мер-//мир-, блест-//блист-, стел-//стил-, жег-//жиг-, чет-//чит-.",
+      ex:"зап<u>И</u>рать — отп<u>Е</u>реть; раст<u>И</u>рать — ст<u>Е</u>реть; выч<u>И</u>тать — выч<u>Е</u>т"},
+     {h:"кас- // кос-", p:"Тот же принцип с другими буквами: есть -А- — пишем А, дальше идёт Н — пишем О.",
+      ex:"прик<u>А</u>саться, к<u>А</u>сательная — прик<u>О</u>сновение, к<u>О</u>снуться"}
+   ],
+   trap:"<b>Похожие, но чужие.</b> Беречь, пировать, держать, тиран, примерять одежду, примирить врагов, читатель, стилистика, косой взгляд, косить траву. Ни одно из них к чередованию отношения не имеет."},
+  {k:"p-sufa", type:"practice", sec:"Чередование: суффикс -А-", back:"r-sufa",
+   title:"Практика: суффикс -А-",
+   instr:"Посмотрите, стоит ли за корнем суффикс -А-, и выберите букву.",
+   items:P_SUFA},
+
+  {k:"r-sogl", type:"rule", sec:"Чередование: согласная", kicker:"Блок 3 · чередование, часть 3",
+   title:"Чередование зависит от согласной в корне",
+   lead:"Смотрим не дальше конца корня: выбор буквы диктует согласный, который за ней стоит.",
+   blocks:[
+     {h:"скак- // скоч-", p:"Перед К пишем А, перед Ч пишем О.",
+      ex:"приск<u>А</u>кать, уск<u>А</u>кать — подск<u>О</u>чить, выск<u>О</u>чить"},
+     {h:"раст- // ращ- // рос-", p:"Перед СТ и Щ пишем А, в остальных случаях О.",
+      ex:"отр<u>А</u>сти, нар<u>А</u>щение — выр<u>О</u>сший, водор<u>О</u>сли, недор<u>О</u>сль"},
+     {h:"лаг- // лож-", p:"Перед Г пишем А, перед Ж пишем О.",
+      ex:"пол<u>А</u>гать, прил<u>А</u>гательное — пол<u>О</u>жить, прил<u>О</u>жение"}
+   ],
+   trap:"<b>Смысл всё-таки вмешивается.</b> «Проск<u>А</u>чу пять километров на коне» и «проск<u>О</u>чу поворот» — разные глаголы, а не разные формы одного. Такие пары в вариантах всегда идут с пояснением в скобках: оно там не для красоты."},
+  {k:"p-sogl", type:"practice", sec:"Чередование: согласная", back:"r-sogl",
+   title:"Практика: согласная в корне",
+   instr:"Посмотрите, какая согласная закрывает корень, и выберите гласную.",
+   items:P_SOGL},
+
+  {k:"r-znach", type:"rule", sec:"Чередование: значение", kicker:"Блок 3 · чередование, часть 4",
+   title:"Чередование зависит от значения",
+   lead:"Единственная группа, где ни ударение, ни соседние буквы не помогут: нужно понять, о чём речь.",
+   blocks:[
+     {h:"мак- // мок-", p:"Мак- — погружать в жидкость. Мок- — пропускать жидкость, становиться мокрым.",
+      ex:"м<u>А</u>кать сухарь, обм<u>А</u>кнуть перо — вым<u>О</u>кнуть под дождём, пром<u>О</u>кашка, непром<u>О</u>каемый"},
+     {h:"равн- // ровн-", p:"Равн- — одинаковый, равный. Ровн- — прямой, гладкий.",
+      ex:"ур<u>А</u>внение, подр<u>А</u>вняться в строю, ср<u>А</u>внить два числа — подр<u>О</u>внять волосы, ср<u>О</u>внять с землёй, выр<u>О</u>внять грядки"},
+     {h:"плав-", p:"Почти всегда А. Исключений всего три.",
+      ex:"пл<u>А</u>вучесть, попл<u>А</u>вок, жук-пл<u>А</u>вунец — но: пл<u>О</u>вец, пл<u>О</u>вчиха, плывуны"}
+   ],
+   trap:"<b>Самая дорогая пара — сровнять и сравнять.</b> «Ср<u>О</u>внять с землёй» — сделать плоским, здесь ровн-. «Ср<u>А</u>внять счёт» — сделать равным, здесь равн-. В вариантах она встречается регулярно и разводит ряд надвое."},
+  {k:"p-znach", type:"practice", sec:"Чередование: значение", back:"r-znach",
+   title:"Практика: значение корня",
+   instr:"Сначала поймите смысл словосочетания, потом выбирайте букву.",
+   items:P_ZNACH},
+
+  {k:"r-imin", type:"rule", sec:"Чередование ИМ/ИН", kicker:"Блок 3 · чередование, часть 5",
+   title:"Чередование А/Я — ИМ/ИН",
+   lead:"Эту группу чаще всего просто не узнают: на месте одной буквы появляются две, и корень становится неузнаваемым.",
+   blocks:[
+     {h:"Правило", p:"Если после корня появляется суффикс -А-, гласный А или Я в корне превращается в ИМ или ИН.",
+      ex:"сжать → сж<u>ИМ</u>ать · понять → пон<u>ИМ</u>ать · поднять → подн<u>ИМ</u>ать · внять → вн<u>ИМ</u>ать<br>начать → нач<u>ИН</u>ать · зачать → зач<u>ИН</u>ать · заклясть → закл<u>ИН</u>ать · напомнить → напом<u>ИН</u>ать"},
+     {h:"Производные", p:"От этих же глаголов образованы слова, где чередование уже не на виду.",
+      ex:"вн<u>ИМ</u>ательный, зан<u>ИМ</u>ательный, напом<u>ИН</u>ание, закл<u>ИН</u>ание"}
+   ],
+   trap:"<b>Как узнать корень.</b> Уберите суффикс -А- и восстановите начальную форму: внимать → внять, начинать → начать. Если такая форма нашлась — перед вами чередование, а не проверяемая гласная."},
+  {k:"p-imin", type:"practice", sec:"Чередование ИМ/ИН", back:"r-imin",
+   title:"Практика: ИМ и ИН",
+   instr:"Восстановите начальную форму и выберите сочетание букв.",
+   items:P_IMIN},
+
+  {k:"s-recap", type:"sort", sec:"Чередование: повторение", back:"r-udar",
+   title:"Разложите слова по типу чередования",
+   instr:"Нажмите на слово, затем на группу, к которой оно относится. Проверяется не буква, а умение опознать правило.",
+   data:SORT_RECAP},
+
+  {k:"r-iskl", type:"rule", sec:"Слова-исключения", kicker:"Блок 4 · исключения",
+   title:"Слова, которые правилу не подчиняются",
+   lead:"Корень тот же, чередование то же, а буква вопреки правилу. Логики здесь нет — только список.",
+   blocks:[
+     {h:"Весь список", p:"Больше исключений в задании 9 не встречается.",
+      ex:"р<u>О</u>сток, р<u>О</u>стовщик, выр<u>О</u>сток, подр<u>О</u>стковый, Р<u>О</u>стов, Р<u>О</u>стислав<br>отр<u>А</u>сль · ск<u>А</u>чок, ск<u>А</u>чу · утв<u>А</u>рь · пол<u>О</u>г<br>выг<u>А</u>рки, изг<u>А</u>рь, приг<u>А</u>рь · пл<u>О</u>вец, пл<u>О</u>вчиха, плывуны<br>р<u>А</u>внина · р<u>О</u>весник · п<u>О</u>ровну · ур<u>О</u>вень<br>соч<u>Е</u>тать, соч<u>Е</u>тание, бракосоч<u>Е</u>тание"}
+   ],
+   trap:"<b>Хитрость на запоминание.</b> В корнях раст-/рос- исключения идут в О, а в скак-/скоч- и гар-/гор- — в А. То есть исключение почти всегда пишется наоборот тому, чего требует правило: это и есть подсказка."},
+  {k:"f-iskl", type:"flash", sec:"Слова-исключения", back:"r-iskl",
+   title:"Флеш-карты: исключения",
+   instr:"Нажмите на карточку, чтобы проверить себя. Затем отметьте, знали вы слово или нет.",
+   items:F_ISKL},
+
+  {k:"r-ship1", type:"rule", sec:"После шипящих: И, А, У", kicker:"Блок 5 · после шипящих",
+   title:"После Ж, Ш, Ч, Щ пишем И, А, У",
+   lead:"Правило простое, но в вариантах оно прячется среди словарных слов, и ряд разваливается именно на нём.",
+   blocks:[
+     {h:"Правило", p:"После шипящих не пишутся Ы, Я, Ю — только И, А, У. Даже в заимствованиях.",
+      ex:"ж<u>И</u>знь, ш<u>И</u>рота, ч<u>И</u>ж · ч<u>А</u>хотка, щ<u>А</u>дить, ж<u>А</u>кет · ш<u>У</u>тка, ч<u>У</u>лок, щ<u>У</u>ка"},
+     {h:"Исключения", p:"Три слова с производными и несколько имён собственных.",
+      ex:"брош<u>Ю</u>ра, ж<u>Ю</u>ри, параш<u>Ю</u>т · Ж<u>ю</u>ль Верн, Ч<u>ю</u>рлёнис"}
+   ]},
+  {k:"p-ship1", type:"practice", sec:"После шипящих: И, А, У", back:"r-ship1",
+   title:"Практика: И, А, У после шипящих",
+   instr:"Выберите верную гласную. Три слова в подборке — исключения.",
+   items:P_SHIP1},
+
+  {k:"r-ship2", type:"rule", sec:"После шипящих: Ё и О", kicker:"Блок 5 · после шипящих",
+   title:"Ё или О в корне под ударением",
+   lead:"Одно действие: пробуем подобрать родственное слово с буквой Е.",
+   blocks:[
+     {h:"Пишем Ё", p:"Родственное слово с Е находится.",
+      ex:"печ<u>Ё</u>нка — печЕнь · ш<u>Ё</u>пот — шЕпчет · ж<u>Ё</u>лудь — жЕлудей · деш<u>Ё</u>вый — дешЕвле · беч<u>Ё</u>вка — бечЕва · реш<u>Ё</u>тка — решЕто"},
+     {h:"Пишем О", p:"Родственного слова с Е нет.",
+      ex:"крыж<u>О</u>вник, трущ<u>О</u>ба, ш<u>О</u>рох, ш<u>О</u>в, ч<u>О</u>порный, ч<u>О</u>каться, ш<u>О</u>мпол, изж<u>О</u>га, обж<u>О</u>ра, чащ<u>О</u>ба, ж<u>О</u>кей, маж<u>О</u>р, капюш<u>О</u>н"}
+   ],
+   trap:"<b>Ожог и ожёг — оба написания верны.</b> Разводит их часть речи: существительное пишется через О, глагол через Ё. «Получил тяжёлый ож<u>О</u>г руки» — но «он ож<u>Ё</u>г руку о плиту». То же с парой подж<u>О</u>г — подж<u>Ё</u>г. В варианте различие всегда задано контекстом в скобках."},
+  {k:"p-ship2", type:"practice", sec:"После шипящих: Ё и О", back:"r-ship2",
+   title:"Практика: Ё или О",
+   instr:"Попробуйте подобрать родственное слово с Е. Получилось — пишем Ё, не получилось — О.",
+   items:P_SHIP2},
+
+  {k:"r-ts", type:"rule", sec:"И и Ы после Ц", kicker:"Блок 6 · после Ц",
+   title:"И и Ы после Ц в корне",
+   lead:"В задании 9 проверяется только корень, поэтому запомнить нужно немного.",
+   blocks:[
+     {h:"В корне пишем И", p:"Правило без оговорок.",
+      ex:"ц<u>И</u>тата, ц<u>И</u>ркуль, ц<u>И</u>фра, ц<u>И</u>клон, панц<u>И</u>рь, ц<u>И</u>нга, ц<u>И</u>новка"},
+     {h:"Исключения", p:"Их удобно держать одной фразой.", memo:"Ц<u>Ы</u>ган на ц<u>Ы</u>почках ц<u>Ы</u>плёнку ц<u>Ы</u>кнул: «Ц<u>Ы</u>ц!»"},
+     {h:"За пределами корня", p:"В окончаниях и в суффиксе -ЫН- пишется Ы, в словах на -ЦИЯ и -ЦИЙ — И. В задании 9 это не спрашивают, но знать полезно.",
+      ex:"куниц<u>Ы</u>, птиц<u>Ы</u>, лисиц<u>Ы</u>н — станц<u>И</u>я, кальц<u>И</u>й"}
+   ],
+   trap:"<b>Две ловушки.</b> Ц<u>Ы</u>пки на руках идут по списку исключений, а не по правилу корня. А в слове ц<u>Е</u>ремония на месте пропуска вообще не И и не Ы, хотя ряд построен так, чтобы вы искали именно их."},
+  {k:"s-ts", type:"sort", sec:"И и Ы после Ц", back:"r-ts",
+   title:"Разложите слова по буквам И и Ы",
+   instr:"Нажмите на слово, затем на карточку с нужной буквой.",
+   data:SORT_TS},
+
+  {k:"r-spor", type:"rule", sec:"Ловушки", kicker:"Блок 7 · спорные случаи",
+   title:"Когда учебник и словарь расходятся",
+   lead:"Два слова, из-за которых ученики спорят с учителями. Разбираем отдельно, чтобы на экзамене не было сомнений.",
+   blocks:[
+     {h:"Зарянка и заревать", p:"Школьные учебники до сих пор дают «зорянка» и «зоревать» как исключения из корня зар-/зор-. Орфографический словарь Российской академии наук эти исключения отменил: сейчас нормативно з<u>А</u>рянка (птица-малиновка) и з<u>А</u>ревать. Оба слова подведены под общее правило — без ударения А. Если в сборнике задач встретится «зорянка», это след старой нормы.",
+      ex:"з<u>А</u>рянка, з<u>А</u>ревать, з<u>А</u>ревой"},
+     {h:"Уровень", p:"Слово означает «ровный», то есть по смыслу должно идти с корнем ровн-. Часть справочников выводит его в исключения, часть проводит по общему правилу. Буква в обоих случаях одна и та же — О, так что на экзамене риска нет.",
+      ex:"ур<u>О</u>вень воды, ур<u>О</u>вень подготовки"}
+   ],
+   trap:"<b>Что делать на экзамене.</b> Обе записи ведут к одной букве, поэтому спор чисто теоретический. Опасно другое — заучить «зорянку» и по аналогии написать через О другие слова с этим корнем: озОрение, зОрница. Вот этого правило не прощает."},
+  {k:"e-find", type:"find", sec:"Ловушки", back:"r-spor",
+   title:"Найдите слова, написанные без ошибки",
+   instr:"Отметьте все слова, в которых ошибки нет. Остальные написаны неверно.",
+   data:FIND},
+  {k:"p-trap", type:"practice", sec:"Ловушки", back:"r-spor",
+   title:"Практика: смысл против звучания",
+   instr:"Каждая пара звучит одинаково. Читайте пояснение под словом — оно и есть подсказка.",
+   items:P_TRAP},
+
+  {k:"p-final", type:"practice", sec:"Итоговая практика", back:"map",
+   title:"Итоговая практика: всё вместе",
+   instr:"Шестнадцать слов из всех блоков вперемешку. Тип орфограммы придётся определять самому.",
+   items:P_FINAL},
+
+  {k:"ege-intro", type:"egeIntro"},
+  ...EGE.map((q,i)=>({k:"ege"+(i+1), type:"ege", sec:"Формат ЕГЭ", back:"ege-intro",
+    title:"Задание "+(i+1)+" из "+EGE.length, data:q})),
+
+  {k:"final", type:"final"}
+];
+
+const IDX = {}; SLIDES.forEach((s,i)=>IDX[s.k]=i);
+
+/* ==================== СОСТОЯНИЕ ==================== */
+
+const STORE = "trenazher9_v2";
+let ST = {ans:{}, ph:{}, fr:{}, fl:{}, first:{}, cur:0, max:0, calm:false};
+
+try{
+  const raw = localStorage.getItem(STORE);
+  if(raw) ST = Object.assign(ST, JSON.parse(raw));
+  if(!ST.first) ST.first = {};
+}catch(e){}
+
+function save(){
+  try{ localStorage.setItem(STORE, JSON.stringify(ST)); }catch(e){}
+}
+
+/* порядок карточек перемешивается при каждой загрузке страницы */
+const ORD = {};
+function shuffled(n){
+  const a = Array.from({length:n},(_,i)=>i);
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+SLIDES.forEach(s=>{
+  if(s.items) ORD[s.k] = shuffled(s.items.length);
+  else if(s.data && s.data.items) ORD[s.k] = shuffled(s.data.items.length);
+});
+
+const A = k => (ST.ans[k] || (ST.ans[k] = {}));
+const PH = k => ST.ph[k] || 0;
+const FR = k => ST.fr[k] || [];
+
+/* ==================== ПОДСЧЁТ ==================== */
+
+function scoreOf(s){
+  const k = s.k, ph = PH(k);
+  if(ph === 0) return null;
+  const ans = A(k);
+
+  if(s.type === "practice" || s.type === "choice"){
+    let r=0,w=0,e=0;
+    s.items.forEach((it,i)=>{
+      const v = ans[i];
+      if(v === undefined || v === null) e++;
+      else if(v === it.a) r++;
+      else w++;
+    });
+    return {r,w,e,t:s.items.length};
+  }
+  if(s.type === "sort"){
+    let r=0,w=0,e=0;
+    s.data.items.forEach((it,i)=>{
+      const v = ans[i];
+      if(!v) e++; else if(v === it.b) r++; else w++;
+    });
+    return {r,w,e,t:s.data.items.length};
+  }
+  if(s.type === "find"){
+    const sel = ans.sel || [];
+    if(!sel.length) return {r:0,w:0,e:s.data.items.length,t:s.data.items.length};
+    let r=0,w=0;
+    s.data.items.forEach((it,i)=>{ (sel.includes(i) === it.ok) ? r++ : w++; });
+    return {r,w,e:0,t:s.data.items.length};
+  }
+  if(s.type === "ege"){
+    const sel = (ans.sel || []).slice().sort();
+    if(!sel.length) return {r:0,w:0,e:1,t:1};
+    const right = s.data.right.slice().sort();
+    const hit = sel.length === right.length && sel.every((v,i)=>v === right[i]);
+    return {r:hit?1:0, w:hit?0:1, e:0, t:1};
+  }
+  if(s.type === "flash"){
+    const st = ST.fl[k] || {rat:{}};
+    const known = Object.values(st.rat).filter(v=>v==="know").length;
+    const rated = Object.keys(st.rat).length;
+    if(!rated) return null;
+    return {r:known, w:rated-known, e:s.items.length-rated, t:s.items.length, self:true};
+  }
+  return null;
+}
+
+/* для диагностики берём результат ПЕРВОЙ проверки: после исправлений
+   счёт всегда близок к 100% и слабые темы перестают быть видны */
+function baseScore(s){
+  if(s.type === "flash") return scoreOf(s);
+  return ST.first[s.k] || null;
+}
+
+function allScores(){
+  const bySec = {};
+  SLIDES.forEach(s=>{
+    if(!s.sec) return;
+    const sc = baseScore(s);
+    if(!sc) return;
+    const b = bySec[s.sec] || (bySec[s.sec] = {r:0,w:0,e:0,t:0,self:false,back:s.back||s.k});
+    b.r+=sc.r; b.w+=sc.w; b.e+=sc.e; b.t+=sc.t;
+    if(sc.self) b.self = true;
+  });
+  return bySec;
+}
+
+/* ==================== УТИЛИТЫ ==================== */
+
+const esc = t => String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function wordHTML(pair, val, reveal){
+  const shown = reveal !== undefined ? reveal : (val || "·");
+  return esc(pair[0]) + '<span class="blank">' + esc(shown) + '</span>' + esc(pair[1]);
+}
+
+function scoreLine(sc){
+  if(!sc) return "";
+  let out = '<span class="score">Верно <b class="g">'+sc.r+'</b>';
+  if(sc.w) out += ' · неверно <b class="r">'+sc.w+'</b>';
+  if(sc.e) out += ' · не отвечено <b class="a">'+sc.e+'</b>';
+  out += ' из '+sc.t+'</span>';
+  return out;
+}
+
+function droplets(el){
+  if(document.body.classList.contains("calm")) return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const rc = el.getBoundingClientRect();
+  const cx = rc.left+rc.width/2, cy = rc.top+rc.height/2;
+  for(let i=0;i<5;i++){
+    const ang = (i/5)*Math.PI*2 + Math.random()*.4, dist = 18+Math.random()*12;
+    const d = document.createElement("div");
+    d.className = "drop";
+    d.style.left = cx+"px"; d.style.top = cy+"px";
+    d.style.setProperty("--dx", Math.cos(ang)*dist+"px");
+    d.style.setProperty("--dy", Math.sin(ang)*dist+"px");
+    document.body.appendChild(d);
+    d.addEventListener("animationend", ()=>d.remove());
+  }
+}
+
+/* ==================== РЕНДЕР ==================== */
+
+const stage = document.getElementById("stage");
+const barFill = document.getElementById("barFill");
+const counter = document.getElementById("counter");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const calmBtn = document.getElementById("calmBtn");
+
+function head(s){
+  return (s.kicker ? '<div class="kicker">'+s.kicker+'</div>' : '') +
+         '<h1>'+s.title+'</h1>' +
+         (s.lead ? '<p class="lead">'+s.lead+'</p>' : '');
+}
+
+let RESTORE = null;
+function render(i){
+  const s = SLIDES[i];
+  const keepScroll = stage.scrollTop;
+  const el = document.createElement("div");
+  el.className = "slide";
+  stage.innerHTML = ""; stage.appendChild(el);
+  ({title:rTitle, map:rMap, rule:rRule, practice:rPractice, choice:rPractice,
+    sort:rSort, flash:rFlash, find:rFind, egeIntro:rEgeIntro, ege:rEge, final:rFinal})[s.type](el, s);
+  stage.scrollTop = keepScroll;
+  if(RESTORE){
+    const t = stage.querySelector(RESTORE);
+    if(t && t.focus) t.focus({preventScroll:true});
+    RESTORE = null;
+  }
+}
+
+/* --- титул --- */
+function rTitle(el){
+  el.innerHTML = `
+    <div class="hero">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="ring r1" cx="60" cy="60" r="52"></circle>
+        <circle class="ring r2" cx="60" cy="60" r="52"></circle>
+        <circle class="ring r3" cx="60" cy="60" r="52"></circle>
+        <circle cx="60" cy="60" r="7" fill="#FFB27D"></circle>
+      </svg>
+      <div class="hero-sup">ЕГЭ по русскому языку</div>
+      <div class="hero-title">Задание 9</div>
+      <div class="hero-sub">Правописание корней. Тренажёр на глубину.</div>
+      <button class="start" type="button" id="startBtn">Начать</button>
+    </div>`;
+  el.querySelector("#startBtn").addEventListener("click", ()=>go(1));
+}
+
+/* --- карта задания --- */
+function rMap(el){
+  const tiles = [
+    ["r-prov","Проверяемые гласные","Подбираем проверочное слово — и не попадаемся на -ЫВА-/-ИВА-"],
+    ["r-slov","Словарные слова","Проверить нечем: бюллетень, винегрет, вестибюль"],
+    ["r-udar","Корни с чередованием","Пять групп: ударение, суффикс, согласная, значение, ИМ/ИН"],
+    ["r-iskl","Слова-исключения","Росток, отрасль, скачок, утварь, полог, равнина"],
+    ["r-ship1","Гласные после шипящих","И, А, У — и отдельно Ё или О под ударением"],
+    ["r-ts","И и Ы после Ц","Цыган на цыпочках цыплёнку цыкнул: «Цыц!»"]
+  ];
+  el.innerHTML = `
+    <div class="kicker">Карта задания</div>
+    <h1>Что проверяет задание 9</h1>
+    <p class="lead">В каждом ряду три слова с пропуском. Нужно указать <b class="hl">все ряды</b>, где во всех словах пропущена <b class="hl">одна и та же буква</b>, и записать их номера. Верных рядов обычно два или три, поэтому останавливаться на первом найденном нельзя.</p>
+    <div class="map">${tiles.map(t=>`<button class="tile" type="button" data-k="${t[0]}"><b>${t[1]}</b><span>${t[2]}</span></button>`).join("")}</div>
+    <div class="trap"><b>Стратегия.</b> Сначала определяем, какой тип орфограммы перед нами, и только потом вставляем букву. Ряды специально собирают из разных типов: чередующийся корень, проверяемый и словарный могут стоять рядом. Пояснение в скобках — не украшение, а условие задачи.</div>
+    <p class="lead" style="margin-top:16px;">Плитки выше работают оглавлением: нажмите на любую, чтобы перейти к нужному блоку.</p>`;
+  el.querySelectorAll(".tile").forEach(b=>b.addEventListener("click",()=>go(IDX[b.dataset.k])));
+}
+
+/* --- правило --- */
+function rRule(el, s){
+  const blocks = s.blocks.map(b=>{
+    let inner = '<h3>'+b.h+'</h3>';
+    if(b.p) inner += '<p>'+b.p+'</p>';
+    if(b.ol) inner += '<ol class="steps">'+b.ol.map(x=>'<li>'+x+'</li>').join("")+'</ol>';
+    if(b.ex) inner += '<p class="ex">'+b.ex+'</p>';
+    if(b.memo) inner += '<div class="memo">'+b.memo+'</div>';
+    return '<div class="rule">'+inner+'</div>';
+  }).join("");
+  el.innerHTML = head(s) + blocks + (s.trap ? '<div class="trap">'+s.trap+'</div>' : '');
+}
+
+/* --- упражнение со словами и выбор из двух слов --- */
+function rPractice(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), ord = ORD[k];
+  const isChoice = s.type === "choice";
+
+  const cards = ord.map(i=>{
+    const it = s.items[i];
+    const v = ans[i];
+    let cls = "card", flag = "", why = "";
+    if(ph >= 1){
+      if(v === undefined) { cls += " na"; flag = '<div class="flag na">не отвечено</div>'; }
+      else if(v === it.a) cls += " ok";
+      else cls += " no";
+    }
+    if(ph === 2){
+      const right = isChoice ? it.a : (it.w[0] + it.a + it.w[1]);
+      why = '<div class="why"><span class="fix">' + esc(right) + '</span> — ' + it.why + '</div>';
+    }
+    const live = (ph === 0) || (ph === 15 && !fr.includes(i));
+    const dis = live ? "" : " disabled";
+
+    let body;
+    if(isChoice){
+      body = '<p class="ctx" style="font-size:.98rem;color:var(--text);margin-bottom:9px;">' + esc(it.q) + '</p>' +
+        '<div class="pick">' + it.o.map(o=>
+          '<button type="button" data-i="'+i+'" data-v="'+esc(o)+'" class="'+(v===o?"on":"")+'"'+dis+'>'+esc(o)+'</button>'
+        ).join("") + '</div>';
+    } else {
+      const reveal = (ph === 2) ? it.a : undefined;
+      body = (it.ctx ? '<div class="ctx">'+esc(it.ctx)+'</div>' : '') +
+        '<div class="word">' + wordHTML(it.w, v, reveal) + '</div>' +
+        '<div class="chips">' + it.o.map(o=>
+          '<button type="button" class="chip '+(v===o?"on":"")+'" data-i="'+i+'" data-v="'+esc(o)+'"'+dis+'>'+esc(o)+'</button>'
+        ).join("") + '</div>';
+    }
+    return '<div class="'+cls+'">' + body + flag + why + '</div>';
+  }).join("");
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="grid">'+cards+'</div>' +
+    '<div class="foot" id="foot"></div>';
+
+  el.querySelectorAll("[data-v]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const i = +b.dataset.i;
+      ans[i] = (ans[i] === b.dataset.v) ? undefined : b.dataset.v;
+      if(ans[i] === undefined) delete ans[i];
+      RESTORE = '[data-i="'+i+'"][data-v="'+b.dataset.v+'"]';
+      save(); droplets(b); render(ST.cur);
+    });
+  });
+  footer(el, s);
+}
+
+/* --- футер с двухшаговой проверкой --- */
+function footer(el, s){
+  const k = s.k, ph = PH(k), foot = el.querySelector("#foot");
+  const sc = scoreOf(s);
+  let html = "";
+  if(ph === 0){
+    html = '<button class="btn main" type="button" id="chk">Проверить</button>';
+  } else if(ph === 1){
+    html = '<button class="btn main" type="button" id="again">Ещё попытка</button>' + scoreLine(sc) +
+      '<div style="flex-basis:100%;color:var(--dim);font-size:.9rem;">Верные ответы закреплены, неверные и пропущенные откроются для правки. Правильные буквы пока не показываем — вспоминайте.</div>';
+  } else if(ph === 15){
+    html = '<button class="btn main" type="button" id="chk">Проверить</button>' +
+      '<span class="score">Открыты только неверные и пропущенные позиции</span>';
+  } else {
+    html = scoreLine(sc) + '<button class="btn ghost" type="button" id="rst">Пройти заново</button>';
+  }
+  foot.innerHTML = html;
+  const chk = foot.querySelector("#chk"), ag = foot.querySelector("#again"), rst = foot.querySelector("#rst");
+  if(chk) chk.addEventListener("click", ()=>doCheck(s));
+  if(ag) ag.addEventListener("click", ()=>{ ST.ph[k] = 15; save(); render(ST.cur); });
+  if(rst) rst.addEventListener("click", ()=>{
+    ST.ans[k] = {}; ST.ph[k] = 0; ST.fr[k] = [];
+    delete ST.first[k]; if(ST.fl[k]) delete ST.fl[k];
+    save(); render(ST.cur);
+  });
+}
+
+function doCheck(s){
+  const k = s.k, ph = PH(k);
+  if(ph === 15){ ST.ph[k] = 2; save(); render(ST.cur); return; }
+
+  const ans = A(k);
+  const frozen = [];
+  let pending = 0;
+
+  if(s.type === "practice" || s.type === "choice"){
+    s.items.forEach((it,i)=>{ (ans[i] === it.a) ? frozen.push(i) : pending++; });
+  } else if(s.type === "sort"){
+    s.data.items.forEach((it,i)=>{ (ans[i] === it.b) ? frozen.push(i) : pending++; });
+  } else if(s.type === "find"){
+    const sel = ans.sel || [];
+    if(!sel.length) pending++;
+    s.data.items.forEach((it,i)=>{
+      const match = sel.includes(i) === it.ok;
+      if(match && it.ok) frozen.push(i);
+      if(!match) pending++;
+    });
+  } else if(s.type === "ege"){
+    const sel = ans.sel || [];
+    sel.forEach(r=>{ if(s.data.right.includes(r)) frozen.push(r); });
+    const done = sel.length === s.data.right.length && s.data.right.every(r=>sel.includes(r));
+    pending = done ? 0 : 1;
+  }
+
+  ST.fr[k] = frozen;
+  ST.ph[k] = pending === 0 ? 2 : 1;
+  if(!ST.first[k]){
+    const sc = scoreOf(s);
+    if(sc) ST.first[k] = {r:sc.r, w:sc.w, e:sc.e, t:sc.t};
+  }
+  save(); render(ST.cur);
+}
+
+/* --- сортировка --- */
+let SEL = null;
+function rSort(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), ord = ORD[k], D = s.data;
+  const live = (ph === 0 || ph === 15);
+
+  const tok = (i, inBucket)=>{
+    const it = D.items[i];
+    let cls = "tok";
+    if(ph >= 1 && ans[i]) cls += (ans[i] === it.b) ? " ok" : " no";
+    if(SEL === i) cls += " sel";
+    const movable = live && !fr.includes(i);
+    return '<button type="button" class="'+cls+'" data-t="'+i+'"'+(movable?"":" disabled")+'>'+esc(it.t)+'</button>';
+  };
+
+  const pool = ord.filter(i=>!ans[i]).map(i=>tok(i,false)).join("") ||
+               '<span style="color:var(--dim);font-size:.9rem;">Все слова разложены</span>';
+
+  const buckets = D.buckets.map(b=>{
+    const inside = ord.filter(i=>ans[i] === b).map(i=>tok(i,true)).join("");
+    return '<div class="bucket" data-b="'+esc(b)+'"><h4>'+esc(b)+'</h4><div class="row">'+inside+'</div></div>';
+  }).join("");
+
+  let fix = "";
+  if(ph === 2){
+    const wrong = D.items.map((it,i)=>({it,i})).filter(x=>ans[x.i] !== x.it.b);
+    fix = wrong.length
+      ? '<div class="fixlist"><b>Верное распределение:</b><br>' +
+        wrong.map(x=>esc(x.it.t)+' → <span>'+esc(x.it.b)+'</span>').join("<br>") + '</div>'
+      : '<div class="fixlist">Все слова разложены верно.</div>';
+  }
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="pool">'+pool+'</div>' +
+    '<div class="buckets">'+buckets+'</div>' +
+    fix + '<div class="foot" id="foot"></div>';
+
+  if(live){
+    el.querySelectorAll("[data-t]").forEach(b=>b.addEventListener("click",()=>{
+      SEL = (SEL === +b.dataset.t) ? null : +b.dataset.t;
+      render(ST.cur);
+    }));
+    el.querySelectorAll(".bucket").forEach(b=>b.addEventListener("click",(ev)=>{
+      if(ev.target.closest("[data-t]")) return;
+      if(SEL === null) return;
+      ans[SEL] = b.dataset.b; SEL = null; save(); render(ST.cur);
+    }));
+  }
+  footer(el, s);
+  const foot = el.querySelector("#foot");
+  const ag = foot.querySelector("#again");
+  if(ag){
+    ag.addEventListener("click", ()=>{
+      D.items.forEach((it,i)=>{ if(!FR(k).includes(i)) delete ans[i]; });
+      save();
+    }, true);
+  }
+}
+
+/* --- флеш-карты --- */
+function rFlash(el, s){
+  const k = s.k;
+  const st = ST.fl[k] || (ST.fl[k] = {pos:0, rat:{}, flip:false});
+  const ord = ORD[k];
+  const i = ord[st.pos];
+  const it = s.items[i];
+  const rated = Object.keys(st.rat).length;
+  const known = Object.values(st.rat).filter(v=>v==="know").length;
+
+  const face = st.flip
+    ? '<div class="fw">'+esc(it.w[0]+it.a+it.w[1])+'</div>' +
+      (it.ctx ? '<div class="fc">'+esc(it.ctx)+'</div>' : '') +
+      '<div class="fh">'+it.why+'</div>'
+    : '<div class="fw">'+wordHTML(it.w, null)+'</div>' +
+      (it.ctx ? '<div class="fc">'+esc(it.ctx)+'</div>' : '') +
+      '<div class="tap">нажмите, чтобы проверить себя</div>';
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="flash" id="fcard">'+face+'</div>' +
+    '<div class="flash-btns">' +
+      '<button class="btn main" type="button" id="know">Знаю</button>' +
+      '<button class="btn ghost" type="button" id="rev">Повторю</button>' +
+    '</div>' +
+    '<div class="flash-nav">' +
+      '<button class="btn ghost" type="button" id="fp">← Назад</button>' +
+      '<span class="score">Карточка '+(st.pos+1)+' из '+s.items.length+' · отмечено '+rated+' · знаю '+known+'</span>' +
+      '<button class="btn ghost" type="button" id="fn">Вперёд →</button>' +
+    '</div>' +
+    (rated === s.items.length ? '<div class="foot" style="margin-top:14px;"><button class="btn ghost" type="button" id="frst">Пройти заново</button></div>' : '');
+
+  el.querySelector("#fcard").addEventListener("click", ()=>{ st.flip = !st.flip; save(); render(ST.cur); });
+  const rate = v => { st.rat[i] = v; st.flip = false; if(st.pos < s.items.length-1) st.pos++; save(); render(ST.cur); };
+  el.querySelector("#know").addEventListener("click", ()=>rate("know"));
+  el.querySelector("#rev").addEventListener("click", ()=>rate("review"));
+  el.querySelector("#fp").addEventListener("click", ()=>{ st.pos = Math.max(0, st.pos-1); st.flip=false; save(); render(ST.cur); });
+  el.querySelector("#fn").addEventListener("click", ()=>{ st.pos = Math.min(s.items.length-1, st.pos+1); st.flip=false; save(); render(ST.cur); });
+  const fr2 = el.querySelector("#frst");
+  if(fr2) fr2.addEventListener("click", ()=>{ delete ST.fl[k]; save(); render(ST.cur); });
+}
+
+/* --- найди слово без ошибки --- */
+function rFind(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), ord = ORD[k];
+  const sel = ans.sel || (ans.sel = []);
+  const live = (ph === 0 || ph === 15);
+
+  const cells = ord.map(i=>{
+    const it = s.data.items[i];
+    const on = sel.includes(i);
+    let cls = "wbtn" + (on ? " on" : "");
+    let note = "";
+    if(ph === 1 && on) cls = "wbtn " + (it.ok ? "ok" : "no");
+    if(ph === 2){
+      cls = "wbtn " + (it.ok ? "ok" : "no");
+      note = it.ok ? '<em>написано верно</em>' : '<em>верно: '+esc(it.fix)+'</em>';
+    }
+    const movable = live && !fr.includes(i);
+    return '<button type="button" class="'+cls+'" data-f="'+i+'"'+(movable?"":" disabled")+'>'+esc(it.t)+note+'</button>';
+  }).join("");
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="words">'+cells+'</div>' +
+    '<div class="foot" id="foot"></div>';
+
+  if(live){
+    el.querySelectorAll("[data-f]").forEach(b=>b.addEventListener("click",()=>{
+      const i = +b.dataset.f, p = sel.indexOf(i);
+      (p === -1) ? sel.push(i) : sel.splice(p,1);
+      RESTORE = '[data-f="'+i+'"]';
+      save(); render(ST.cur);
+    }));
+  }
+  footer(el, s);
+  const ag = el.querySelector("#again");
+  if(ag) ag.addEventListener("click", ()=>{
+    ans.sel = sel.filter(i=>FR(k).includes(i));
+    save();
+  }, true);
+}
+
+/* --- задание формата ЕГЭ --- */
+function rEgeIntro(el){
+  el.innerHTML = `
+    <div class="kicker">Формат ЕГЭ</div>
+    <h1>Пять заданий так, как они стоят в варианте</h1>
+    <p class="lead">Дальше — пять заданий в точной формулировке экзамена. Устроены они не так, как школьные упражнения, и на этом теряют баллы чаще всего.</p>
+    <div class="rule"><h3>Три отличия от того, что вы решали до сих пор</h3>
+      <ol class="steps">
+        <li><b>Верных рядов несколько.</b> Обычно два или три. Найти один и перейти к следующему заданию — значит потерять балл.</li>
+        <li><b>Типы орфограмм в ряду перемешаны.</b> Чередующийся корень, проверяемый и словарное слово могут стоять рядом. Ряд разваливается на том из трёх, о котором вы не подумали.</li>
+        <li><b>Пояснение в скобках — часть условия.</b> «Ум..лять (заслуги)» и «ум..лять (о пощаде)» — разные слова с разными буквами.</li>
+      </ol>
+    </div>
+    <div class="trap"><b>Как решать.</b> Идите по рядам сверху вниз и вычёркивайте ряд сразу, как только нашли в нём слово с другой буквой. Это быстрее, чем доказывать про каждый ряд, что он верный.</div>`;
+}
+
+function rEge(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), D = s.data;
+  const sel = ans.sel || (ans.sel = []);
+  const live = (ph === 0 || ph === 15);
+
+  const rows = D.rows.map((row, ri)=>{
+    const on = sel.includes(ri);
+    let cls = "erow" + (on ? " on" : "");
+    if(ph === 1 && on) cls = "erow " + (D.right.includes(ri) ? "ok" : "no");
+    if(ph === 2){
+      if(D.right.includes(ri)) cls = "erow " + (on ? "ok" : "miss");
+      else cls = "erow" + (on ? " no" : "");
+    }
+    const words = row.map(w=>{
+      const rev = (ph === 2) ? w.a : undefined;
+      return wordHTML(w.w, null, rev === undefined ? "…" : rev) +
+             (w.cx ? ' <span class="cx">('+esc(w.cx)+')</span>' : '');
+    }).join(", ");
+    let key = "";
+    if(ph === 2){
+      const letters = row.map(w=>w.a);
+      const same = letters.every(x=>x === letters[0]);
+      key = '<div class="ekey">' + (same
+        ? 'Во всех словах «'+esc(letters[0])+'» — ряд подходит.'
+        : 'Буквы разные: ' + letters.map(x=>'«'+esc(x)+'»').join(", ") + ' — ряд не подходит.') + '</div>';
+    }
+    const movable = live && !fr.includes(ri);
+    return '<button type="button" class="'+cls+'" data-r="'+ri+'"'+(movable?"":" disabled")+'>' +
+      '<span class="enum">'+(ri+1)+'</span><span class="ewords">'+words+key+'</span></button>';
+  }).join("");
+
+  let verdict = "";
+  if(ph === 2){
+    const nums = D.right.map(r=>r+1).join("");
+    verdict = '<div class="trap" style="margin-bottom:14px;"><b>Ответ: '+nums+'</b></div>';
+  }
+
+  el.innerHTML =
+    '<div class="kicker">Формат ЕГЭ · '+s.title+'</div>' +
+    '<h1>Укажите варианты ответов</h1>' +
+    '<div class="ege-q">Укажите варианты ответов, в которых во всех словах одного ряда пропущена одна и та же буква. Отметьте <b class="hl">все</b> подходящие ряды.</div>' +
+    '<div class="rows">'+rows+'</div>' + verdict +
+    '<div class="foot" id="foot"></div>';
+
+  if(live){
+    el.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>{
+      const ri = +b.dataset.r, p = sel.indexOf(ri);
+      (p === -1) ? sel.push(ri) : sel.splice(p,1);
+      RESTORE = '[data-r="'+ri+'"]';
+      save(); render(ST.cur);
+    }));
+  }
+  footer(el, s);
+  const ag = el.querySelector("#again");
+  if(ag) ag.addEventListener("click", ()=>{
+    ans.sel = sel.filter(r=>FR(k).includes(r));
+    save();
+  }, true);
+}
+
+/* --- итоги --- */
+function gauge(pct, color, label, text){
+  const id = "g"+Math.random().toString(36).slice(2,8);
+  const r = 62, c = 72, top = c + r - (pct/100)*(2*r);
+  return '<div class="gauge"><svg viewBox="0 0 144 144">' +
+    '<defs><clipPath id="'+id+'"><circle cx="'+c+'" cy="'+c+'" r="'+r+'"/></clipPath></defs>' +
+    '<circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>' +
+    '<g clip-path="url(#'+id+')"><rect x="-20" y="'+top+'" width="190" height="170" fill="'+color+'" opacity=".8"/>' +
+    '<path d="M-20,'+top+' Q 16,'+(top-6)+' 52,'+top+' T 124,'+top+' T 196,'+top+' V170 H-20 Z" fill="'+color+'" opacity=".45"/></g>' +
+    '<circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="2"/>' +
+    '<text x="72" y="80" text-anchor="middle" font-family="PT Serif, serif" font-size="25" fill="#EDF7FC">'+text+'</text>' +
+    '</svg><div class="lab">'+label+'</div></div>';
+}
+
+function rFinal(el){
+  const bySec = allScores();
+  const keys = Object.keys(bySec);
+
+  let R=0, W=0;
+  keys.forEach(x=>{ if(!bySec[x].self){ R += bySec[x].r; W += bySec[x].w; } });
+  const und = (R+W) ? Math.round(R/(R+W)*100) : null;
+  const done = Math.round(((ST.max+1)/SLIDES.length)*100);
+
+  const list = keys.map(x=>{
+    const v = bySec[x];
+    const pct = (v.r+v.w) ? Math.round(v.r/(v.r+v.w)*100) : null;
+    return {name:x, v, pct};
+  }).sort((a,b)=>{
+    if(a.pct === null) return 1; if(b.pct === null) return -1;
+    return a.pct - b.pct;
+  });
+
+  const topics = list.length ? list.map(o=>{
+    const cls = o.pct === null ? "" : (o.pct < 60 ? " bad" : o.pct < 85 ? " mid" : " good");
+    const val = (o.pct === null ? "нет ответов" : o.pct + "%") +
+      (o.v.e ? " · пропущено " + o.v.e : "") + (o.v.self ? " · самооценка" : "");
+    return '<div class="topic'+cls+'"><span class="tn">'+esc(o.name)+'</span>' +
+      '<span class="tv">'+val+'</span>' +
+      '<button type="button" data-b="'+esc(o.v.back)+'">К теории</button></div>';
+  }).join("") : '<div class="topic"><span class="tn">Практика ещё не пройдена — вернитесь к упражнениям.</span></div>';
+
+  el.innerHTML =
+    '<div class="kicker">Итоги</div>' +
+    '<h1>Что получилось с заданием 9</h1>' +
+    '<p class="lead">Слева — сколько тренажёра пройдено. Справа — доля верных ответов <b class="hl">с первой попытки</b>: исправления после «Ещё попытки» в этот процент не идут, иначе слабые темы перестали бы быть видны. Флеш-карты в общий счёт не входят — там оценка ставится самостоятельно.</p>' +
+    '<div class="gauges">' +
+      gauge(done, "#5FDCD0", "Пройдено", done+"%") +
+      (und === null ? gauge(0, "#3d5c6b", "Верных ответов", "—")
+                    : gauge(und, und >= 70 ? "#4BE3A2" : "#FF7C6E", "Верных ответов", und+"%")) +
+    '</div>' +
+    '<h2>Темы на повторение</h2>' +
+    '<p class="lead">Сверху — то, что проседает сильнее всего. Тот же список с процентами доступен в оглавлении: кнопка со счётчиком слайдов внизу экрана.</p>' +
+    '<div class="topics">'+topics+'</div>' +
+    '<div class="foot" style="margin-bottom:16px;">' +
+      '<button class="btn main" type="button" id="cp">Скопировать итог</button>' +
+      '<button class="btn ghost" type="button" id="clr">Очистить прогресс</button>' +
+      '<span id="cpmsg"></span>' +
+    '</div>' +
+    '<div class="note"><b>Что делать дальше.</b> Пройдите ещё раз флеш-карты, начав с тех, что отмечены «Повторю»: порядок карточек меняется при каждом открытии страницы, так что запомнить расположение не выйдет. Проседающие темы удобно повторять по одному блоку в день, а не все сразу.</div>';
+
+  el.querySelectorAll("[data-b]").forEach(b=>b.addEventListener("click",()=>go(IDX[b.dataset.b])));
+  el.querySelector("#cp").addEventListener("click", ()=>copySummary(list, und, done));
+  el.querySelector("#clr").addEventListener("click", ()=>{
+    if(!confirm("Стереть все ответы и начать тренажёр заново?")) return;
+    ST.ans = {}; ST.ph = {}; ST.fr = {}; ST.fl = {}; ST.first = {}; ST.max = 0;
+    save(); render(ST.cur);
+  });
+}
+
+function copySummary(list, und, done){
+  const lines = ["Задание 9. Правописание корней — итог тренажёра",
+    "Пройдено: "+done+"%   Верных с первой попытки: "+(und === null ? "—" : und+"%"), ""];
+  if(!list.length) lines.push("Упражнения не пройдены.");
+  list.forEach(o=>{
+    const pct = o.pct === null ? "нет ответов" : o.pct+"%";
+    lines.push("• "+o.name+" — "+pct+" (верно "+o.v.r+", неверно "+o.v.w+
+      (o.v.e ? ", пропущено "+o.v.e : "")+")"+(o.v.self ? " [самооценка]" : ""));
+  });
+  const text = lines.join("\n");
+  const done2 = ()=>{
+    const m = document.getElementById("cpmsg");
+    if(m){ m.className = "copied"; m.textContent = "Скопировано"; setTimeout(()=>{ m.textContent=""; }, 2500); }
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done2, ()=>fallbackCopy(text, done2));
+  } else fallbackCopy(text, done2);
+}
+
+function fallbackCopy(text, cb){
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand("copy"); cb(); }catch(e){}
+  ta.remove();
+}
+
+/* ==================== НАВИГАЦИЯ ==================== */
+
+function go(i){
+  SEL = null;
+  ST.cur = Math.max(0, Math.min(SLIDES.length-1, i));
+  ST.max = Math.max(ST.max, ST.cur);
+  save(); render(ST.cur); updateNav();
+  stage.scrollTop = 0;
+}
+
+function updateNav(){
+  prevBtn.disabled = ST.cur === 0;
+  nextBtn.disabled = ST.cur === SLIDES.length-1;
+  counter.textContent = "слайд " + (ST.cur+1) + " из " + SLIDES.length + "  \u25BE";
+  barFill.style.width = Math.round(((ST.cur+1)/SLIDES.length)*100) + "%";
+}
+
+/* ---------- оглавление ---------- */
+const tocOverlay = document.getElementById("tocOverlay");
+const tocBody = document.getElementById("tocBody");
+const TAGS = {title:"Начало", map:"Карта", rule:"Правило", practice:"Практика",
+  choice:"Практика", sort:"Практика", find:"Практика", flash:"Карточки",
+  egeIntro:"Формат ЕГЭ", ege:"Задание ЕГЭ", final:"Итог"};
+
+function slideName(s, i){
+  if(s.type === "title") return "Титульный слайд";
+  if(s.type === "map") return "Карта задания 9";
+  if(s.type === "egeIntro") return "Как устроены задания ЕГЭ";
+  if(s.type === "final") return "Итог и темы на повторение";
+  return s.title || TAGS[s.type] || ("Слайд " + (i+1));
+}
+
+function buildTOC(){
+  let html = "", lastSec = null;
+  SLIDES.forEach((s,i)=>{
+    const sec = s.sec || null;
+    if(sec && sec !== lastSec){ html += '<div class="toc-group">'+esc(sec)+'</div>'; lastSec = sec; }
+    if(!sec) lastSec = null;
+
+    const f = baseScore(s);
+    let score;
+    if(f){
+      const a = f.r + f.w;
+      const pct = a ? Math.round(f.r/a*100) : null;
+      const col = pct === null ? "var(--dim)" : (pct >= 80 ? "var(--green)" : (pct >= 55 ? "var(--amber)" : "var(--red)"));
+      score = '<span class="toc-score" style="color:'+col+'">'+(pct === null ? "—" : pct+"%")+'</span>';
+    } else {
+      score = '<span class="toc-score" style="color:var(--dim)">·</span>';
+    }
+    html += '<button type="button" class="toc-item'+(i === ST.cur ? " current" : "")+'" data-i="'+i+'">' +
+      '<span class="toc-num">'+(i+1)+'</span>' +
+      '<span class="toc-name">'+esc(slideName(s,i))+'</span>' +
+      '<span class="toc-tag">'+esc(TAGS[s.type] || "")+'</span>' + score + '</button>';
+  });
+  tocBody.innerHTML = html;
+  tocBody.querySelectorAll(".toc-item").forEach(b=>{
+    b.addEventListener("click", ()=>{ closeTOC(); go(+b.dataset.i); });
+  });
+  const cur = tocBody.querySelector(".toc-item.current");
+  if(cur && cur.scrollIntoView) setTimeout(()=>cur.scrollIntoView({block:"center"}), 0);
+}
+
+function openTOC(){ buildTOC(); tocOverlay.classList.add("open"); const c = tocBody.querySelector(".toc-item.current"); if(c && c.focus) c.focus({preventScroll:true}); }
+function closeTOC(){ tocOverlay.classList.remove("open"); if(counter.focus) counter.focus({preventScroll:true}); }
+counter.addEventListener("click", openTOC);
+document.getElementById("tocClose").addEventListener("click", closeTOC);
+tocOverlay.addEventListener("click", e=>{ if(e.target === tocOverlay) closeTOC(); });
+
+prevBtn.addEventListener("click", ()=>go(ST.cur-1));
+nextBtn.addEventListener("click", ()=>go(ST.cur+1));
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){ closeTOC(); return; }
+  if(tocOverlay.classList.contains("open")) return;
+  if(e.target && e.target.closest && e.target.closest("button")) return;
+  if(e.key === "ArrowRight") go(ST.cur+1);
+  if(e.key === "ArrowLeft") go(ST.cur-1);
+});
+
+function setCalm(on){
+  ST.calm = on;
+  document.body.classList.toggle("calm", on);
+  calmBtn.setAttribute("aria-pressed", on ? "true" : "false");
+  calmBtn.textContent = on ? "Движение выключено" : "Спокойный режим";
+  save();
+}
+calmBtn.addEventListener("click", ()=>setCalm(!ST.calm));
+setCalm(!!ST.calm);
+
+(function bubbles(){
+  const wrap = document.getElementById("bubbles");
+  for(let i=0;i<16;i++){
+    const b = document.createElement("i");
+    const sz = 4 + Math.random()*15;
+    b.style.width = sz+"px"; b.style.height = sz+"px";
+    b.style.left = (Math.random()*100)+"%";
+    b.style.animationDuration = (9 + Math.random()*12)+"s";
+    b.style.animationDelay = (Math.random()*11)+"s";
+    wrap.appendChild(b);
+  }
+})();
+
+go(ST.cur || 0);
+
+</script>
+</body>
+</html>
