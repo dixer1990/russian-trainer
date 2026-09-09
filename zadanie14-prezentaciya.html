@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Задание 14. Слитное, раздельное и дефисное написание слов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=PT+Sans:wght@400;700&family=PT+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#0c0906; --bg2:#150f08; --bg3:#1e150b;
+    --panel:rgba(216,164,74,.055);
+    --panel-solid:#150f09;
+    --line:rgba(216,164,74,.24);
+    --text:#F3E7D3;
+    --text-dim:#C3AC8B;
+    --brass:#D8A44A;
+    --brass-soft:#E7C176;
+    --copper:#C07A3E;
+    --patina:#5FBFA8;
+    --green:#5FBFA8; --green-soft:rgba(95,191,168,.13);
+    --red:#E5715C; --red-soft:rgba(217,99,79,.13);
+    --yellow:#E8C55F;
+    --ink:#0c0906;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  body{
+    background:
+      radial-gradient(ellipse 65% 45% at 15% 0%, rgba(216,164,74,.10) 0%, transparent 58%),
+      radial-gradient(ellipse 55% 45% at 88% 6%, rgba(192,122,62,.10) 0%, transparent 60%),
+      radial-gradient(ellipse 90% 55% at 50% 108%, rgba(60,38,14,.45) 0%, transparent 68%),
+      linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);
+    color:var(--text);
+    font-family:'PT Sans',sans-serif;
+    display:flex;flex-direction:column;
+    height:100dvh;
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* ===== ФОН МАСТЕРСКОЙ ===== */
+  .gears{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:.5;}
+  .gears svg{position:absolute;}
+  .gear-spin{transform-origin:50% 50%;animation:spin 46s linear infinite;}
+  .gear-spin.rev{animation-direction:reverse;animation-duration:32s;}
+  .gear-spin.slow{animation-duration:78s;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .g1{top:-70px;left:-70px;width:260px;height:260px;}
+  .g2{top:34%;right:-90px;width:230px;height:230px;}
+  .g3{bottom:-90px;left:12%;width:280px;height:280px;}
+
+  .dust{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .dust i{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;background:var(--brass-soft);
+    box-shadow:0 0 7px rgba(231,193,118,.7);opacity:0;animation:rise linear infinite;}
+  @keyframes rise{
+    0%{transform:translate(0,0);opacity:0;}
+    10%{opacity:.7;}
+    55%{transform:translate(12px,-50vh);opacity:.35;}
+    100%{transform:translate(-10px,-102vh);opacity:0;}
+  }
+  .vignette{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(ellipse 80% 70% at 50% 45%, transparent 40%, rgba(0,0,0,.55) 100%);}
+
+  /* ===== ШАПКА / ПРОГРЕСС ===== */
+  .progressbar{height:7px;background:rgba(255,255,255,.05);flex-shrink:0;position:relative;z-index:2;
+    border-bottom:1px solid rgba(216,164,74,.18);}
+  .progressbar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--copper),var(--brass),var(--brass-soft));
+    transition:width .4s ease;box-shadow:0 1px 8px rgba(216,164,74,.45);}
+
+  .slide-viewport{flex:1;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;
+    padding:34px 22px 26px;position:relative;z-index:1;-webkit-overflow-scrolling:touch;}
+  .slide{width:100%;max-width:900px;padding-bottom:8px;animation:slideIn .4s cubic-bezier(.22,1,.36,1);}
+  @keyframes slideIn{0%{opacity:0;transform:translateY(16px);}100%{opacity:1;transform:translateY(0);}}
+
+  .eyebrow{font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);
+    margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .eyebrow::before{content:"⚙";font-size:14px;color:var(--copper);}
+  h1{font-family:'Playfair Display',serif;font-weight:700;font-size:31px;margin:0 0 10px;line-height:1.22;}
+  h2{font-family:'Playfair Display',serif;font-weight:600;font-size:21px;margin:0 0 6px;}
+  .subtitle{color:var(--text-dim);font-size:15px;max-width:700px;line-height:1.62;}
+
+  /* ===== ТИТУЛ ===== */
+  .title-slide{min-height:60dvh;display:flex;flex-direction:column;justify-content:center;text-align:center;align-items:center;}
+  .title-slide h1{font-size:38px;}
+  .title-slide h1 .accent{color:var(--brass);}
+  .pendulum{width:150px;height:170px;margin-bottom:6px;}
+  .pend-arm{transform-origin:75px 12px;animation:tick 2.4s cubic-bezier(.45,.05,.55,.95) infinite alternate;}
+  @keyframes tick{from{transform:rotate(-15deg);}to{transform:rotate(15deg);}}
+  .plate{border:1px solid var(--line);border-radius:3px;padding:16px 22px;margin-top:20px;
+    background:linear-gradient(160deg, rgba(216,164,74,.09), rgba(216,164,74,.02));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 10px 26px rgba(0,0,0,.5);max-width:620px;}
+  .plate .rivets{display:flex;justify-content:space-between;margin-bottom:10px;}
+  .plate .rivets span{width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #E7C176, #7a5a22);}
+
+  /* ===== КАРТА ЗАДАНИЯ ===== */
+  .map-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:18px;}
+  .map-card{border:1px solid var(--line);border-radius:3px;padding:12px 14px;background:var(--panel);
+    display:flex;gap:11px;align-items:flex-start;}
+  .map-card b{font-family:'Playfair Display',serif;color:var(--brass);font-size:17px;min-width:24px;}
+  .map-card span{font-size:14.2px;line-height:1.5;color:var(--text-dim);}
+  .map-card span i{color:var(--text);font-style:normal;font-weight:700;}
+
+  /* ===== ПРАВИЛА ===== */
+  .rule-block{background:linear-gradient(160deg, rgba(216,164,74,.075), rgba(216,164,74,.015));
+    border:1px solid var(--line);border-left:3px solid var(--brass);border-radius:3px;
+    padding:15px 19px;margin-bottom:13px;box-shadow:0 8px 22px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);}
+  .rule-block h3{font-family:'Playfair Display',serif;font-weight:600;font-size:16.5px;margin:0 0 6px;color:var(--brass-soft);}
+  .rule-block p{margin:6px 0;line-height:1.62;font-size:14.5px;}
+  .rule-block b{color:#fff;}
+  .rule-block .ex{color:var(--brass-soft);font-family:'PT Mono',monospace;font-size:13.8px;line-height:1.8;display:block;margin-top:7px;}
+  .algo-steps{list-style:none;counter-reset:algo;margin:2px 0 0;padding:0;}
+  .algo-steps li{counter-increment:algo;position:relative;padding:10px 4px 10px 44px;line-height:1.55;font-size:14.4px;
+    border-bottom:1px solid rgba(255,255,255,.06);}
+  .algo-steps li:last-child{border-bottom:none;}
+  .algo-steps li::before{content:counter(algo);position:absolute;left:4px;top:8px;width:27px;height:27px;
+    display:flex;align-items:center;justify-content:center;border-radius:50%;
+    background:rgba(216,164,74,.15);border:1.5px solid var(--brass);color:var(--brass-soft);
+    font-family:'Playfair Display',serif;font-weight:700;font-size:14px;}
+  .trap-box{background:rgba(217,99,79,.07);border:1px dashed rgba(217,99,79,.5);border-radius:3px;
+    padding:13px 17px;margin-top:14px;font-size:13.8px;color:var(--text-dim);line-height:1.62;}
+  .trap-box b{color:var(--red);}
+  .trap-box::before{content:"⚠ ЛОВУШКА";display:block;font-size:10.5px;letter-spacing:.16em;color:var(--red);
+    font-weight:700;margin-bottom:6px;}
+  .memo-box{background:rgba(216,164,74,.09);border:1px solid rgba(216,164,74,.5);border-radius:3px;
+    padding:14px 18px;margin-top:14px;font-size:14.4px;line-height:1.65;}
+  .memo-box b{color:var(--brass-soft);}
+  .memo-box::before{content:"⚙ ЗАПОМНИТЬ";display:block;font-size:10.5px;letter-spacing:.16em;color:var(--brass);
+    font-weight:700;margin-bottom:6px;}
+  .note-box{background:rgba(95,191,168,.07);border:1px solid rgba(95,191,168,.4);border-radius:3px;
+    padding:13px 17px;margin-top:14px;font-size:13.6px;color:var(--text-dim);line-height:1.62;}
+  .note-box b{color:var(--patina);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .col-list{font-family:'PT Mono',monospace;font-size:12.8px;line-height:1.85;color:var(--text);}
+  .col-list .h{display:block;font-family:'PT Sans',sans-serif;font-weight:700;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--brass);margin-bottom:5px;}
+
+  /* ===== СЛОВА ===== */
+  .mono{font-family:'PT Mono',monospace;}
+  .brk{color:var(--brass-soft);background:rgba(216,164,74,.16);border-bottom:1px solid var(--brass);
+    padding:0 2px;border-radius:2px;font-weight:700;}
+  .paren{color:var(--text-dim);}
+
+  /* ===== ПРАКТИКА ===== */
+  .practice-instruction{color:var(--text-dim);font-size:14.2px;margin:0 0 15px;line-height:1.55;}
+  .word-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:10px;margin-bottom:15px;}
+  .word-card{background:linear-gradient(160deg, rgba(216,164,74,.06), rgba(216,164,74,.012));
+    border:1px solid var(--line);border-radius:3px;padding:10px 12px;
+    box-shadow:0 4px 12px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.04);}
+  .word-card .word-text{font-family:'PT Mono',monospace;font-size:14.8px;margin-bottom:9px;line-height:1.5;}
+  .chip-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{border:1px solid var(--text-dim);background:transparent;color:var(--text);border-radius:2px;
+    padding:0 11px;min-height:40px;font-size:13.5px;cursor:pointer;font-family:'PT Sans',sans-serif;font-weight:700;white-space:nowrap;}
+  .chip:hover{border-color:var(--brass);color:var(--brass-soft);}
+  .chip.selected{background:var(--brass);color:var(--ink);border-color:var(--brass);}
+  .chip.selected.anim{animation:pop .3s ease;}
+  @keyframes pop{0%{transform:scale(1);}45%{transform:scale(1.12);}100%{transform:scale(1);}}
+  .word-card.correct{border-color:var(--green);background:var(--green-soft);}
+  .word-card.wrong{border-color:var(--red);background:var(--red-soft);}
+  .word-card.unans{border-color:var(--yellow);background:rgba(232,197,95,.08);}
+  .word-card.locked .chip{cursor:default;opacity:.5;}
+  .word-card.locked .chip.selected{opacity:1;}
+  .verdict{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;display:none;}
+  .word-card.correct .verdict{display:block;color:var(--green);}
+  .word-card.wrong .verdict{display:block;color:var(--red);}
+  .word-card.unans .verdict{display:block;color:var(--yellow);}
+  .why{font-size:13.4px;color:var(--text-dim);margin-top:8px;line-height:1.55;display:none;
+    border-top:1px solid rgba(255,255,255,.08);padding-top:7px;}
+  .why b{color:var(--brass-soft);font-family:'PT Mono',monospace;}
+  .word-card.revealed .why{display:block;}
+
+  .practice-footer{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;}
+  .btn{font-family:'PT Sans',sans-serif;font-weight:700;border:1px solid transparent;border-radius:2px;
+    padding:0 22px;min-height:44px;cursor:pointer;font-size:14px;}
+  .btn-primary{background:linear-gradient(180deg,#F0CE88,var(--brass));color:var(--ink);
+    box-shadow:0 3px 10px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.35);}
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--brass);color:var(--brass-soft);}
+  .btn:disabled{opacity:.35;cursor:default;filter:none;}
+  .practice-result{font-family:'Playfair Display',serif;font-weight:600;font-size:15.5px;}
+  .practice-result .ok{color:var(--green);} .practice-result .no{color:var(--red);} .practice-result .un{color:var(--yellow);}
+  .hint-line{font-size:13.4px;color:var(--text-dim);margin-top:9px;line-height:1.5;}
+
+  /* ===== СОРТИРОВКА ===== */
+  .sort-pool{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;padding:12px;background:var(--panel);
+    border:1px solid var(--line);border-radius:3px;min-height:52px;}
+  .sort-chip{border:1px solid var(--brass);background:rgba(216,164,74,.08);color:var(--text);
+    border-radius:2px;padding:0 13px;min-height:38px;font-size:13.8px;cursor:pointer;
+    font-family:'PT Mono',monospace;display:inline-flex;align-items:center;}
+  .sort-chip.selecting{background:var(--brass);color:var(--ink);}
+  .sort-chip.correct{border-color:var(--green);background:var(--green-soft);}
+  .sort-chip.wrong{border-color:var(--red);background:var(--red-soft);}
+  .sort-buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px;}
+  .sort-bucket{background:rgba(255,255,255,.02);border:1px dashed var(--line);border-radius:3px;
+    padding:10px;min-height:96px;cursor:pointer;}
+  .sort-bucket:hover{border-color:var(--brass);}
+  .sort-bucket-title{font-weight:700;color:var(--brass-soft);font-size:12.5px;margin-bottom:8px;text-align:center;
+    text-transform:uppercase;letter-spacing:.12em;}
+  .sort-bucket .row{display:flex;flex-wrap:wrap;gap:6px;}
+
+  /* ===== ФЛЕШ-КАРТЫ ===== */
+  .flash-wrap{display:flex;flex-direction:column;align-items:center;gap:15px;}
+  .flash-card{width:100%;max-width:430px;height:200px;perspective:1000px;cursor:pointer;}
+  .flash-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+  .flash-inner.flipped{transform:rotateY(180deg);}
+  .flash-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:3px;
+    display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;flex-direction:column;gap:9px;
+    border:1px solid var(--line);}
+  .flash-front{background:var(--panel);font-family:'PT Mono',monospace;font-size:21px;}
+  .flash-front .hint{font-size:12.5px;color:var(--text-dim);font-family:'PT Sans',sans-serif;}
+  .flash-back{background:rgba(216,164,74,.1);transform:rotateY(180deg);}
+  .flash-back .ans{font-family:'PT Mono',monospace;font-size:22px;color:var(--brass-soft);}
+  .flash-back .tag{font-size:13.2px;color:var(--text-dim);line-height:1.5;max-width:330px;}
+  .flash-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;}
+  .flash-counter{color:var(--text-dim);font-size:13px;min-width:64px;text-align:center;}
+
+  /* ===== ВИКТОРИНА ===== */
+  .quiz-card{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:20px;max-width:640px;}
+  .quiz-card .q-prompt{font-size:16px;margin:0 0 16px;line-height:1.5;}
+  .quiz-options{display:flex;flex-direction:column;gap:9px;}
+  .quiz-option{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:2px;
+    padding:12px 15px;min-height:44px;font-size:14.2px;text-align:left;cursor:pointer;font-family:'PT Sans',sans-serif;line-height:1.5;}
+  .quiz-option:hover{border-color:var(--brass);}
+  .quiz-option.correct{border-color:var(--green);background:var(--green-soft);}
+  .quiz-option.wrong{border-color:var(--red);background:var(--red-soft);}
+  .quiz-option:disabled{cursor:default;}
+  .quiz-progress{color:var(--text-dim);font-size:13px;margin-bottom:10px;font-weight:700;letter-spacing:.05em;}
+
+  /* ===== ЕГЭ ===== */
+  .ege-ask{border:1px solid var(--brass);background:rgba(216,164,74,.1);border-radius:3px;padding:12px 16px;
+    font-size:14.4px;line-height:1.55;margin-bottom:14px;}
+  .ege-ask b{color:var(--brass-soft);text-transform:uppercase;letter-spacing:.06em;}
+  .ege-row{border:1px solid var(--line);background:var(--panel);border-radius:3px;padding:12px 14px;margin-bottom:9px;}
+  .ege-row .sent{font-size:15px;line-height:1.65;margin-bottom:10px;}
+  .ege-row .sent .mono{font-size:14.4px;}
+  .ege-num{font-family:'Playfair Display',serif;color:var(--brass);font-weight:700;margin-right:7px;}
+  .ege-words{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-bottom:9px;}
+  .ege-word{border:1px solid rgba(255,255,255,.09);border-radius:2px;padding:8px 10px;}
+  .ege-word .w{font-family:'PT Mono',monospace;font-size:14.2px;margin-bottom:7px;}
+  .ege-verdict{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13.4px;color:var(--text-dim);}
+  .ege-row.correct{border-color:var(--green);background:var(--green-soft);}
+  .ege-row.wrong{border-color:var(--red);background:var(--red-soft);}
+  .ege-row.unans{border-color:var(--yellow);background:rgba(232,197,95,.07);}
+  .ege-answer{margin-top:10px;font-size:13.4px;color:var(--text-dim);line-height:1.55;display:none;
+    border-top:1px solid rgba(255,255,255,.08);padding-top:8px;}
+  .ege-row.revealed .ege-answer{display:block;}
+  .ege-answer b{color:var(--brass-soft);font-family:'PT Mono',monospace;}
+
+  /* ===== ИТОГ ===== */
+  .gauges{display:flex;gap:26px;flex-wrap:wrap;margin:20px 0;justify-content:flex-start;}
+  .gauge{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .gauge svg{width:148px;height:148px;}
+  .gauge .gauge-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;font-weight:700;}
+  .topic-list{margin-top:6px;display:grid;gap:7px;}
+  .topic{display:flex;align-items:center;gap:11px;border:1px solid var(--line);border-radius:3px;
+    padding:10px 13px;background:var(--panel);cursor:pointer;text-align:left;color:var(--text);
+    font-family:'PT Sans',sans-serif;font-size:14px;width:100%;}
+  .topic:hover{border-color:var(--brass);}
+  .topic .bar{flex:1;height:7px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;}
+  .topic .bar i{display:block;height:100%;}
+  .topic .pct{font-family:'PT Mono',monospace;font-size:13px;min-width:44px;text-align:right;}
+  .topic .name{min-width:150px;}
+  .topic .goto{font-size:12px;color:var(--brass);white-space:nowrap;}
+  .final-box{border:1px solid var(--line);border-left:3px solid var(--brass);background:var(--panel);
+    border-radius:3px;padding:16px 20px;margin-top:18px;}
+  .final-box h3{font-family:'Playfair Display',serif;margin:0 0 10px;color:var(--brass-soft);font-size:17px;}
+  .copy-area{width:100%;height:140px;margin-top:10px;background:#0a0705;color:var(--text-dim);
+    border:1px solid var(--line);border-radius:2px;font-family:'PT Mono',monospace;font-size:12.5px;padding:10px;display:none;}
+
+  /* ===== НАВИГАЦИЯ ===== */
+  .navbar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:10px 18px;border-top:1px solid var(--line);background:var(--panel-solid);position:relative;z-index:2;}
+  .navbar button{font-family:'PT Sans',sans-serif;font-weight:700;background:transparent;
+    border:1px solid var(--line);color:var(--text);border-radius:2px;padding:0 18px;min-height:44px;cursor:pointer;font-size:13.5px;}
+  .navbar button:hover:not(:disabled){border-color:var(--brass);color:var(--brass-soft);}
+  .navbar button:disabled{opacity:.3;cursor:default;}
+  .nav-mid{display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .slide-counter{color:var(--text-dim);font-size:13px;font-family:'PT Mono',monospace;}
+  .toc-btn{background:transparent;border:1px solid var(--line);border-radius:2px;color:var(--text-dim);
+    font-family:'PT Mono',monospace;font-size:13px;padding:4px 12px;min-height:32px;cursor:pointer;}
+  .toc-btn:hover{border-color:var(--brass);color:var(--brass-soft);}
+  .toc-overlay{position:fixed;inset:0;z-index:30;background:rgba(6,4,2,.88);display:none;
+    align-items:center;justify-content:center;padding:20px;}
+  .toc-overlay.open{display:flex;}
+  .toc-panel{background:var(--panel-solid);border:1px solid var(--line);border-radius:3px;
+    width:min(760px,100%);max-height:86dvh;display:flex;flex-direction:column;
+    box-shadow:0 20px 60px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);}
+  .toc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 18px;border-bottom:1px solid var(--line);}
+  .toc-head h2{margin:0;font-size:19px;color:var(--brass-soft);}
+  .toc-close{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:2px;
+    min-height:38px;padding:0 15px;cursor:pointer;font-family:'PT Sans',sans-serif;font-weight:700;font-size:13.5px;}
+  .toc-close:hover{border-color:var(--brass);color:var(--brass-soft);}
+  .toc-body{overflow-y:auto;padding:10px 12px 16px;}
+  .toc-group{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);
+    font-weight:700;margin:14px 6px 6px;}
+  .toc-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:transparent;
+    border:1px solid transparent;border-radius:2px;color:var(--text);font-family:'PT Sans',sans-serif;
+    font-size:14.2px;padding:9px 10px;min-height:44px;cursor:pointer;}
+  .toc-item:hover{border-color:var(--line);background:var(--panel);}
+  .toc-item.current{border-color:var(--brass);background:rgba(216,164,74,.1);}
+  .toc-num{font-family:'PT Mono',monospace;font-size:12.5px;color:var(--text-dim);min-width:26px;}
+  .toc-name{flex:1;line-height:1.4;}
+  .toc-tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);
+    border:1px solid var(--line);border-radius:2px;padding:2px 7px;white-space:nowrap;}
+  .toc-score{font-family:'PT Mono',monospace;font-size:12.5px;min-width:46px;text-align:right;}
+  @media (max-width:620px){ .toc-tag{display:none;} .toc-panel{max-height:90dvh;} }
+
+  .calm-btn{font-size:12px !important;padding:0 12px !important;min-height:34px !important;}
+  .calm-btn.on{border-color:var(--patina);color:var(--patina);}
+
+  /* ===== СПОКОЙНЫЙ РЕЖИМ ===== */
+  body.calm .gears .gear-spin{animation:none;}
+  body.calm .dust{display:none;}
+  body.calm .pend-arm{animation:none;}
+  body.calm *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.05s !important;}
+
+  @media (max-width:620px){
+    .chip{min-height:44px;padding:0 14px;}
+    .sort-chip{min-height:44px;}
+    h1{font-size:25px;} .title-slide h1{font-size:28px;}
+    .slide-viewport{padding:22px 14px 20px;}
+    .two-col{grid-template-columns:1fr;}
+    .word-grid{grid-template-columns:1fr;}
+    .ege-words{grid-template-columns:1fr;}
+    .navbar{padding:9px 12px;}
+    .navbar button{padding:0 13px;font-size:13px;}
+    .gauge svg{width:124px;height:124px;}
+    .topic{flex-wrap:wrap;} .topic .name{min-width:100%;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.05s !important;}
+    .dust{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="gears">
+  <svg class="g1" viewBox="0 0 100 100"><g class="gear-spin"><path id="gearpath" d="M50 12l5 1 3-8 8 3-1 8 4 3 7-5 6 6-5 7 3 4 8-1 3 8-8 3-1 5 8 3-3 8-8-1-3 4 5 7-6 6-7-5-4 3 1 8-8 3-3-8-5 1-3 8-8-3 1-8-4-3-7 5-6-6 5-7-3-4-8 1-3-8 8-3 1-5-8-3 3-8 8 1 3-4-5-7 6-6 7 5 4-3-1-8 8-3z" fill="none" stroke="#8C6B2F" stroke-width="2"/><circle cx="50" cy="50" r="16" fill="none" stroke="#8C6B2F" stroke-width="2"/></g></svg>
+  <svg class="g2" viewBox="0 0 100 100" xmlns:xlink="http://www.w3.org/1999/xlink"><g class="gear-spin rev"><use href="#gearpath" xlink:href="#gearpath" fill="none" stroke="#A07B36" stroke-width="2"/><circle cx="50" cy="50" r="14" fill="none" stroke="#A07B36" stroke-width="2"/></g></svg>
+  <svg class="g3" viewBox="0 0 100 100" xmlns:xlink="http://www.w3.org/1999/xlink"><g class="gear-spin slow"><use href="#gearpath" xlink:href="#gearpath" fill="none" stroke="#7a5a22" stroke-width="2"/><circle cx="50" cy="50" r="18" fill="none" stroke="#7a5a22" stroke-width="2"/></g></svg>
+</div>
+<div class="dust" id="dust"></div>
+<div class="vignette"></div>
+
+<div class="progressbar"><div class="progressbar-fill" id="progressFill"></div></div>
+<div class="toc-overlay" id="tocOverlay">
+  <div class="toc-panel">
+    <div class="toc-head"><h2>Оглавление</h2><button class="toc-close" id="tocClose">Закрыть</button></div>
+    <div class="toc-body" id="tocBody"></div>
+  </div>
+</div>
+<div class="slide-viewport" id="slideViewport"></div>
+<div class="navbar">
+  <button id="prevBtn">← Назад</button>
+  <div class="nav-mid">
+    <button class="toc-btn" id="slideCounter" title="Открыть оглавление"></button>
+    <button class="calm-btn" id="calmBtn">Спокойный режим</button>
+  </div>
+  <button id="nextBtn">Вперёд →</button>
+</div>
+
+<script>
+/* ==========================================================================
+   ЗАДАНИЕ 14 ЕГЭ. Слитное, раздельное, дефисное написание слов.
+   Тренажёр-презентация. Один файл, без внешних зависимостей (кроме шрифтов).
+   ========================================================================== */
+
+var SL="слитно", DF="через дефис", RZ="раздельно";
+var SRD=[SL,DF,RZ];
+var ONE=["одно слово","два слова"];
+
+/* ---------- БЛОК 1: одно слово или два ---------- */
+var P_ONE=[
+ {w:"Договорились (НА)СЧЁТ поездки",a:"одно слово",full:"насчёт поездки",why:"Здесь <b>насчёт</b> = предлог «о»: договорились <b>о поездке</b>. Предлог заменяется другим предлогом — значит, это одно слово."},
+ {w:"Положить деньги (НА)СЧЁТ в банке",a:"два слова",full:"на счёт",why:"«Счёт» — существительное: можно вставить слово (<b>на</b> мой <b>счёт</b>) и задать вопрос «на что?». Предлог + существительное — два слова."},
+ {w:"Идти (НА)ВСТРЕЧУ ветру",a:"одно слово",full:"навстречу ветру",why:"<b>Навстречу</b> — производный предлог при слове «ветру», заменяется на «к» (идти <b>к</b> ветру). Вставить слово нельзя."},
+ {w:"Опоздать (НА)ВСТРЕЧУ с другом",a:"два слова",full:"на встречу",why:"«Встреча» — существительное: опоздать <b>на</b> важную <b>встречу</b>. Вставляется прилагательное — пишем раздельно."},
+ {w:"(В)ВИДУ непогоды рейс отменили",a:"одно слово",full:"ввиду непогоды",why:"<b>Ввиду</b> = «из-за», причина. Это производный предлог, одно слово."},
+ {w:"Иметь (В)ВИДУ сроки",a:"два слова",full:"в виду",why:"Устойчивое сочетание <b>иметь в виду</b> пишется в три слова — это исключение, которое надо просто запомнить."},
+ {w:"(В)СЛЕДСТВИЕ ошибки прибор сломался",a:"одно слово",full:"вследствие ошибки",why:"<b>Вследствие</b> = «из-за»: предлог причины, одно слово. Кончается на Е."},
+ {w:"(В)СЛЕДСТВИИ по делу нашли улику",a:"два слова",full:"в следствии",why:"«Следствие» здесь — существительное (расследование): <b>в</b> этом <b>следствии</b>. Предлог + существительное, на конце И."},
+ {w:"Подняться (НА)ВЕРХ и осмотреться",a:"одно слово",full:"наверх",why:"Отвечает на вопрос «куда?» и не имеет при себе зависимого существительного — это наречие, одно слово."},
+ {w:"Взобраться (НА)ВЕРХ повозки",a:"два слова",full:"на верх повозки",why:"Есть зависимое слово «повозки»: <b>верх</b> — существительное. Сравните: на <b>самый</b> верх повозки."},
+ {w:"Готовил подарок (В)ТАЙНЕ от всех",a:"одно слово",full:"втайне",why:"Отвечает на вопрос «как?» — наречие <b>втайне</b> (= тайно, скрытно)."},
+ {w:"Держать планы (В)ТАЙНЕ",a:"два слова",full:"в тайне",why:"Держать <b>в</b> строгой <b>тайне</b> — существительное с предлогом, слово вставляется."}
+];
+
+/* ---------- БЛОК 2: производные предлоги ---------- */
+var P_PREP=[
+ {w:"(В)ТЕЧЕНИЕ часа никто не пришёл",a:RZ,full:"в течение часа",why:"Предлог времени <b>в течение</b> всегда пишется раздельно, на конце Е. Проверка: «в течение» отвечает на вопрос «как долго?»."},
+ {w:"(В)ТЕЧЕНИИ реки много порогов",a:RZ,full:"в течении реки",why:"Тоже раздельно, но это существительное «течение» с предлогом — и на конце И. Задание 14 проверяет только пробел, а Е/И спрашивают в других заданиях."},
+ {w:"(В)СЛЕДСТВИЕ засухи река обмелела",a:SL,full:"вследствие засухи",why:"Предлог причины <b>вследствие</b> = «из-за», пишется слитно."},
+ {w:"Сооружение (НА)ПОДОБИЕ зонта",a:SL,full:"наподобие зонта",why:"<b>Наподобие</b> = «вроде», производный предлог, слитно."},
+ {w:"Язык (В)РОДЕ испанского",a:SL,full:"вроде испанского",why:"<b>Вроде</b> = «наподобие», предлог, слитно."},
+ {w:"Он последний (В)РОДЕ Романовых",a:RZ,full:"в роде Романовых",why:"«Род» — существительное (<b>в</b> старинном <b>роде</b>), значит предлог с существительным, раздельно."},
+ {w:"(ИЗ)ЗА туч показалось солнце",a:DF,full:"из-за",why:"Сложные предлоги <b>из-за, из-под, по-над, по-за</b> пишутся через дефис. Их всего четыре — просто запомнить."},
+ {w:"(ИЗ)ПОД снега пробилась трава",a:DF,full:"из-под",why:"<b>Из-под</b> — сложный предлог, всегда через дефис."},
+ {w:"(НЕ)СМОТРЯ на поломку, часы шли",a:SL,full:"несмотря на поломку",why:"Предлог уступки <b>несмотря на</b> = «хотя», пишется слитно (в два слова с «на»)."},
+ {w:"Шёл, (НЕ)СМОТРЯ по сторонам",a:RZ,full:"не смотря по сторонам",why:"Здесь настоящее деепричастие: он действительно не смотрел глазами. НЕ с деепричастием — раздельно."},
+ {w:"(В)МЕСТО ответа он пожал плечами",a:SL,full:"вместо ответа",why:"<b>Вместо</b> = «за», предлог, слитно. Сравните: попасть <b>в</b> нужное <b>место</b> — там существительное."},
+ {w:"(В)ЗАКЛЮЧЕНИЕ доклада он пошутил",a:RZ,full:"в заключение доклада",why:"<b>В заключение</b> (= в конце) — раздельно, как и «в течение», «в продолжение», «в отличие»."}
+];
+
+/* ---------- БЛОК 3: союзы и омонимы ---------- */
+var P_CONJ=[
+ {w:"Он пришёл, ЧТО(БЫ) помочь",a:SL,full:"чтобы",why:"Союз цели: заменяется на «для того чтобы». БЫ отбросить нельзя — значит, слитно."},
+ {w:"ЧТО(БЫ) мне почитать вечером?",a:RZ,full:"что бы",why:"Здесь местоимение «что» + частица «бы»: частицу можно убрать или переставить — «Что мне почитать?». Раздельно."},
+ {w:"Я ТО(ЖЕ) люблю старые часы",a:SL,full:"тоже",why:"Союз <b>тоже</b> = «и»: «И я люблю старые часы». Слитно."},
+ {w:"Он повторил ТО(ЖЕ) слово",a:RZ,full:"то же",why:"Местоимение «то» + частица «же»: подставляется «самое» — <b>то же самое</b> слово. Раздельно."},
+ {w:"Мастер ТАК(ЖЕ) не спешил",a:SL,full:"также",why:"Союз <b>также</b> = «и»: «И мастер не спешил». Слитно."},
+ {w:"Всё ТАК(ЖЕ) тихо, как вчера",a:RZ,full:"так же",why:"Наречие «так» + частица «же», рядом стоит «как» — конструкция «так же…, как». Раздельно."},
+ {w:"Прибор стар, ЗА(ТО) надёжен",a:SL,full:"зато",why:"Союз <b>зато</b> = «но». Слитно."},
+ {w:"Он спрятался ЗА(ТО) дерево",a:RZ,full:"за то дерево",why:"Предлог «за» + указательное местоимение «то»: за <b>то самое</b> дерево. Раздельно."},
+ {w:"(ОТ)ЧЕГО ты сегодня молчишь?",a:SL,full:"отчего",why:"<b>Отчего</b> = «почему», наречие. Слитно."},
+ {w:"Я тут ни (ПРИ)ЧЁМ",a:RZ,full:"ни при чём",why:"Предлог «при» + местоимение «чём»: <b>ни при чём</b> — три слова. Сравните с союзом «притом» (= к тому же), который пишется слитно."},
+ {w:"Молчал, (ПО)ТОМУ что обижен",a:SL,full:"потому что",why:"Союз причины: «потому» пишется слитно, а «что» — отдельное слово. Проверка: заменяется на «так как»."},
+ {w:"Скучаю (ПО)ТОМУ, что было",a:RZ,full:"по тому",why:"Предлог «по» + местоимение «тому»: скучаю по <b>тому самому</b>. Раздельно."}
+];
+
+/* ---------- БЛОК 4: частицы ---------- */
+var P_PART=[
+ {w:"Кто(ТО) оставил записку",a:DF,full:"кто-то",why:"Частицы <b>-то, -либо, -нибудь, -ка, кое-, -таки</b> пишутся через дефис."},
+ {w:"Где(НИБУДЬ) здесь есть лавка",a:DF,full:"где-нибудь",why:"Частица <b>-нибудь</b> — через дефис."},
+ {w:"КОЕ(КТО) уже ушёл",a:DF,full:"кое-кто",why:"Приставка-частица <b>кое-</b> пишется через дефис."},
+ {w:"Я узнал об этом КОЕ(ОТ)КОГО",a:RZ,full:"кое от кого",why:"Если между «кое» и словом появился предлог, всё пишется раздельно, в три слова: <b>кое у кого, кое от кого, кое с кем</b>."},
+ {w:"Принеси(КА) отвёртку",a:DF,full:"принеси-ка",why:"Частица <b>-ка</b> при глаголе — через дефис."},
+ {w:"Он ВСЁ(ТАКИ) починил механизм",a:DF,full:"всё-таки",why:"<b>Всё-таки</b> и <b>так-таки</b> — через дефис. Также через дефис -таки после глаголов и наречий: пришёл-таки."},
+ {w:"Мастер(БЫ) не согласился",a:RZ,full:"мастер бы",why:"Частицы <b>бы, ли, же</b> пишутся раздельно всегда. Их можно убрать или переставить."},
+ {w:"Что(ЖЕ) ты молчишь?",a:RZ,full:"что же",why:"Частица <b>же</b> — раздельно."},
+ {w:"Вряд(ЛИ) он успеет",a:RZ,full:"вряд ли",why:"Частица <b>ли</b> раздельно, даже в сращении «вряд ли»."},
+ {w:"Он молчал, КАК(БУДТО) не слышал",a:RZ,full:"как будто",why:"<b>Как будто</b> — раздельно, в два слова. А вот сам союз <b>будто</b> пишется слитно (там нет частицы «то»)."},
+ {w:"НЕУЖЕ(ЛИ) всё сломалось?",a:SL,full:"неужели",why:"<b>Неужели, даже, разве</b> — цельные частицы, пишутся слитно, хотя «ли» внутри слышится."},
+ {w:"ДА(ЖЕ) не пытайся",a:SL,full:"даже",why:"<b>Даже</b> — цельная частица, слитно: «да» без «же» здесь не существует."}
+];
+
+/* ---------- БЛОК 5: наречия через дефис ---------- */
+var P_ADV_DEF=[
+ {w:"Сделай (ПО)НОВОМУ",a:DF,full:"по-новому",why:"Формула дефиса: приставка <b>ПО-</b> + окончание <b>-ОМУ/-ЕМУ/-И</b>. Отвечает на вопрос «как?»."},
+ {w:"(ПО)ВЕСЕННЕМУ тепло на улице",a:DF,full:"по-весеннему",why:"ПО- + -ЕМУ, наречие, отвечает на вопрос «как?» (тепло как?)."},
+ {w:"Мы шли (ПО)ЗИМНЕМУ парку",a:RZ,full:"по зимнему парку",why:"Это не наречие, а прилагательное с предлогом: шли <b>по</b> какому? <b>парку</b>. Вставляется слово: по <b>заснеженному</b> зимнему парку."},
+ {w:"Пусть всё будет (ПО)ВАШЕМУ",a:DF,full:"по-вашему",why:"ПО- + -ЕМУ у наречия: будет <b>как?</b> по-вашему. Дефис."},
+ {w:"(ВО)ПЕРВЫХ, проверьте пружину",a:DF,full:"во-первых",why:"Приставки <b>В-/ВО-</b> + суффикс <b>-ЫХ/-ИХ</b> дают дефис: во-первых, в-третьих."},
+ {w:"(ВО)ВТОРЫХ классах шли уроки",a:RZ,full:"во вторых классах",why:"Здесь числительное с существительным: во вторых <b>классах</b>. Есть зависимое слово — раздельно."},
+ {w:"Часы шли ЕЛЕ(ЕЛЕ)",a:DF,full:"еле-еле",why:"Наречия, образованные повтором слова, пишутся через дефис: еле-еле, чуть-чуть, давным-давно."},
+ {w:"Деталь подошла ТОЧЬ(В)ТОЧЬ",a:DF,full:"точь-в-точь",why:"<b>Точь-в-точь</b> — дефисное наречие-повтор с предлогом внутри. Запомнить вместе с «крест-накрест», «бок о бок» (а вот последнее — раздельно!)."},
+ {w:"Пришлось согласиться ВОЛЕЙ(НЕВОЛЕЙ)",a:DF,full:"волей-неволей",why:"Повтор синонимичных или созвучных слов — дефис: волей-неволей, худо-бедно, подобру-поздорову."},
+ {w:"Надпись сделана (ПО)ЛАТЫНИ",a:DF,full:"по-латыни",why:"ПО- + -И: по-латыни, по-русски, по-французски."},
+ {w:"Мы пойдём (ПО)ВАШЕМУ сценарию",a:RZ,full:"по вашему сценарию",why:"Формула ПО- + -ЕМУ здесь не работает: рядом существительное «сценарию», значит это местоимение с предлогом. Сравните: «будь <b>по-вашему</b>» — наречие, дефис."},
+ {w:"Мы шли БОК(О)БОК",a:RZ,full:"бок о бок",why:"Главная ловушка блока: <b>бок о бок</b> пишется в три слова, хотя внешне похоже на «точь-в-точь». Так же раздельно — «с глазу на глаз», «честь по чести»."}
+];
+
+/* ---------- БЛОК 6: сортировка наречий ---------- */
+var SORT_ADV={
+ buckets:["Слитно","Раздельно"],
+ items:[
+  {t:"(во)время прийти",b:0,full:"вовремя",why:"Наречие <b>вовремя</b> (= своевременно) — слитно. Раздельно только «во время урока», где есть существительное."},
+  {t:"(в)общем",b:1,full:"в общем",why:"<b>В общем</b> — всегда раздельно. Слова «вобщем» в русском языке нет."},
+  {t:"(с)начала подумай",b:0,full:"сначала",why:"Наречие времени <b>сначала</b> — слитно. Раздельно: «с начала пути», где есть зависимое слово."},
+  {t:"говорить (без)умолку",b:1,full:"без умолку",why:"Наречные сочетания с предлогом БЕЗ пишутся раздельно: без умолку, без толку, без оглядки, без спросу."},
+  {t:"броситься (в)рассыпную",b:0,full:"врассыпную",why:"Предлог + прилагательное на -УЮ обычно слитно: врассыпную, вслепую, вплотную, вручную."},
+  {t:"играть (в)открытую",b:1,full:"в открытую",why:"Исключения из предыдущего правила пишутся раздельно: <b>в открытую, на боковую, на попятную, на мировую</b>."},
+  {t:"идти (по)одиночке",b:0,full:"поодиночке",why:"Наречие <b>поодиночке</b> — слитно. Но «по одному», «по двое», «по трое» — раздельно."},
+  {t:"отвечать (по)очереди",b:1,full:"по очереди",why:"<b>По очереди</b> — раздельно, как и «по памяти», «по совести», «по праву»."},
+  {t:"выучить (на)изусть",b:0,full:"наизусть",why:"Наречие с приставкой НА-, где корень отдельно не употребляется, — слитно: наизусть, наугад, наутёк, настежь."},
+  {t:"перекусить (на)ходу",b:1,full:"на ходу",why:"Раздельно, как и «на лету», «на бегу», «на виду», «на ощупь»."},
+  {t:"устать (до)нельзя",b:0,full:"донельзя",why:"Приставка ДО- + наречие — слитно: донельзя, досуха, дочиста, добела."},
+  {t:"молчал (до)сих(пор)",b:1,full:"до сих пор",why:"<b>До сих пор</b> — устойчивое сочетание в три слова."}
+ ]
+};
+
+/* ---------- БЛОК 7: наречие против предлога с существительным ---------- */
+var P_HOMO=[
+ {w:"(В)НАЧАЛЕ все были спокойны",a:SL,full:"вначале",why:"Отвечает на вопрос «когда?», зависимого слова нет — наречие, слитно."},
+ {w:"(В)НАЧАЛЕ пути было легко",a:RZ,full:"в начале пути",why:"Есть зависимое слово «пути» — существительное с предлогом, раздельно."},
+ {w:"Скажи (НА)ПРЯМУЮ",a:SL,full:"напрямую",why:"Наречие: «как сказать?» — напрямую."},
+ {w:"Свернуть (НА)ПРЯМУЮ дорогу",a:RZ,full:"на прямую дорогу",why:"«Прямую» — прилагательное при существительном «дорогу». Раздельно."},
+ {w:"Мы действовали (ЗА)ОДНО",a:SL,full:"заодно",why:"Наречие <b>заодно</b> = «вместе, сообща»."},
+ {w:"Два посещения приняли (ЗА)ОДНО",a:RZ,full:"за одно",why:"Предлог «за» + числительное «одно» (за одно посещение). Раздельно."},
+ {w:"Он уехал (НА)СОВСЕМ",a:SL,full:"насовсем",why:"Наречие: «уехал как? насовсем»."},
+ {w:"Сослался (НА)СОВСЕМ старые данные",a:RZ,full:"на совсем старые данные",why:"Предлог «на» относится к «данные», а «совсем» — к прилагательному «старые». Раздельно."},
+ {w:"Удивился, (ЗА)ТЕМ рассмеялся",a:SL,full:"затем",why:"<b>Затем</b> = «потом», наречие времени. Слитно."},
+ {w:"(ЗА)ТЕМ домом начинается парк",a:RZ,full:"за тем домом",why:"Предлог «за» + местоимение «тем» при существительном «домом». Раздельно."},
+ {w:"(ПО)ЭТОМУ мы и опоздали",a:SL,full:"поэтому",why:"<b>Поэтому</b> = «по этой причине», наречие. Слитно."},
+ {w:"(ПО)ЭТОМУ мосту ходить опасно",a:RZ,full:"по этому мосту",why:"Предлог «по» + местоимение «этому» при существительном «мосту». Раздельно."}
+];
+
+/* ---------- БЛОК 7б: словарные пары наречий (из «Экспресс-зачётов») ---------- */
+var P_HOMO2=[
+ {w:"Она (В)МИГ повеселела",a:SL,full:"вмиг",why:"«Как?» — <b>вмиг</b> (= мгновенно), наречие."},
+ {w:"Отчаяние (В)МИГ разлуки",a:RZ,full:"в миг",why:"«Миг» — существительное с зависимым словом «разлуки»: в <b>тот самый</b> миг."},
+ {w:"Ты (В)ПРАВЕ сам решать",a:SL,full:"вправе",why:"<b>Вправе</b> = «имеешь право», наречие. Слитно."},
+ {w:"Отказать (В)ПРАВЕ выбора",a:RZ,full:"в праве",why:"«Право» — существительное: отказать в <b>законном</b> праве выбора."},
+ {w:"(НА)УТРО мы попрощались",a:SL,full:"наутро",why:"«Когда?» — <b>наутро</b> (= на следующее утро), наречие."},
+ {w:"Праздник назначен (НА)УТРО",a:RZ,full:"на утро",why:"«На что?» — на утро: существительное с предлогом, можно вставить слово (на <b>раннее</b> утро)."},
+ {w:"Ребята бежали (ВО)ВСЮ",a:SL,full:"вовсю",why:"«Как?» — <b>вовсю</b> (= изо всех сил), наречие."},
+ {w:"Ковёр (ВО)ВСЮ комнату",a:RZ,full:"во всю",why:"Местоимение «всю» при существительном «комнату». Раздельно."},
+ {w:"Ты играешь (В)ТЁМНУЮ",a:SL,full:"втёмную",why:"Наречие от прилагательного с предлогом В-: втёмную, вслепую, вничью."},
+ {w:"Уехал (В)ТЁМНУЮ ночь",a:RZ,full:"в тёмную",why:"«Тёмную» — прилагательное при существительном «ночь». Раздельно."},
+ {w:"Подойти (В)ПЛОТНУЮ",a:SL,full:"вплотную",why:"Наречие: «как подойти?» — вплотную."},
+ {w:"Завернуть (В)ПЛОТНУЮ бумагу",a:RZ,full:"в плотную",why:"Прилагательное «плотную» при существительном «бумагу». Раздельно."}
+];
+
+/* ---------- БЛОК 8: ПОЛ- и ПОЛУ- ---------- */
+var P_POL=[
+ {w:"(ПОЛ)ЯБЛОКА откусил",a:DF,full:"пол-яблока",why:"После ПОЛ- гласная — дефис. Правило трёх: <b>гласная, Л, прописная буква</b>."},
+ {w:"(ПОЛ)ГОДА отсутствовал",a:SL,full:"полгода",why:"После ПОЛ- согласная (кроме Л) — слитно."},
+ {w:"(ПОЛ)АТЛАНТИКИ проплыли",a:DF,full:"пол-Атлантики",why:"После ПОЛ- прописная буква — дефис."},
+ {w:"(ПОЛ)ЛУКОВИЦЫ нарезать",a:DF,full:"пол-луковицы",why:"После ПОЛ- буква Л — дефис."},
+ {w:"Покрасить (ПОЛ)КОМНАТЫ",a:SL,full:"полкомнаты",why:"Согласная К после ПОЛ- — слитно."},
+ {w:"(ПОЛ)СТОЛОВОЙ ЛОЖКИ",a:RZ,full:"пол столовой ложки",why:"Между ПОЛ и существительным вклинилось прилагательное — пишем раздельно."},
+ {w:"(ПОЛУ)ОСТРОВ в океане",a:SL,full:"полуостров",why:"<b>ПОЛУ-</b> всегда слитно, без исключений."},
+ {w:"Читать (ПОЛУ)ЛЁЖА",a:SL,full:"полулёжа",why:"ПОЛУ- слитно и с наречиями."},
+ {w:"(ПОЛ)АПЕЛЬСИНА почистил",a:DF,full:"пол-апельсина",why:"Гласная А после ПОЛ- — дефис."},
+ {w:"(ПОЛ)СТАКАНА воды",a:SL,full:"полстакана",why:"Согласная С — слитно."},
+ {w:"(ПОЛ)ЛИСТА сожжено",a:DF,full:"пол-листа",why:"Буква Л — дефис."},
+ {w:"(ПОЛ)ЖИЗНИ прожито",a:SL,full:"полжизни",why:"Согласная Ж — слитно."}
+];
+
+/* ---------- БЛОК 9: сложные существительные и прилагательные ---------- */
+var P_COMPLEX=[
+ {w:"(ЮГО)ВОСТОК",a:DF,full:"юго-восток",why:"Промежуточные стороны света — через дефис: юго-восток, северо-запад. И прилагательные от них: юго-восточный."},
+ {w:"(СТАЛЕ)ЛИТЕЙНЫЙ цех",a:SL,full:"сталелитейный",why:"В первой части нет суффикса, слова связаны подчинением (лить сталь) — слитно. Так же: рельсоукладочный, овощемоечный."},
+ {w:"(СЕРО)ЗЕЛЁНЫЙ",a:DF,full:"серо-зелёный",why:"Оттенки цвета — всегда через дефис: серо-зелёный, изумрудно-зелёный, тёмно-красный."},
+ {w:"(ДРЕВНЕ)РУССКИЙ",a:SL,full:"древнерусский",why:"Образовано от подчинительного сочетания «Древняя Русь», суффикса в первой части нет — слитно."},
+ {w:"(ВИЦЕ)ПРЕЗИДЕНТ",a:DF,full:"вице-президент",why:"Иноязычные первые части <b>вице-, экс-, обер-, унтер-, штаб-, лейб-</b> — через дефис."},
+ {w:"(СЕЛЬСКО)ХОЗЯЙСТВЕННЫЙ",a:SL,full:"сельскохозяйственный",why:"От словосочетания «сельское хозяйство» с подчинительной связью — слитно."},
+ {w:"(ВЫПУКЛО)ВОГНУТЫЙ",a:DF,full:"выпукло-вогнутый",why:"Равноправные части (выпуклый <b>и</b> вогнутый) — дефис. Так же: колюще-режущий, кисло-сладкий."},
+ {w:"(ОСЕННЕ)ЗИМНИЙ сезон",a:DF,full:"осенне-зимний",why:"В первой части есть суффикс (осенн-е-) и связь сочинительная (осенний и зимний) — дефис. Тот же случай: садово-парковый, колюще-режущий."},
+ {w:"(ПЯТИ)ЭТАЖКА",a:SL,full:"пятиэтажка",why:"Первая часть — числительное в родительном падеже — слитно: пятиэтажка, девяностолетие, двадцатипятиметровый."},
+ {w:"(ЭКС)ДИРЕКТОР",a:DF,full:"экс-директор",why:"Первая часть ЭКС- — через дефис."},
+ {w:"(ТЁМНО)ВОЛОСЫЙ",a:SL,full:"тёмноволосый",why:"Не цвет предмета, а признак от сочетания «тёмные волосы» — слитно. Сравните: тёмно-красный (оттенок цвета) — дефис."},
+ {w:"(ЛЕГКО)ПОДДАЮЩИЙСЯ обработке металл",a:RZ,full:"легко поддающийся",why:"Первая часть — наречие на -О, отвечающее на вопрос «как?»: поддающийся <b>как?</b> легко. Наречие с причастием пишется раздельно."}
+];
+
+/* ---------- ЛОВУШКИ: флеш-карты ---------- */
+var FLASH=[
+ {q:"ТОЧЬ(В)ТОЧЬ",a:"точь-в-точь",tag:"Дефисный повтор с предлогом. Запоминается в паре с «бок о бок» — а вот оно раздельное."},
+ {q:"БОК(О)БОК",a:"бок о бок",tag:"Три слова. Повтор существительных с предлогом между ними: бок о бок, с глазу на глаз."},
+ {q:"(В)ОТКРЫТУЮ",a:"в открытую",tag:"Исключение: обычно «предлог + прилагательное на -УЮ» слитно (вслепую, вплотную), но в открытую, на попятную, на боковую, на мировую — раздельно."},
+ {q:"(БЕЗ)УМОЛКУ",a:"без умолку",tag:"Все наречные сочетания с БЕЗ раздельно: без умолку, без толку, без спросу, без оглядки."},
+ {q:"(ПОД)МЫШКУ сунуть",a:"под мышку",tag:"Раздельно: под мышку, под мышкой, в подмышках. Существительное с предлогом, хотя слышится как одно слово."},
+ {q:"(В)ПОЛОБОРОТА",a:"вполоборота",tag:"Слитно, вместе с вполголоса, вполсилы, вполуха. Здесь ПОЛ- внутри наречия, а не перед существительным."},
+ {q:"(НА)ХОДУ",a:"на ходу",tag:"Раздельно, как на лету, на бегу, на виду, на ощупь, на глаз."},
+ {q:"(ПО)ДВОЕ",a:"по двое",tag:"Раздельно: по двое, по трое, по одному. Но поодиночке — слитно."},
+ {q:"КАК(БУДТО)",a:"как будто",tag:"Два слова. При этом союз «будто» сам по себе пишется слитно."},
+ {q:"ВСЁ(ТАКИ)",a:"всё-таки",tag:"Дефис. Так же: так-таки, пришёл-таки, довольно-таки."},
+ {q:"КОЕ(У)КОГО",a:"кое у кого",tag:"Появился предлог — пишем в три слова, дефис исчезает."},
+ {q:"(ДО)СИХ(ПОР)",a:"до сих пор",tag:"Три слова, устойчивое сочетание."}
+];
+
+/* ---------- ВИКТОРИНА ---------- */
+var QUIZ=[
+ {p:"Почему «Он опоздал НА ВСТРЕЧУ с другом» пишется раздельно, а «идти НАВСТРЕЧУ ветру» — слитно?",
+  o:["Раздельное написание зависит от порядка слов в предложении",
+     "В первом случае «встреча» — существительное, в него можно вставить слово; во втором — производный предлог",
+     "После глагола «опоздать» всегда пишется раздельно"],
+  a:1, why:"Проверка одна: попробуйте вставить слово. «На важную встречу» — получилось, значит существительное. «На сильную встречу ветру» — бессмыслица, значит предлог."},
+ {p:"Как отличить союз ЧТОБЫ от местоимения с частицей ЧТО БЫ?",
+  o:["Посмотреть на первую букву следующего слова",
+     "Проверить, на какой слог падает ударение",
+     "Попробовать убрать или переставить БЫ: если предложение сохраняется — раздельно"],
+  a:2, why:"«Что бы мне почитать?» → «Что мне почитать?» — БЫ убирается, значит это частица, пишем раздельно. В «Пришёл, чтобы помочь» убрать БЫ нельзя."},
+ {p:"Почему «В ТЕЧЕНИЕ часа» и «В ТЕЧЕНИИ реки» одинаково пишутся раздельно?",
+  o:["Потому что в обоих случаях перед нами два слова: производный предлог или предлог с существительным",
+     "Потому что это одно и то же слово в разных падежах",
+     "Потому что после предлога «в» всегда ставится пробел"],
+  a:0, why:"Задание 14 спрашивает только про пробел, а он тут одинаковый. Различие Е/И — вопрос другого правила: у предлога времени Е, у существительного И."},
+ {p:"Что определяет написание наречия ПО-ВЕСЕННЕМУ через дефис?",
+  o:["То, что в слове два корня",
+     "То, что слово стоит в начале предложения",
+     "Сочетание приставки ПО- и суффикса -ЕМУ у наречия, отвечающего на вопрос «как?»"],
+  a:2, why:"Формула дефиса: ПО- + -ОМУ/-ЕМУ/-И, а также В-/ВО- + -ЫХ/-ИХ. Если же это прилагательное с предлогом («по зимнему парку»), рядом стоит существительное — и тогда раздельно."},
+ {p:"Почему ПОЛ-ЛУКОВИЦЫ пишется через дефис, а ПОЛСТАКАНА — слитно?",
+  o:["Дефис ставится, если слово длиннее восьми букв",
+     "После ПОЛ- дефис ставится перед гласной, буквой Л и прописной буквой; перед остальными согласными — слитно",
+     "Дефис зависит от рода существительного"],
+  a:1, why:"Правило трёх условий: гласная (пол-апельсина), Л (пол-луковицы), прописная (пол-Атлантики). Всё остальное слитно. Плюс раздельно, если вклинилось прилагательное: пол столовой ложки."},
+ {p:"Почему СЕРО-ЗЕЛЁНЫЙ через дефис, а ТЕМНОВОЛОСЫЙ слитно, хотя обе первые части похожи?",
+  o:["Первое обозначает оттенок цвета, второе образовано от сочетания «тёмные волосы» с подчинительной связью",
+     "Слова с первой частью на -О всегда пишутся через дефис",
+     "Написание зависит от количества слогов в слове"],
+  a:0, why:"Оттенок цвета — всегда дефис. А «темноволосый» описывает не цвет предмета, а признак человека и восходит к подчинительному сочетанию, поэтому слитно."},
+ {p:"Как понять, что КОЕ- нужно писать раздельно?",
+  o:["Кое- всегда пишется через дефис, раздельных случаев нет",
+     "Если слово стоит в конце предложения",
+     "Если между КОЕ и словом стоит предлог: кое у кого, кое с кем, кое от кого"],
+  a:2, why:"Появление предлога разбивает сращение: кое-кто → кое у кого. Это одна из самых частых ловушек задания 14."},
+ {p:"Почему НЕСМОТРЯ НА дождь пишется слитно, а «шёл, НЕ СМОТРЯ по сторонам» — раздельно?",
+  o:["Различие зависит от времени глагола в предложении",
+     "В первом случае это предлог уступки (= «хотя»), во втором — настоящее деепричастие со значением «не глядя»",
+     "Раздельно пишется, когда предложение длинное"],
+  a:1, why:"Подставьте «хотя»: «Хотя шёл дождь» — получилось, значит предлог, слитно. Если человек действительно не смотрел глазами — это деепричастие, раздельно."}
+];
+
+/* ---------- ИТОГОВАЯ ПРАКТИКА ---------- */
+var P_FINAL=[
+ P_PREP[2],P_PREP[6],P_CONJ[0],P_CONJ[7],P_PART[3],P_PART[9],
+ P_ADV_DEF[4],P_ADV_DEF[11],P_HOMO[10],P_HOMO[11],P_POL[5],P_COMPLEX[11]
+];
+
+/* ---------- ЕГЭ ---------- */
+var EGE=[
+ {ask:DF, rows:[
+  {s:"Старый мельник уже {0} стал в здешнем краю {1} вроде живой легенды.",
+   w:[{t:"ДАВНЫМ(ДАВНО)",a:DF,full:"давным-давно",why:"повтор слова — дефис"},
+      {t:"ЧЕМ(ТО)",a:DF,full:"чем-то",why:"частица -то — дефис"}]},
+  {s:"Тем, кто идёт {0} парку, зима кажется {1} неведомым волшебником.",
+   w:[{t:"(ПО)ЗИМНЕМУ",a:RZ,full:"по зимнему",why:"прилагательное при существительном «парку» — раздельно"},
+      {t:"КАКИМ(НИБУДЬ)",a:DF,full:"каким-нибудь",why:"частица -нибудь — дефис"}]},
+  {s:"{0} крыши выпорхнула птица, а часовщик {1} не заметил этого.",
+   w:[{t:"(ИЗ)ПОД",a:DF,full:"из-под",why:"сложный предлог — дефис"},
+      {t:"(ПО)ПРОСТУ",a:SL,full:"попросту",why:"наречие — слитно"}]},
+  {s:"{0}, шестерни нужно смазать, а {1}, выставить маятник.",
+   w:[{t:"(ВО)ПЕРВЫХ",a:DF,full:"во-первых",why:"ВО- + -ЫХ — дефис"},
+      {t:"(ВО)ВТОРЫХ",a:DF,full:"во-вторых",why:"ВО- + -ЫХ — дефис"}]},
+  {s:"Ученик {0} собрал механизм, {1} собрал его сам.",
+   w:[{t:"КОЕ(КАК)",a:DF,full:"кое-как",why:"кое- — дефис"},
+      {t:"ЗА(ТО)",a:SL,full:"зато",why:"союз зато = но — слитно"}]}
+ ]},
+ {ask:SL, rows:[
+  {s:"{0} поломки мастерская закрылась, и {1} все заказы отложили.",
+   w:[{t:"(В)СЛЕДСТВИЕ",a:SL,full:"вследствие",why:"предлог причины — слитно"},
+      {t:"(ПО)ЭТОМУ",a:SL,full:"поэтому",why:"наречие — слитно"}]},
+  {s:"{0} целого часа он {1} молчал, как и вчера.",
+   w:[{t:"(В)ТЕЧЕНИЕ",a:RZ,full:"в течение",why:"предлог времени — раздельно"},
+      {t:"ТАК(ЖЕ)",a:RZ,full:"так же",why:"«так же…, как» — раздельно"}]},
+  {s:"Мастер был неразговорчив, {1} {0} внимательнее прочих.",
+   w:[{t:"(В)ДВОЕ",a:SL,full:"вдвое",why:"наречие — слитно"},
+      {t:"ЗА(ТО)",a:SL,full:"зато",why:"союз = но — слитно"}]},
+  {s:"Мы говорили {0} ремонта, {1} на поздний час.",
+   w:[{t:"(НА)СЧЁТ",a:SL,full:"насчёт",why:"предлог = о — слитно"},
+      {t:"(НЕ)СМОТРЯ",a:SL,full:"несмотря",why:"предлог уступки = хотя — слитно"}]},
+  {s:"{0} не спорить, он ушёл {1}, не прощаясь.",
+   w:[{t:"ЧТО(БЫ)",a:SL,full:"чтобы",why:"союз цели — слитно"},
+      {t:"(ПО)АНГЛИЙСКИ",a:DF,full:"по-английски",why:"ПО- + -И — дефис"}]}
+ ]},
+ {ask:RZ, rows:[
+  {s:"{0} вечера гость говорил {1}, не давая никому вставить слово.",
+   w:[{t:"(В)ТЕЧЕНИЕ",a:RZ,full:"в течение",why:"предлог времени — раздельно"},
+      {t:"(БЕЗ)УМОЛКУ",a:RZ,full:"без умолку",why:"сочетание с БЕЗ — раздельно"}]},
+  {s:"Ученик стоял {0} и {1} не слушал наставника.",
+   w:[{t:"(В)ПОЛОБОРОТА",a:SL,full:"вполоборота",why:"наречие — слитно"},
+      {t:"КАК(БУДТО)",a:RZ,full:"как будто",why:"два слова"}]},
+  {s:"{0} работа удалась, {1} детали подобрали точно.",
+   w:[{t:"(В)ЦЕЛОМ",a:RZ,full:"в целом",why:"наречное сочетание — раздельно"},
+      {t:"ТАК(КАК)",a:RZ,full:"так как",why:"составной союз — два слова"}]},
+  {s:"Он уехал {0}, и {1} мы долго не могли найти нового мастера.",
+   w:[{t:"(НА)СОВСЕМ",a:SL,full:"насовсем",why:"наречие — слитно"},
+      {t:"(ПО)ЭТОМУ",a:SL,full:"поэтому",why:"наречие — слитно"}]},
+  {s:"{0} спорить он не стал, {1} попросту промолчал.",
+   w:[{t:"(В)ОТКРЫТУЮ",a:RZ,full:"в открытую",why:"исключение — раздельно"},
+      {t:"ТО(ЕСТЬ)",a:RZ,full:"то есть",why:"союз «то есть» всегда раздельно"}]}
+ ]},
+ {ask:SL, rows:[
+  {s:"{0} он молчал, {1} заговорил о старом хронометре.",
+   w:[{t:"(ПОЛ)ЧАСА",a:SL,full:"полчаса",why:"после ПОЛ- согласная — слитно"},
+      {t:"(ЗА)ТЕМ",a:SL,full:"затем",why:"наречие = потом — слитно"}]},
+  {s:"На столе лежали {0} и {1}.",
+   w:[{t:"(ПОЛ)ЛИМОНА",a:DF,full:"пол-лимона",why:"после ПОЛ- буква Л — дефис"},
+      {t:"(ПОЛ)АПЕЛЬСИНА",a:DF,full:"пол-апельсина",why:"после ПОЛ- гласная — дефис"}]},
+  {s:"Ученик отвечал {0}, {1} в свои записи.",
+   w:[{t:"(НА)УГАД",a:SL,full:"наугад",why:"наречие — слитно"},
+      {t:"(НЕ)СМОТРЯ",a:RZ,full:"не смотря",why:"здесь деепричастие: он и правда не смотрел — раздельно"}]},
+  {s:"Часы стали спешить, {0} что маятник {1} укоротили.",
+   w:[{t:"(ПО)ТОМУ",a:SL,full:"потому",why:"союз «потому что» — слитно"},
+      {t:"(В)ДВОЕ",a:SL,full:"вдвое",why:"наречие — слитно"}]},
+  {s:"{0} он понял, что мастер учил его, {1} передать ремесло.",
+   w:[{t:"(В)ПОСЛЕДСТВИИ",a:SL,full:"впоследствии",why:"наречие — слитно"},
+      {t:"ЧТО(БЫ)",a:SL,full:"чтобы",why:"союз цели — слитно"}]}
+ ]}
+];
+
+/* ============================= СЛАЙДЫ ============================= */
+var SLIDES=[
+ {type:"title"},
+ {type:"map"},
+
+ {type:"rule",section:"Одно слово или два",title:"Главный вопрос задания 14",
+  blocks:[
+   {h:"Что вообще спрашивают",p:"В задании 14 нужно решить, как пишется слово: <b>слитно</b>, <b>через дефис</b> или <b>раздельно</b>. Никаких букв вставлять не нужно. Почти всегда выбор сводится к одному вопросу: перед нами <b>одно слово</b> или <b>сочетание предлога с самостоятельным словом</b>."},
+   {h:"Три приёма проверки",p:"Эти приёмы работают в девяти случаях из десяти. Применяйте их по очереди.",ex:"1. Вставить слово: на (важную) встречу — два слова; навстречу ветру — одно.\n2. Задать вопрос: подняться КУДА? наверх — наречие; на верх ЧЕГО? повозки — существительное.\n3. Заменить синонимом: насчёт = о, вследствие = из-за, зато = но, тоже = и."}
+  ],
+  algo:["Найдите выделенное слово и определите, к чему оно относится в предложении.",
+        "Попробуйте вставить между частями другое слово. Получилось — пишите раздельно.",
+        "Проверьте, есть ли зависимое существительное. Есть — скорее всего, это предлог с существительным.",
+        "Замените слово синонимом-служебным (о, из-за, но, и, хотя). Замена удалась — это одно служебное слово.",
+        "Проверьте, не попадает ли слово в список тех, что просто запоминаются."],
+  memo:"Задание 14 в 2025–2026 годах даётся с <b>множественным ответом</b>: пять предложений, в каждом два выделенных слова, а в ответ идут номера тех предложений, где <b>оба</b> слова написаны так, как требует шапка. Шапка меняется: сегодня «слитно», завтра «через дефис». Читайте её первой строкой, до того как смотреть на слова."},
+ {type:"practice",section:"Одно слово или два",title:"Практика: одно слово или два",
+  instruction:"Не думайте пока о дефисе. Решите только одно: перед вами цельное слово или предлог с самостоятельным словом.",
+  opts:ONE,items:P_ONE},
+
+ {type:"rule",section:"Производные предлоги",title:"Предлоги, которые притворяются существительными",
+  blocks:[
+   {h:"Пишутся слитно",p:"Эти предлоги можно заменить другим предлогом и нельзя разбить вставленным словом.",ex:"ввиду (= из-за), вследствие (= из-за), навстречу (= к), наподобие (= вроде), вслед (= за), вместо, вроде, насчёт (= о), вблизи (= у), позади (= за), напротив (= перед, у), накануне (= перед), посередине, впереди, внутри, наперекор, наперерез, несмотря на, невзирая на"},
+   {h:"Пишутся раздельно",p:"Почти все они когда-то были существительными и сохранили предлог отдельно.",ex:"в течение, в продолжение, в заключение (= под конец), в отличие от, в виде (= как), в связи с, в силу, в целях, за счёт (= благодаря), по направлению к, на протяжении, по мере, не считая"},
+   {h:"Пишутся через дефис",p:"Сложных предлогов всего четыре, их проще выучить списком.",ex:"из-за, из-под, по-над, по-за"}
+  ],
+  trap:"Пара, которую путают чаще всего: <b>ввиду</b> непогоды (предлог, слитно) — <b>иметь в виду</b> (устойчивое сочетание, три слова) — <b>в виду</b> города (предлог с существительным). А «вследствие» (предлог, слитно) не то же самое, что «в следствии по делу» (существительное, раздельно).",
+  note:"Слова «в течение / в продолжение / в заключение» проверяются в задании 14 только на пробел, а буква Е или И на конце — предмет другого правила. Не путайте два разных вопроса к одному слову."},
+ {type:"practice",section:"Производные предлоги",title:"Практика: производные предлоги",
+  instruction:"Определите, предлог перед вами или существительное с предлогом. Помните про четыре дефисных предлога.",
+  items:P_PREP},
+
+ {type:"rule",section:"Союзы и омонимы",title:"Союзы против местоимений с частицами",
+  blocks:[
+   {h:"Слитные союзы",p:"Каждый из них заменяется другим союзом. Если замена получилась — пишем слитно.",ex:"чтобы (= для того чтобы), тоже / также (= и), зато (= но), притом / причём (= к тому же), оттого что, потому что, поэтому, затем, зачем, итак, поскольку, так как, а также"},
+   {h:"Раздельные сочетания",p:"Это местоимение или наречие плюс частица. Частицу можно убрать или переставить, а к местоимению — подставить слово.",ex:"что бы (что бы мне почитать), что бы ни (что бы ни предлагал), то же (то же самое), так же (так же, как), за то (за то дерево), при том (при том доме), при чём (при чём тут я), ни при чём, от того (от того дома), по тому (по тому мосту)"},
+   {h:"Всегда раздельно / всегда слитно",p:"Два союза, которые надо просто запомнить.",ex:"то есть — всегда раздельно; будто — всегда слитно (но «как будто» — два слова)"}
+  ],
+  trap:"Устойчивые сочетания, которые всегда раздельно: <b>то же самое</b>, <b>то же, что и…</b>, <b>так же, как и…</b>, <b>что бы ни…</b>, <b>во что бы то ни стало</b>. «Так же» и «также» различают по контексту. Если рядом есть или подразумевается <b>как</b> — пишем раздельно: «всё так же тихо, <b>как</b> вчера». Если слово заменяется на <b>и</b> — слитно: «Он также молчал» = «И он молчал»."},
+ {type:"practice",section:"Союзы и омонимы",title:"Практика: союзы и омонимы",
+  instruction:"Подставьте союз-замену или попробуйте убрать частицу. Контекст в каждой карточке подсказывает ответ.",
+  items:P_CONJ},
+
+ {type:"rule",section:"Частицы",title:"Дефис, пробел или ничего",
+  blocks:[
+   {h:"Через дефис",p:"Частицы присоединяются дефисом, если слово существует и без них.",ex:"-то, -либо, -нибудь, -ка, -таки, кое- : кто-то, где-либо, что-нибудь, дай-ка, всё-таки, кое-что"},
+   {h:"Раздельно",p:"Эти частицы всегда отдельно, их можно убрать или переставить.",ex:"бы (б), ли (ль), же (ж), будто в составе «как будто», дескать, почти что"},
+   {h:"Слитно",p:"Здесь частица срослась со словом навсегда.",ex:"даже, разве, неужели"}
+  ],
+  trap:"Если между <b>кое-</b> и словом появляется предлог, дефис исчезает и получается три слова: кое-кто → <b>кое у кого</b>, кое-что → <b>кое о чём</b>. Ещё одна ловушка: <b>вряд ли</b>, <b>едва ли</b>, <b>что же</b> — раздельно, а <b>неужели</b> — слитно, хотя «ли» слышится во всех."},
+ {type:"practice",section:"Частицы",title:"Практика: частицы",
+  instruction:"Проверьте, можно ли убрать частицу. Убирается — пишем раздельно; прирастает — дефис; срослась намертво — слитно.",
+  items:P_PART},
+
+ {type:"rule",section:"Наречия: дефис",title:"Наречия через дефис: формула",
+  blocks:[
+   {h:"Формула дефиса",p:"Дефис в наречии ставится, когда приставка и окончание работают в паре.",ex:"ПО- + -ОМУ / -ЕМУ / -И : по-новому, по-весеннему, по-волчьи, по-русски\nВ- / ВО- + -ЫХ / -ИХ : во-первых, во-вторых, в-третьих"},
+   {h:"Повторы",p:"Наречия, образованные повтором слова или соединением близких слов, тоже дефисные.",ex:"еле-еле, чуть-чуть, давным-давно, крепко-накрепко, волей-неволей, худо-бедно, точь-в-точь"},
+   {h:"Кое- и -то, -либо, -нибудь",p:"Те же частицы работают и в наречиях.",ex:"кое-где, когда-то, где-либо, как-нибудь"}
+  ],
+  trap:"Формула ПО- + -ОМУ работает только для наречия, отвечающего на вопрос «как?». Если рядом стоит существительное, перед вами прилагательное с предлогом: по-зимнему тепло (наречие, дефис) — <b>по зимнему парку</b> (прилагательное, раздельно). Так же: во-первых (наречие) — <b>во вторых классах</b> (числительное с существительным).",
+  memo:"<b>Точь-в-точь</b> — дефис, а <b>бок о бок</b> — три слова. Эту пару стоит запомнить вместе: они выглядят одинаково, но пишутся по-разному."},
+ {type:"practice",section:"Наречия: дефис",title:"Практика: наречия через дефис",
+  instruction:"Проверьте формулу «приставка + окончание» и задайте вопрос. Если рядом есть существительное — формула не работает.",
+  items:P_ADV_DEF},
+
+ {type:"rule",section:"Наречия: слитно и раздельно",title:"Наречия слитно и раздельно",
+  blocks:[
+   {h:"Правила, которые действительно работают",p:"Полного правила здесь нет — есть закономерности и список ФИПИ. Вот то, на что можно опереться:",ex:"1. Предлог + прилагательное на -УЮ → слитно: врассыпную, вслепую, вплотную, вручную.\n   Исключения: в открытую, на попятную, на боковую, на мировую.\n2. Приставка + наречие → слитно: донельзя, навсегда, назавтра, послезавтра.\n3. Корень отдельно не живёт → слитно: наизусть, наугад, наутёк, впросак, настежь, вдребезги.\n4. Сочетания с БЕЗ → раздельно: без умолку, без толку, без спросу, без оглядки.\n5. Предлог + существительное на гласную → раздельно: в обнимку, в одиночку, в упор."},
+   {h:"Частотный список: слитно",p:"Двенадцать наречий, которые встречаются в вариантах чаще прочих.",ex:"вовремя, сначала, врассыпную, поодиночке, наизусть, донельзя, вполголоса, вполоборота, впоследствии, наотрез, намертво, насквозь"},
+   {h:"Частотный список: раздельно",p:"И столько же с обратным написанием.",ex:"в общем, без умолку, в открытую, по очереди, на ходу, до сих пор, по двое, за границу, в сердцах, в рассрочку, на мировую, в конце концов"}
+  ],
+  note:"Полный список наречий с их написанием опубликован ФИПИ и лежит в открытых материалах экзамена. Учить его целиком бесполезно — но эти двадцать четыре слова стоит знать наизусть: они закрывают большую часть реальных вариантов."},
+ {type:"sort",section:"Наречия: слитно и раздельно",title:"Разложите наречия по ящикам",
+  instruction:"Нажмите на слово, потом — на нужный ящик. Ошиблись — нажмите на слово в ящике, оно вернётся обратно.",
+  data:SORT_ADV},
+
+ {type:"rule",section:"Наречие или предлог с существительным",title:"Ловушка: наречие против предлога с существительным",
+  blocks:[
+   {h:"В чём проблема",p:"Одно и то же сочетание букв пишется то слитно, то раздельно — и правило здесь не поможет, потому что решает <b>контекст</b>. Спасают два вопроса: есть ли зависимое слово и на какой вопрос отвечает выделенное слово."},
+   {h:"Пары, которые нужно узнавать в лицо",p:"Слева — наречие (слитно), справа — предлог с существительным или прилагательным (раздельно).",ex:"вначале было тихо — в начале пути\nзатем рассмеялся — за тем домом\nнапрямую сказать — на прямую дорогу\nзаодно с ним — принять два за одно\nнасовсем уехать — сослаться на совсем старые данные\nвтайне готовить — сохранить в тайне\nпоэтому опоздали — по этому мосту\nнаверх подняться — на верх повозки\nвовремя пришёл — во время бури\nвмиг исчез — в миг опасности\nнаутро выехали — на утро назначили\nвовсю старался — во всю ширь\nотроду не видел — от роду двадцать лет\nвправду обиделся — верить в правду"}
+  ],
+  trap:"Признак раздельного написания почти всегда один: <b>рядом появилось зависимое слово</b>. «Затем» — наречие («затем рассмеялся»), но «за тем домом» — уже местоимение с предлогом, потому что дальше стоит существительное. Тот же приём и с остальными парами: если можно спросить «за тем чем?», «на утро чего?» — пишем раздельно."},
+ {type:"practice",section:"Наречие или предлог с существительным",title:"Практика: слитно или раздельно по контексту",
+  instruction:"Читайте всю фразу целиком. Ищите зависимое слово: если оно есть — почти наверняка раздельно.",
+  items:P_HOMO},
+
+ {type:"practice",section:"Наречие или предлог с существительным",title:"Практика: словарные пары",
+  instruction:"Пары из «Экспресс-зачётов»: одно и то же сочетание букв, но разное написание. Смотрите, есть ли рядом существительное, к которому относится второе слово.",
+  items:P_HOMO2},
+
+ {type:"rule",section:"ПОЛ- и ПОЛУ-",title:"Правило трёх условий",
+  blocks:[
+   {h:"ПОЛ- : правило трёх",p:"Дефис после ПОЛ- ставится в трёх случаях, во всех остальных — слитно.",ex:"гласная → пол-яблока, пол-апельсина, пол-острова\nбуква Л → пол-лимона, пол-листа, пол-литра\nпрописная буква → пол-Москвы, пол-Атлантики"},
+   {h:"ПОЛ- : слитно и раздельно",p:"Перед любой другой согласной ПОЛ- прирастает к слову. Но если между ПОЛ и существительным вклинилось прилагательное, всё расходится на три слова.",ex:"полдня, полстакана, полкомнаты, полжизни\nпол чайной ложки, пол столовой ложки, пол моей жизни"},
+   {h:"ПОЛУ- : всегда слитно",p:"Здесь исключений нет вообще.",ex:"полуостров, полумера, полулёжа, полушутя, полусапожки, полутон"}
+  ],
+  memo:"Мнемоника на три условия дефиса: <b>гласная, Л, прописная</b> — «а-Л-А»: пол-<b>а</b>рбуза, пол-<b>л</b>имона, пол-<b>А</b>фрики.",
+  trap:"Не путайте ПОЛ- перед существительным и ПОЛ внутри наречия: <b>вполголоса, вполоборота, вполсилы, вполуха</b> пишутся слитно целиком, потому что это уже наречия, а не «половина чего-то»."},
+ {type:"practice",section:"ПОЛ- и ПОЛУ-",title:"Практика: ПОЛ- и ПОЛУ-",
+  instruction:"Посмотрите на первую букву после ПОЛ. Гласная, Л или прописная — дефис. Прилагательное между — раздельно.",
+  items:P_POL},
+
+ {type:"rule",section:"Сложные слова",title:"Сложные существительные и прилагательные",
+  blocks:[
+   {h:"Существительные",p:"Слитно — с соединительной гласной О/Е и с иноязычными частями (авиа-, авто-, био-, радио-, теле-, фото- и подобными). Через дефис — без соединительной гласной и с частями вице-, экс-, обер-, штаб-, лейб-.",ex:"слитно: пароход, водопровод, фотоаппарат, спецкор\nдефис: царь-колокол, премьер-министр, вице-президент, экс-чемпион, юго-восток, мать-и-мачеха"},
+   {h:"Прилагательные: главный признак",p:"Смотрите на связь между частями. Если части <b>равноправны</b> (между ними вставляется «и») — дефис. Если одна часть подчинена другой — слитно.",ex:"дефис: выпукло-вогнутый (выпуклый и вогнутый), красно-синий, осенне-зимний, колюще-режущий\nслитно: сельскохозяйственный (сельское хозяйство), древнерусский (Древняя Русь), сталелитейный (лить сталь), тёмноволосый (тёмные волосы)"},
+   {h:"Ещё два верных признака",p:"Первый: оттенки цвета всегда через дефис. Второй: числительное в первой части даёт слитное написание.",ex:"дефис: серо-зелёный, изумрудно-зелёный, тёмно-красный, ярко-оранжевый\nслитно: пятиэтажка, девяностолетие, двадцатипятиметровый, сорокалетний"}
+  ],
+  note:"ФИПИ формулирует признак так: дефис ставится, когда в первой части есть суффикс, а части связаны сочинительной связью (садово-парковый, кабельно-спутниковый); слитно пишется, когда суффикса в первой части нет и связь подчинительная (рельсоукладочный, йодсодержащий).",
+  trap:"Наречие на -О с причастием пишется <b>раздельно</b>, если отвечает на вопрос «как?»: <b>легко поддающийся</b> обработке, <b>дружески настроенный</b>. Сравните с прилагательным «вечнозелёный», где такой вопрос не задать."},
+ {type:"practice",section:"Сложные слова",title:"Практика: сложные слова",
+  instruction:"Проверьте связь между частями: вставляется «и» — дефис; одна часть подчинена другой — слитно.",
+  items:P_COMPLEX},
+
+ {type:"rule",section:"Словарные случаи",title:"Слова, где правило не работает",
+  blocks:[
+   {h:"Их надо просто узнавать",p:"Эти написания не выводятся ни из одного правила: они закреплены словарём. Их немного, но встречаются они постоянно.",ex:"через дефис: точь-в-точь, крест-накрест, всё-таки, волей-неволей, худо-бедно\nраздельно: бок о бок, в открытую, до сих пор, кое у кого, как будто, то есть, ни при чём, на мировую, в рассрочку, в сердцах, во что бы то ни стало, под мышку\nслитно: вполоборота, вполголоса, наотрез, намертво, насквозь, назло, потихоньку, чересчур, взаперти, навзничь, неужели"}
+  ],
+  trap:"Пары, которые ломают интуицию: <b>точь-в-точь</b> через дефис, но <b>бок о бок</b> — в три слова; <b>врассыпную</b> слитно, но <b>в открытую</b> — раздельно. Из того же ряда словарные пары из ваших зачётов: сунуть учебник <b>под мышку</b> — жмёт <b>в подмышках</b>; пятнадцать лет <b>от роду</b> — <b>отроду</b> не встречались; перейти реку <b>вброд</b> — кони вступили <b>в брод</b> Дона; встань <b>сбоку</b> — переворачиваться <b>с боку на бок</b>."},
+ {type:"flash",section:"Словарные случаи",title:"Карточки: словарные написания",
+  instruction:"Сначала скажите ответ вслух, потом переверните карточку. Двенадцать слов — те, что чаще всего встречаются в вариантах."},
+
+ {type:"quiz",section:"Логика правил",title:"Мини-викторина: почему так",
+  instruction:"Выбирайте не ответ, а объяснение. Если механизм проверки понятен, слово вспомнится и без зубрёжки."},
+
+ {type:"practice",section:"Итоговая практика",title:"Итоговая практика: всё вместе",
+  instruction:"Смешанная подборка из всех блоков — последняя проверка перед заданиями в формате ЕГЭ.",
+  items:P_FINAL},
+
+ {type:"egeIntro"},
+ {type:"ege",section:"Формат ЕГЭ",title:"Задание 1 из 4",data:EGE[0]},
+ {type:"ege",section:"Формат ЕГЭ",title:"Задание 2 из 4",data:EGE[1]},
+ {type:"ege",section:"Формат ЕГЭ",title:"Задание 3 из 4",data:EGE[2]},
+ {type:"ege",section:"Формат ЕГЭ",title:"Задание 4 из 4",data:EGE[3]},
+
+ {type:"final"}
+];
+
+/* ============================= ПАМЯТЬ ============================= */
+var KEY="zad14_v2";
+var ST={ans:{},stage:{},locked:{},first:{},flash:{},quiz:{},calm:false,idx:0};
+try{
+  var raw=localStorage.getItem(KEY);
+  if(raw){var p=JSON.parse(raw); if(p&&typeof p==="object"){ST=Object.assign(ST,p);} }
+}catch(e){}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(ST)); }catch(e){} }
+function A(k){ if(!ST.ans[k])ST.ans[k]={}; return ST.ans[k]; }
+function stage(k){ return ST.stage[k]||0; }
+function L(k){ if(!ST.locked[k])ST.locked[k]=[]; return ST.locked[k]; }
+
+/* ============================= УТИЛИТЫ ============================= */
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function markBrackets(s){ return esc(s).replace(/\(([^)]*)\)/g,'<span class="paren">(</span><span class="brk">$1</span><span class="paren">)</span>'); }
+function shuffle(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+var ORDER={};
+function ordered(key,items){
+  if(!ORDER[key]){
+    var idx=items.map(function(it,i){return i;});
+    ORDER[key]=shuffle(idx);
+  }
+  return ORDER[key].map(function(i){return {it:items[i],id:"i"+i};});
+}
+function el(html){ var d=document.createElement("div"); d.innerHTML=html; return d.firstElementChild; }
+
+/* ============================= РЕНДЕР ============================= */
+var viewport=document.getElementById("slideViewport");
+var progressFill=document.getElementById("progressFill");
+var slideCounter=document.getElementById("slideCounter");
+var prevBtn=document.getElementById("prevBtn");
+var nextBtn=document.getElementById("nextBtn");
+var calmBtn=document.getElementById("calmBtn");
+var curr=0;
+
+function render(idx){
+  var s=SLIDES[idx];
+  viewport.innerHTML="";
+  viewport.scrollTop=0;
+  var slide=document.createElement("div");
+  slide.className="slide";
+  viewport.appendChild(slide);
+  var k="s"+idx;
+
+  if(s.type==="title"){ renderTitle(slide); }
+  else if(s.type==="map"){ renderMap(slide); }
+  else if(s.type==="rule"){ renderRule(slide,s); }
+  else if(s.type==="practice"){ renderPractice(slide,s,k); }
+  else if(s.type==="sort"){ renderSort(slide,s,k); }
+  else if(s.type==="flash"){ renderFlash(slide,s,k); }
+  else if(s.type==="quiz"){ renderQuiz(slide,s,k); }
+  else if(s.type==="egeIntro"){ renderEgeIntro(slide); }
+  else if(s.type==="ege"){ renderEge(slide,s,k); }
+  else if(s.type==="final"){ renderFinal(slide); }
+  updateNav();
+}
+
+function head(slide,s){
+  if(s.section){ slide.appendChild(el('<div class="eyebrow">'+esc(s.section)+'</div>')); }
+  slide.appendChild(el("<h1>"+esc(s.title)+"</h1>"));
+  if(s.instruction){ slide.appendChild(el('<p class="practice-instruction">'+s.instruction+"</p>")); }
+}
+
+/* ---------- ТИТУЛ ---------- */
+function renderTitle(slide){
+  slide.innerHTML=
+   '<div class="title-slide">'+
+    '<svg class="pendulum" viewBox="0 0 150 170">'+
+      '<circle cx="75" cy="12" r="5" fill="none" stroke="#D8A44A" stroke-width="2"/>'+
+      '<g class="pend-arm">'+
+        '<line x1="75" y1="12" x2="75" y2="128" stroke="#8C6B2F" stroke-width="2.5"/>'+
+        '<circle cx="75" cy="140" r="17" fill="none" stroke="#D8A44A" stroke-width="3"/>'+
+        '<circle cx="75" cy="140" r="7" fill="#C07A3E" opacity=".7"/>'+
+      '</g>'+
+    "</svg>"+
+    '<div class="eyebrow" style="justify-content:center">Мастерская часовщика</div>'+
+    "<h1>Задание 14. <span class=\"accent\">Слитно, через дефис<br>или раздельно</span></h1>"+
+    '<p class="subtitle" style="text-align:center">Слово — как механизм: детали либо спаяны в один корпус, либо соединены шарниром-дефисом, либо лежат на столе порознь. Разберём все девять блоков правил и соберём их вместе.</p>'+
+    '<div class="plate">'+
+      '<div class="rivets"><span></span><span></span><span></span><span></span></div>'+
+      '<p class="subtitle" style="font-size:13.6px;margin:0">Ответы сохраняются: можно закрыть вкладку и вернуться. Порядок карточек каждый раз новый — запомнить расположение не выйдет.</p>'+
+    "</div>"+
+    '<div style="margin-top:22px"><button class="btn btn-primary" id="startBtn">Завести механизм</button></div>'+
+   "</div>";
+  slide.querySelector("#startBtn").onclick=function(){ goTo(1); };
+}
+
+/* ---------- КАРТА ---------- */
+function renderMap(slide){
+  var cards=[
+   ["1","<i>Одно слово или два</i> — базовый вопрос и три приёма проверки"],
+   ["2","<i>Производные предлоги</i>: ввиду, вследствие, в течение, из-за"],
+   ["3","<i>Союзы и омонимы</i>: чтобы / что бы, тоже / то же, зато / за то"],
+   ["4","<i>Частицы</i>: -то, -нибудь, кое-, бы, ли, же, даже"],
+   ["5","<i>Наречия через дефис</i>: по-новому, во-первых, еле-еле"],
+   ["6","<i>Наречия слитно и раздельно</i>: список, который решает половину заданий"],
+   ["7","<i>Наречие или предлог с существительным</i>: вначале — в начале"],
+   ["8","<i>ПОЛ- и ПОЛУ-</i>: правило трёх условий"],
+   ["9","<i>Сложные слова</i>: юго-восток, сельскохозяйственный, светло-зелёный"]
+  ];
+  var html='<div class="eyebrow">Карта задания</div><h1>Что проверяет задание 14</h1>'+
+   '<p class="subtitle">Одно задание — девять разных правил. Поэтому идём блоками: правило, сразу практика, потом следующее правило. В конце — задания в том виде, в каком они стоят в варианте.</p>'+
+   '<div class="map-grid">';
+  cards.forEach(function(c){ html+='<div class="map-card"><b>'+c[0]+"</b><span>"+c[1]+"</span></div>"; });
+  html+="</div>"+
+   '<div class="memo-box">Формулировка на экзамене: <b>«Укажите варианты ответов, в которых все выделенные слова пишутся СЛИТНО (или РАЗДЕЛЬНО, или ЧЕРЕЗ ДЕФИС). Запишите номера ответов.»</b> Требуемое написание меняется от варианта к варианту — читайте шапку первой. Задание оценивается в 1 балл, ошибка в одном ряду обнуляет весь ответ.</div>';
+  slide.innerHTML=html;
+}
+
+/* ---------- ПРАВИЛО ---------- */
+function renderRule(slide,s){
+  head(slide,s);
+  (s.blocks||[]).forEach(function(b){
+    var h='<div class="rule-block"><h3>'+esc(b.h)+"</h3><p>"+b.p+"</p>";
+    if(b.ex){ h+='<span class="ex">'+esc(b.ex).replace(/\n/g,"<br>")+"</span>"; }
+    h+="</div>";
+    slide.appendChild(el(h));
+  });
+  if(s.algo){
+    var lis=s.algo.map(function(t){return "<li>"+t+"</li>";}).join("");
+    slide.appendChild(el('<div class="rule-block"><h3>Порядок действий</h3><ol class="algo-steps">'+lis+"</ol></div>"));
+  }
+  if(s.memo){ slide.appendChild(el('<div class="memo-box">'+s.memo+"</div>")); }
+  if(s.trap){ slide.appendChild(el('<div class="trap-box">'+s.trap+"</div>")); }
+  if(s.note){ slide.appendChild(el('<div class="note-box">'+s.note+"</div>")); }
+}
+
+/* ---------- ПРАКТИКА ---------- */
+function renderPractice(slide,s,k){
+  head(slide,s);
+  var opts=s.opts||SRD;
+  var list=ordered(k,s.items);
+  var grid=document.createElement("div");
+  grid.className="word-grid";
+  slide.appendChild(grid);
+  var ans=A(k);
+
+  list.forEach(function(o){
+    var card=document.createElement("div");
+    card.className="word-card";
+    card.dataset.id=o.id;
+    var chips=opts.map(function(op){
+      return '<button class="chip" data-v="'+esc(op)+'">'+esc(op)+"</button>";
+    }).join("");
+    card.innerHTML='<div class="verdict"></div><div class="word-text">'+markBrackets(o.it.w)+"</div>"+
+      '<div class="chip-row">'+chips+"</div>"+
+      '<div class="why"></div>';
+    card.querySelectorAll(".chip").forEach(function(ch){
+      ch.onclick=function(){
+        if(card.classList.contains("locked"))return;
+        ans[o.id]=ch.dataset.v;
+        card.querySelectorAll(".chip").forEach(function(c){c.classList.remove("selected","anim");});
+        ch.classList.add("selected","anim");
+        save();
+      };
+    });
+    grid.appendChild(card);
+  });
+
+  var footer=document.createElement("div");
+  footer.className="practice-footer";
+  footer.innerHTML='<button class="btn btn-primary" id="checkBtn">Проверить</button>'+
+    '<button class="btn btn-ghost" id="retryBtn" style="display:none">Ещё попытка</button>'+
+    '<div class="practice-result" id="res"></div>';
+  slide.appendChild(footer);
+  var hint=el('<div class="hint-line"></div>');
+  slide.appendChild(hint);
+
+  function paint(){
+    var st=stage(k), locked=L(k);
+    list.forEach(function(o){
+      var card=grid.querySelector('[data-id="'+o.id+'"]');
+      var v=ans[o.id];
+      card.className="word-card";
+      card.querySelectorAll(".chip").forEach(function(c){
+        c.classList.toggle("selected", c.dataset.v===v);
+      });
+      var isLocked = st>=2 || (st<2 && locked.indexOf(o.id)>=0);
+      if(st>=1 || locked.indexOf(o.id)>=0){
+        if(!v && st>=1){ card.classList.add("unans"); card.querySelector(".verdict").textContent="не отвечено"; }
+        else if(v===o.it.a){ card.classList.add("correct"); card.querySelector(".verdict").textContent="верно"; }
+        else if(v && st>=1){ card.classList.add("wrong"); card.querySelector(".verdict").textContent="ошибка"; }
+      }
+      if(isLocked) card.classList.add("locked");
+      if(st>=2){
+        card.classList.add("revealed","locked");
+        card.querySelector(".why").innerHTML="<b>"+esc(o.it.full)+"</b> — "+o.it.why;
+      }
+    });
+    var checkBtn=footer.querySelector("#checkBtn");
+    var retryBtn=footer.querySelector("#retryBtn");
+    var res=footer.querySelector("#res");
+    if(st===0){ checkBtn.textContent="Проверить"; retryBtn.style.display="none"; }
+    if(st===1){
+      checkBtn.textContent="Показать ответы";
+      retryBtn.style.display="";
+      hint.textContent="Исправьте только отмеченные позиции. Правильные буквы откроются после второй проверки — сначала вспомните сами.";
+    }
+    if(st>=2){ checkBtn.disabled=true; checkBtn.textContent="Проверено"; retryBtn.style.display="none"; hint.textContent=""; }
+    if(st>=1){
+      var c=0,w=0,u=0;
+      list.forEach(function(o){ var v=ans[o.id]; if(!v)u++; else if(v===o.it.a)c++; else w++; });
+      res.innerHTML='<span class="ok">верно '+c+"</span> · "+'<span class="no">ошибок '+w+"</span> · "+'<span class="un">не отвечено '+u+"</span>";
+    } else { res.textContent=""; }
+  }
+
+  footer.querySelector("#checkBtn").onclick=function(){
+    var st=stage(k);
+    if(st===0){
+      var c=0,w=0,u=0;
+      list.forEach(function(o){ var v=ans[o.id]; if(!v)u++; else if(v===o.it.a)c++; else w++; });
+      if(!ST.first[k]){ ST.first[k]={c:c,w:w,u:u,sec:s.section}; }
+      ST.stage[k]= (w===0&&u===0) ? 2 : 1;
+    } else if(st===1){ ST.stage[k]=2; }
+    save(); paint();
+  };
+  footer.querySelector("#retryBtn").onclick=function(){
+    var locked=[];
+    list.forEach(function(o){ if(ans[o.id]===o.it.a) locked.push(o.id); });
+    ST.locked[k]=locked;
+    ST.stage[k]=0;
+    save(); paint();
+    hint.textContent="Верные позиции закрыты. Исправьте остальные и нажмите «Проверить».";
+  };
+  paint();
+}
+
+/* ---------- СОРТИРОВКА ---------- */
+function renderSort(slide,s,k){
+  head(slide,s);
+  var d=s.data;
+  var list=ordered(k,d.items);
+  var ans=A(k);
+  var pool=el('<div class="sort-pool"></div>');
+  var buckets=el('<div class="sort-buckets"></div>');
+  d.buckets.forEach(function(name,i){
+    buckets.appendChild(el('<div class="sort-bucket" data-b="'+i+'"><div class="sort-bucket-title">'+esc(name)+'</div><div class="row"></div></div>'));
+  });
+  slide.appendChild(pool); slide.appendChild(buckets);
+  var footer=el('<div class="practice-footer"><button class="btn btn-primary" id="checkBtn">Проверить</button>'+
+    '<button class="btn btn-ghost" id="retryBtn" style="display:none">Ещё попытка</button>'+
+    '<div class="practice-result" id="res"></div></div>');
+  slide.appendChild(footer);
+  var why=el('<div class="hint-line"></div>');
+  slide.appendChild(why);
+  var sel=null;
+
+  function paint(){
+    var st=stage(k), locked=L(k);
+    pool.innerHTML="";
+    buckets.querySelectorAll(".row").forEach(function(r){ r.innerHTML=""; });
+    list.forEach(function(o){
+      var b=ans[o.id];
+      var chip=el('<button class="sort-chip">'+markBrackets(o.it.t)+"</button>");
+      var isLocked = st>=2 || locked.indexOf(o.id)>=0;
+      if(st>=1 || locked.indexOf(o.id)>=0){
+        if(b===undefined||b===null){ /* не разложено */ }
+        else if(b===o.it.b) chip.classList.add("correct");
+        else if(st>=1) chip.classList.add("wrong");
+      }
+      chip.onclick=function(){
+        if(isLocked||st>=2)return;
+        if(b===undefined||b===null){
+          if(sel===o.id){ sel=null; } else { sel=o.id; }
+          paint();
+        } else {
+          delete ans[o.id]; sel=null; save(); paint();
+        }
+      };
+      if(sel===o.id) chip.classList.add("selecting");
+      if(b===undefined||b===null){ pool.appendChild(chip); }
+      else { buckets.querySelector('[data-b="'+b+'"] .row').appendChild(chip); }
+    });
+    buckets.querySelectorAll(".sort-bucket").forEach(function(bk){
+      bk.onclick=function(ev){
+        if(ev.target!==bk && !ev.target.classList.contains("row") && !ev.target.classList.contains("sort-bucket-title"))return;
+        if(stage(k)>=2)return;
+        if(sel===null)return;
+        ans[sel]=parseInt(bk.dataset.b,10); sel=null; save(); paint();
+      };
+    });
+    var checkBtn=footer.querySelector("#checkBtn"), retryBtn=footer.querySelector("#retryBtn"), res=footer.querySelector("#res");
+    if(st===0){ checkBtn.textContent="Проверить"; retryBtn.style.display="none"; }
+    if(st===1){ checkBtn.textContent="Показать ответы"; retryBtn.style.display=""; }
+    if(st>=2){
+      checkBtn.disabled=true; checkBtn.textContent="Проверено"; retryBtn.style.display="none";
+      var h="";
+      list.forEach(function(o){ h+="<div style='margin:7px 0'><b style=\"color:var(--brass-soft);font-family:'PT Mono',monospace\">"+esc(o.it.full)+"</b> — "+o.it.why+"</div>"; });
+      why.innerHTML=h;
+    }
+    if(st>=1){
+      var c=0,w=0,u=0;
+      list.forEach(function(o){ var b=ans[o.id]; if(b===undefined||b===null)u++; else if(b===o.it.b)c++; else w++; });
+      res.innerHTML='<span class="ok">верно '+c+"</span> · "+'<span class="no">ошибок '+w+"</span> · "+'<span class="un">не разложено '+u+"</span>";
+    }
+  }
+  footer.querySelector("#checkBtn").onclick=function(){
+    var st=stage(k);
+    if(st===0){
+      var c=0,w=0,u=0;
+      list.forEach(function(o){ var b=ans[o.id]; if(b===undefined||b===null)u++; else if(b===o.it.b)c++; else w++; });
+      if(!ST.first[k]) ST.first[k]={c:c,w:w,u:u,sec:s.section};
+      ST.stage[k]=(w===0&&u===0)?2:1;
+    } else if(st===1){ ST.stage[k]=2; }
+    save(); paint();
+  };
+  footer.querySelector("#retryBtn").onclick=function(){
+    var locked=[];
+    list.forEach(function(o){ if(ans[o.id]===o.it.b) locked.push(o.id); else delete ans[o.id]; });
+    ST.locked[k]=locked; ST.stage[k]=0; save(); paint();
+  };
+  paint();
+}
+
+/* ---------- ФЛЕШ-КАРТЫ ---------- */
+function renderFlash(slide,s,k){
+  head(slide,s);
+  var list=ordered(k,FLASH);
+  if(!ST.flash[k]) ST.flash[k]={i:0,know:0,rev:0};
+  var f=ST.flash[k];
+  var wrap=el('<div class="flash-wrap"></div>');
+  slide.appendChild(wrap);
+  function draw(){
+    if(f.i>=list.length){
+      wrap.innerHTML='<div class="plate" style="text-align:center"><h2>Карточки пройдены</h2>'+
+        '<p class="subtitle">Знаю сразу: '+f.know+" · Отложено на повтор: "+f.rev+"</p>"+
+        '<button class="btn btn-ghost" id="again" style="margin-top:12px">Пройти заново</button></div>';
+      wrap.querySelector("#again").onclick=function(){ f.i=0;f.know=0;f.rev=0;save();draw(); };
+      return;
+    }
+    var o=list[f.i];
+    wrap.innerHTML='<div class="flash-card"><div class="flash-inner" id="fi">'+
+      '<div class="flash-face flash-front">'+markBrackets(o.it.q)+'<span class="hint">нажмите, чтобы перевернуть</span></div>'+
+      '<div class="flash-face flash-back"><div class="ans">'+esc(o.it.a)+'</div><div class="tag">'+esc(o.it.tag)+"</div></div>"+
+      "</div></div>"+
+      '<div class="flash-controls">'+
+        '<button class="btn btn-ghost" id="know">Знаю</button>'+
+        '<div class="flash-counter">'+(f.i+1)+" / "+list.length+"</div>"+
+        '<button class="btn btn-ghost" id="rev">Повторить</button>'+
+      "</div>";
+    var inner=wrap.querySelector("#fi");
+    wrap.querySelector(".flash-card").onclick=function(){ inner.classList.toggle("flipped"); };
+    wrap.querySelector("#know").onclick=function(){ f.know++; f.i++; save(); draw(); };
+    wrap.querySelector("#rev").onclick=function(){ f.rev++; f.i++; save(); draw(); };
+  }
+  draw();
+}
+
+/* ---------- ВИКТОРИНА ---------- */
+function renderQuiz(slide,s,k){
+  head(slide,s);
+  var list=ordered(k,QUIZ);
+  if(!ST.quiz[k]) ST.quiz[k]={i:0,c:0,w:0};
+  var q=ST.quiz[k];
+  var box=el("<div></div>");
+  var oOrder={};
+  slide.appendChild(box);
+  function draw(){
+    if(q.i>=list.length){
+      if(!ST.first[k]) ST.first[k]={c:q.c,w:q.w,u:0,sec:s.section};
+      save();
+      box.innerHTML='<div class="plate"><h2>Викторина пройдена</h2><p class="subtitle">Верно: '+q.c+" из "+list.length+
+        '</p><button class="btn btn-ghost" id="again" style="margin-top:12px">Пройти заново</button></div>';
+      box.querySelector("#again").onclick=function(){ q.i=0;q.c=0;q.w=0;save();draw(); };
+      return;
+    }
+    var o=list[q.i].it;
+    if(!oOrder[q.i]) oOrder[q.i]=shuffle(o.o.map(function(_,i){return i;}));
+    var opts=oOrder[q.i].map(function(i){ return '<button class="quiz-option" data-i="'+i+'">'+esc(o.o[i])+"</button>"; }).join("");
+    box.innerHTML='<div class="quiz-progress">Вопрос '+(q.i+1)+" из "+list.length+"</div>"+
+      '<div class="quiz-card"><p class="q-prompt">'+esc(o.p)+'</p><div class="quiz-options">'+opts+"</div>"+
+      '<div class="why" id="qwhy"></div>'+
+      '<div style="margin-top:14px"><button class="btn btn-primary" id="qnext" style="display:none">Дальше</button></div></div>';
+    box.querySelectorAll(".quiz-option").forEach(function(b){
+      b.onclick=function(){
+        var i=parseInt(b.dataset.i,10);
+        box.querySelectorAll(".quiz-option").forEach(function(x){
+          x.disabled=true;
+          if(parseInt(x.dataset.i,10)===o.a) x.classList.add("correct");
+        });
+        if(i!==o.a){ b.classList.add("wrong"); q.w++; } else { q.c++; }
+        var w=box.querySelector("#qwhy");
+        w.style.display="block"; w.innerHTML=o.why;
+        box.querySelector("#qnext").style.display="";
+        save();
+      };
+    });
+    box.querySelector("#qnext").onclick=function(){ q.i++; save(); draw(); };
+  }
+  draw();
+}
+
+/* ---------- ЕГЭ ---------- */
+function renderEgeIntro(slide){
+  slide.innerHTML='<div class="eyebrow">Формат ЕГЭ</div><h1>Теперь — как на экзамене</h1>'+
+   '<p class="subtitle">Четыре задания в реальном формате. В каждом пять предложений, в каждом предложении два выделенных слова. Нужно указать номера предложений, где <b>оба</b> слова написаны так, как требует шапка задания.</p>'+
+   '<div class="memo-box">Шапка меняется от задания к заданию: где-то ищут слитные написания, где-то раздельные, где-то дефисные. Первым делом читайте её — это самая частая причина потери балла у сильных учеников.</div>'+
+   '<div class="rule-block"><h3>Как устроена проверка здесь</h3><p>Сначала решите по каждому слову, как оно пишется, а затем вынесите вердикт по всему предложению: подходит оно под шапку или нет. Верно написать слова и забыть отметить ряд — тоже ошибка, и на экзамене она стоит балла.</p></div>';
+}
+
+function renderEge(slide,s,k){
+  head(slide,s);
+  var d=s.data;
+  var ans=A(k);
+  slide.appendChild(el('<div class="ege-ask">Укажите варианты ответов, в которых все выделенные слова пишутся <b>'+esc(d.ask)+"</b>. Отметьте подходящие предложения.</div>"));
+  var wrap=el("<div></div>");
+  slide.appendChild(wrap);
+
+  d.rows.forEach(function(row,ri){
+    var sent=esc(row.s).replace(/\{(\d)\}/g,function(m,n){
+      return '<span class="mono brk-holder">'+markBrackets(row.w[parseInt(n,10)].t)+"</span>";
+    });
+    var words=row.w.map(function(w,wi){
+      var chips=SRD.map(function(op){ return '<button class="chip" data-w="'+wi+'" data-v="'+esc(op)+'">'+esc(op)+"</button>"; }).join("");
+      return '<div class="ege-word"><div class="w">'+markBrackets(w.t)+'</div><div class="chip-row">'+chips+"</div></div>";
+    }).join("");
+    var r=el('<div class="ege-row" data-r="'+ri+'">'+
+      '<div class="sent"><span class="ege-num">'+(ri+1)+")</span>"+sent+"</div>"+
+      '<div class="ege-words">'+words+"</div>"+
+      '<div class="ege-verdict">Подходит под условие?'+
+        '<button class="chip" data-vd="yes">да</button><button class="chip" data-vd="no">нет</button></div>'+
+      '<div class="ege-answer"></div></div>');
+    wrap.appendChild(r);
+  });
+
+  var footer=el('<div class="practice-footer"><button class="btn btn-primary" id="checkBtn">Проверить</button>'+
+    '<button class="btn btn-ghost" id="retryBtn" style="display:none">Ещё попытка</button>'+
+    '<div class="practice-result" id="res"></div></div>');
+  slide.appendChild(footer);
+  var hint=el('<div class="hint-line"></div>');
+  slide.appendChild(hint);
+
+  function rowRight(ri){
+    return d.rows[ri].w.every(function(w){ return w.a===d.ask; }) ? "yes":"no";
+  }
+  function paint(){
+    var st=stage(k), locked=L(k);
+    d.rows.forEach(function(row,ri){
+      var r=wrap.querySelector('[data-r="'+ri+'"]');
+      var lockedRow = st>=2 || locked.indexOf("r"+ri)>=0;
+      r.className="ege-row";
+      r.querySelectorAll(".chip").forEach(function(c){
+        if(c.dataset.vd){ c.classList.toggle("selected", ans["r"+ri]===c.dataset.vd); }
+        else { c.classList.toggle("selected", ans["w"+ri+"_"+c.dataset.w]===c.dataset.v); }
+      });
+      if(st>=1||lockedRow){
+        var vd=ans["r"+ri];
+        var wordsOk=row.w.every(function(w,wi){ return ans["w"+ri+"_"+wi]===w.a; });
+        var anyWord=row.w.some(function(w,wi){ return !!ans["w"+ri+"_"+wi]; });
+        if(!vd && !anyWord){ r.classList.add("unans"); }
+        else if(vd===rowRight(ri) && wordsOk){ r.classList.add("correct"); }
+        else if(st>=1){ r.classList.add("wrong"); }
+      }
+      if(st>=2){
+        r.classList.add("revealed");
+        var txt=row.w.map(function(w){ return "<b>"+esc(w.full)+"</b> — "+esc(w.why); }).join("; ");
+        r.querySelector(".ege-answer").innerHTML=txt+". Предложение "+(rowRight(ri)==="yes"?"<b>подходит</b>":"не подходит")+" под условие «"+esc(d.ask)+"».";
+      }
+    });
+    var checkBtn=footer.querySelector("#checkBtn"), retryBtn=footer.querySelector("#retryBtn"), res=footer.querySelector("#res");
+    if(st===0){ checkBtn.textContent="Проверить"; retryBtn.style.display="none"; }
+    if(st===1){ checkBtn.textContent="Показать ответы"; retryBtn.style.display=""; hint.textContent="Отмечены ряды с ошибкой. Исправьте их и проверьте снова — правильные написания откроются после второй проверки."; }
+    if(st>=2){
+      checkBtn.disabled=true; checkBtn.textContent="Проверено"; retryBtn.style.display="none";
+      var right=d.rows.map(function(r,i){return rowRight(i)==="yes"?(i+1):null;}).filter(Boolean).join("");
+      hint.innerHTML="Ответ на экзамене записали бы так: <b style=\"color:var(--brass-soft);font-family:'PT Mono',monospace\">"+right+"</b>";
+    }
+    if(st>=1){
+      var c=0,w=0,u=0;
+      d.rows.forEach(function(row,ri){
+        var vd=ans["r"+ri];
+        var anyWord=row.w.some(function(x,wi){ return !!ans["w"+ri+"_"+wi]; });
+        var wordsOk=row.w.every(function(x,wi){ return ans["w"+ri+"_"+wi]===x.a; });
+        if(!vd&&!anyWord)u++; else if(vd===rowRight(ri)&&wordsOk)c++; else w++;
+      });
+      res.innerHTML='<span class="ok">рядов верно '+c+"</span> · "+'<span class="no">с ошибкой '+w+"</span> · "+'<span class="un">пропущено '+u+"</span>";
+    }
+  }
+  wrap.querySelectorAll(".ege-row").forEach(function(r){
+    var ri=r.dataset.r;
+    r.querySelectorAll(".chip").forEach(function(c){
+      c.onclick=function(){
+        var st=stage(k);
+        if(st>=2||L(k).indexOf("r"+ri)>=0)return;
+        if(c.dataset.vd){ ans["r"+ri]=c.dataset.vd; }
+        else { ans["w"+ri+"_"+c.dataset.w]=c.dataset.v; }
+        save(); paint();
+      };
+    });
+  });
+  footer.querySelector("#checkBtn").onclick=function(){
+    var st=stage(k);
+    if(st===0){
+      var c=0,w=0,u=0;
+      d.rows.forEach(function(row,ri){
+        var vd=ans["r"+ri];
+        var anyWord=row.w.some(function(x,wi){ return !!ans["w"+ri+"_"+wi]; });
+        var wordsOk=row.w.every(function(x,wi){ return ans["w"+ri+"_"+wi]===x.a; });
+        if(!vd&&!anyWord)u++; else if(vd===rowRight(ri)&&wordsOk)c++; else w++;
+      });
+      if(!ST.first[k]) ST.first[k]={c:c,w:w,u:u,sec:s.section};
+      ST.stage[k]=(w===0&&u===0)?2:1;
+    } else if(st===1){ ST.stage[k]=2; }
+    save(); paint();
+  };
+  footer.querySelector("#retryBtn").onclick=function(){
+    var locked=[];
+    d.rows.forEach(function(row,ri){
+      var vd=ans["r"+ri];
+      var wordsOk=row.w.every(function(x,wi){ return ans["w"+ri+"_"+wi]===x.a; });
+      if(vd===rowRight(ri)&&wordsOk) locked.push("r"+ri);
+    });
+    ST.locked[k]=locked; ST.stage[k]=0; save(); paint();
+  };
+  paint();
+}
+
+/* ---------- ИТОГ ---------- */
+function gaugeSVG(pct,color,valueText){
+  var r=58, cx=74, cy=74, circ=2*Math.PI*r, off=circ*(1-pct/100);
+  return '<svg viewBox="0 0 148 148">'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/>'+
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="9" stroke-linecap="round" '+
+      'stroke-dasharray="'+circ+'" stroke-dashoffset="'+off+'" transform="rotate(-90 '+cx+" "+cy+')"/>'+
+    '<text x="'+cx+'" y="'+(cy+8)+'" text-anchor="middle" fill="#F3E7D3" font-family="Playfair Display,serif" font-size="27">'+valueText+"</text>"+
+    "</svg>";
+}
+function collect(){
+  var bySec={};
+  Object.keys(ST.first).forEach(function(k){
+    var f=ST.first[k]; if(!f||!f.sec)return;
+    if(!bySec[f.sec]) bySec[f.sec]={c:0,w:0,u:0,slide:null};
+    bySec[f.sec].c+=f.c; bySec[f.sec].w+=f.w; bySec[f.sec].u+=f.u;
+  });
+  SLIDES.forEach(function(s,i){
+    if(s.type==="rule"&&s.section&&bySec[s.section]&&bySec[s.section].slide===null) bySec[s.section].slide=i;
+  });
+  return bySec;
+}
+function renderFinal(slide){
+  var bySec=collect();
+  var secs=Object.keys(bySec);
+  var tc=0,tw=0,tu=0;
+  secs.forEach(function(n){ tc+=bySec[n].c; tw+=bySec[n].w; tu+=bySec[n].u; });
+  var answered=tc+tw;
+  var pct= answered? Math.round(tc/answered*100):0;
+  var color = pct>=80?"#5FBFA8":(pct>=55?"#E8C55F":"#D9634F");
+
+  var html='<div class="eyebrow">Итог</div><h1>Показания приборов</h1>';
+  if(!answered && !tu){
+    html+='<p class="subtitle">Пока ни одно упражнение не проверено. Пройдите блоки и нажмите «Проверить» — тогда здесь появится разбор по темам.</p>';
+    slide.innerHTML=html; return;
+  }
+  html+='<div class="gauges">'+
+    '<div class="gauge">'+gaugeSVG(pct,color,pct+"%")+'<div class="gauge-label">точность</div></div>'+
+    '<div class="gauge">'+gaugeSVG(answered?Math.round(tc/(answered+tu)*100):0,"#D8A44A",String(tc))+'<div class="gauge-label">верных ответов</div></div>'+
+    "</div>"+
+    '<p class="subtitle">Верно: '+tc+" · Ошибок: "+tw+" · Не отвечено: "+tu+". Пропущенные позиции не считаются ошибками — они просто не вошли в статистику.</p>";
+
+  var rows=secs.map(function(n){
+    var d=bySec[n], a=d.c+d.w;
+    return {name:n, pct: a?Math.round(d.c/a*100):null, c:d.c, w:d.w, u:d.u, slide:d.slide};
+  }).sort(function(x,y){
+    if(x.pct===null)return 1; if(y.pct===null)return -1; return x.pct-y.pct;
+  });
+
+  html+='<div class="final-box"><h3>Темы на повторение</h3>'+
+    '<p class="subtitle" style="font-size:13.5px">От самой проблемной к усвоенной. Нажмите на тему — вернётесь к её теории.</p>'+
+    '<div class="topic-list">';
+  rows.forEach(function(r){
+    var col = r.pct===null?"#B09A7C":(r.pct>=80?"#5FBFA8":(r.pct>=55?"#E8C55F":"#D9634F"));
+    html+='<button class="topic" data-slide="'+(r.slide===null?"":r.slide)+'">'+
+      '<span class="name">'+esc(r.name)+"</span>"+
+      '<span class="bar"><i style="width:'+(r.pct===null?0:r.pct)+"%;background:"+col+'"></i></span>'+
+      '<span class="pct" style="color:'+col+'">'+(r.pct===null?"—":r.pct+"%")+"</span>"+
+      (r.slide===null?"":'<span class="goto">к теории →</span>')+
+      "</button>";
+  });
+  html+="</div></div>";
+  html+='<div class="practice-footer" style="margin-top:16px">'+
+    '<button class="btn btn-primary" id="copyBtn">Скопировать итог</button>'+
+    '<button class="btn btn-ghost" id="resetBtn">Сбросить прогресс</button>'+
+    '<div class="practice-result" id="copyRes"></div></div>'+
+    '<textarea class="copy-area" id="copyArea" readonly></textarea>';
+  slide.innerHTML=html;
+
+  slide.querySelectorAll(".topic").forEach(function(b){
+    b.onclick=function(){ var i=b.dataset.slide; if(i!=="") goTo(parseInt(i,10)); };
+  });
+
+  var text="Задание 14. Итог тренажёра\n"+
+    "Верно: "+tc+" · Ошибок: "+tw+" · Не отвечено: "+tu+" · Точность: "+pct+"%\n\nПо темам (от слабой к сильной):\n"+
+    rows.map(function(r){ return "— "+r.name+": "+(r.pct===null?"не проходилась":r.pct+"% (верно "+r.c+", ошибок "+r.w+", пропущено "+r.u+")"); }).join("\n");
+  var ta=slide.querySelector("#copyArea");
+  ta.value=text;
+  slide.querySelector("#copyBtn").onclick=function(){
+    var res=slide.querySelector("#copyRes");
+    function fallback(){ ta.style.display="block"; ta.select(); try{document.execCommand("copy");}catch(e){} res.textContent="Скопировано (или выделено — скопируйте вручную)"; }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ res.textContent="Скопировано"; },fallback);
+    } else fallback();
+  };
+  slide.querySelector("#resetBtn").onclick=function(){
+    if(!confirm("Стереть все ответы и начать заново?"))return;
+    ST={ans:{},stage:{},locked:{},first:{},flash:{},quiz:{},calm:ST.calm,idx:0};
+    save(); ORDER={}; goTo(0);
+  };
+}
+
+/* ============================= НАВИГАЦИЯ ============================= */
+function goTo(i){
+  if(i<0||i>=SLIDES.length)return;
+  curr=i; ST.idx=i; save(); render(i);
+}
+function updateNav(){
+  progressFill.style.width=((curr)/(SLIDES.length-1)*100)+"%";
+  slideCounter.textContent="слайд "+(curr+1)+" из "+SLIDES.length+"  ▾";
+  prevBtn.disabled=curr===0;
+  nextBtn.disabled=curr===SLIDES.length-1;
+}
+/* оглавление */
+var tocOverlay=document.getElementById("tocOverlay");
+var tocBody=document.getElementById("tocBody");
+var TAGS={title:"Начало",map:"Карта",rule:"Правило",practice:"Практика",sort:"Практика",
+  flash:"Карточки",quiz:"Викторина",egeIntro:"Формат ЕГЭ",ege:"Задание ЕГЭ",final:"Итог"};
+function slideName(s,i){
+  if(s.type==="title")return "Титульный слайд";
+  if(s.type==="map")return "Карта задания 14";
+  if(s.type==="egeIntro")return "Как устроены задания ЕГЭ";
+  if(s.type==="final")return "Итог и темы на повторение";
+  return s.title||TAGS[s.type]||"Слайд "+(i+1);
+}
+function buildTOC(){
+  var html="",lastSec=null;
+  SLIDES.forEach(function(s,i){
+    var sec=s.section||null;
+    if(sec&&sec!==lastSec){ html+='<div class="toc-group">'+esc(sec)+"</div>"; lastSec=sec; }
+    if(!sec&&lastSec!==null&&(s.type==="title"||s.type==="map"||s.type==="egeIntro"||s.type==="final")){ lastSec=null; }
+    var f=ST.first["s"+i], score="";
+    if(f){
+      var a=f.c+f.w, pct=a?Math.round(f.c/a*100):null;
+      var col = pct===null?"var(--text-dim)":(pct>=80?"var(--green)":(pct>=55?"var(--yellow)":"var(--red)"));
+      score='<span class="toc-score" style="color:'+col+'">'+(pct===null?"—":pct+"%")+"</span>";
+    } else { score='<span class="toc-score" style="color:var(--text-dim)">·</span>'; }
+    html+='<button class="toc-item'+(i===curr?" current":"")+'" data-i="'+i+'">'+
+      '<span class="toc-num">'+(i+1)+"</span>"+
+      '<span class="toc-name">'+esc(slideName(s,i))+"</span>"+
+      '<span class="toc-tag">'+esc(TAGS[s.type]||"")+"</span>"+score+"</button>";
+  });
+  tocBody.innerHTML=html;
+  tocBody.querySelectorAll(".toc-item").forEach(function(b){
+    b.onclick=function(){ closeTOC(); goTo(parseInt(b.dataset.i,10)); };
+  });
+  var cur=tocBody.querySelector(".toc-item.current");
+  if(cur) setTimeout(function(){ cur.scrollIntoView({block:"center"}); },0);
+}
+function openTOC(){ buildTOC(); tocOverlay.classList.add("open"); }
+function closeTOC(){ tocOverlay.classList.remove("open"); }
+slideCounter.onclick=openTOC;
+document.getElementById("tocClose").onclick=closeTOC;
+tocOverlay.onclick=function(e){ if(e.target===tocOverlay) closeTOC(); };
+
+prevBtn.onclick=function(){ goTo(curr-1); };
+nextBtn.onclick=function(){ goTo(curr+1); };
+document.addEventListener("keydown",function(e){
+  if(e.target&&(e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT"))return;
+  if(e.key==="Escape"){ closeTOC(); return; }
+  if(tocOverlay.classList.contains("open"))return;
+  if(e.key==="ArrowRight")goTo(curr+1);
+  if(e.key==="ArrowLeft")goTo(curr-1);
+});
+
+/* спокойный режим */
+function applyCalm(){
+  document.body.classList.toggle("calm",!!ST.calm);
+  calmBtn.classList.toggle("on",!!ST.calm);
+  calmBtn.textContent = ST.calm ? "Спокойный режим: вкл" : "Спокойный режим";
+}
+calmBtn.onclick=function(){ ST.calm=!ST.calm; save(); applyCalm(); };
+applyCalm();
+
+/* пылинки */
+(function(){
+  var d=document.getElementById("dust");
+  for(var i=0;i<16;i++){
+    var s=document.createElement("i");
+    s.style.left=(Math.random()*100)+"%";
+    s.style.animationDuration=(11+Math.random()*13)+"s";
+    s.style.animationDelay=(Math.random()*14)+"s";
+    d.appendChild(s);
+  }
+})();
+
+goTo(ST.idx&&ST.idx<SLIDES.length?ST.idx:0);
+</script>
+</body>
+</html>
