@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЕГЭ по русскому. Задание 10 — Правописание приставок</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=PT+Serif:wght@700&family=JetBrains+Mono:wght@400;700&family=Russo+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky0:#05070d;
+  --sky1:#0c1322;
+  --cloud1:#182342;
+  --cloud2:#243158;
+  --panel:rgba(13,19,35,.88);
+  --line:rgba(130,199,255,.22);
+  --bolt:#82c7ff;
+  --bolt2:#a78bff;
+  --flash:#eaf4ff;
+  --gold:#ffd966;
+  --txt:#e3ecfb;
+  --muted:#9db0d6;
+  --ok:#63e6a5;
+  --bad:#ff7a8a;
+  --wait:#ffc266;
+  --font-d:'Russo One','Arial Black',sans-serif;
+  --font-h:'PT Serif',Georgia,serif;
+  --font-b:'PT Sans','Segoe UI',Tahoma,sans-serif;
+  --font-m:'JetBrains Mono','Consolas',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:100%}
+html,body{height:100%}
+body{
+  font-family:var(--font-b);
+  color:var(--txt);
+  background:
+    radial-gradient(1200px 600px at 70% -10%, #131c33 0%, transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, #101a30 0%, transparent 55%),
+    linear-gradient(180deg, var(--sky0) 0%, var(--sky1) 55%, #0a1120 100%);
+  overflow:hidden;
+  -webkit-text-size-adjust:100%;
+}
+
+/* ---- фон: тучи и дождь. Вспышки — только по действию ученика ---- */
+#storm{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.cloud{position:absolute;border-radius:50%;filter:blur(46px);opacity:.5}
+.cloud.c1{width:640px;height:230px;background:var(--cloud1);top:-70px;left:-120px;animation:drift 140s linear infinite alternate}
+.cloud.c2{width:760px;height:260px;background:var(--cloud2);top:-40px;right:-180px;opacity:.38;animation:drift 170s linear infinite alternate-reverse}
+.cloud.c3{width:560px;height:200px;background:#141d38;bottom:-90px;left:22%;opacity:.45;animation:drift 155s linear infinite alternate}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(110px)}}
+#rain{position:absolute;inset:-60px 0;opacity:.1;
+  background:repeating-linear-gradient(102deg, transparent 0 11px, rgba(160,200,255,.5) 11px 12px, transparent 12px 23px);
+  animation:rainfall 1.4s linear infinite;}
+@keyframes rainfall{from{transform:translateY(-46px)}to{transform:translateY(0)}}
+#flash{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%, var(--flash), rgba(130,199,255,.4) 45%, transparent 75%);opacity:0;pointer-events:none;z-index:50;transition:opacity .09s linear}
+
+/* спокойный режим и системная настройка «уменьшить движение» */
+@media (prefers-reduced-motion: reduce){
+  .cloud,#rain{animation:none}
+  .slide.active{animation:none !important}
+}
+body.calm .cloud,body.calm #rain{animation:none}
+body.calm #rain{opacity:.05}
+body.calm #flash{display:none}
+body.calm .slide.active{animation:none}
+body.calm *{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+
+/* ---- прогресс ---- */
+#progress{position:fixed;top:0;left:0;right:0;height:4px;background:rgba(130,199,255,.08);z-index:40}
+#progress .fill{height:100%;width:0;background:linear-gradient(90deg,var(--bolt),var(--bolt2));box-shadow:0 0 10px rgba(130,199,255,.7);transition:width .35s ease}
+
+/* ---- слайды ---- */
+#deck{position:relative;z-index:2;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:2rem 1.1rem 6rem}
+.slide{display:none;width:min(1060px,100%);max-height:calc(100dvh - 7.5rem);overflow:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.slide.active{display:block;animation:slideIn .35s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;
+  box-shadow:0 24px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.02) inset;
+  padding:1.9rem 2.2rem;backdrop-filter:blur(6px)}
+.eyebrow{font-family:var(--font-m);font-size:.88rem;letter-spacing:.18em;text-transform:uppercase;color:var(--bolt);margin-bottom:.7rem}
+.eyebrow .blk{color:var(--bolt2)}
+h2{font-family:var(--font-h);font-weight:700;font-size:clamp(1.35rem,3vw,2rem);line-height:1.22;margin-bottom:1rem;color:#f2f7ff}
+h3{font-family:var(--font-h);font-weight:700;font-size:1.12rem;color:var(--bolt);margin:1.2rem 0 .6rem}
+p,li{font-size:1.06rem;line-height:1.62}
+p+p{margin-top:.6rem}
+ul{list-style:none}
+ul li{padding-left:1.5rem;position:relative;margin:.55rem 0}
+ul li::before{content:'⚡';position:absolute;left:0;top:.1rem;font-size:.85rem}
+.muted{color:var(--muted)}
+b.e{color:var(--gold);font-family:var(--font-m)}
+b.i{color:var(--bolt);font-family:var(--font-m)}
+b.hl{color:var(--bolt2)}
+.w{font-family:var(--font-m);font-size:.97em;line-height:1.75}
+.tag{display:inline-block;font-family:var(--font-m);font-size:.9rem;padding:.2rem .6rem;border:1px solid var(--line);border-radius:999px;color:var(--txt);margin:.15rem .25rem .15rem 0}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.9rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:.9rem}
+.tile{border:1px solid var(--line);border-radius:16px;padding:1rem 1.1rem;background:linear-gradient(180deg,rgba(24,35,66,.55),rgba(12,18,34,.6))}
+.tile h4{font-family:var(--font-h);font-weight:700;font-size:1.02rem;color:var(--flash);margin-bottom:.45rem}
+.tile p{font-size:1rem}
+.tile.warn{border-color:rgba(255,217,102,.45)}
+.tile.warn h4{color:var(--gold)}
+.tile.viol{border-color:rgba(167,139,255,.45)}
+.tile.viol h4{color:var(--bolt2)}
+.tile .num{font-family:var(--font-d);color:var(--bolt2);font-size:.88rem}
+
+.callout{margin-top:1rem;border:1px solid rgba(255,217,102,.5);border-radius:14px;padding:.85rem 1.1rem;background:rgba(255,217,102,.06);font-size:1.02rem;line-height:1.6}
+.callout b{color:var(--gold)}
+.callout.blue{border-color:rgba(130,199,255,.5);background:rgba(130,199,255,.06)}
+.callout.blue b{color:var(--bolt)}
+.callout.red{border-color:rgba(255,122,138,.5);background:rgba(255,122,138,.07)}
+.callout.red b{color:var(--bad)}
+
+table.pare{width:100%;border-collapse:collapse;margin-top:.7rem;font-size:1.01rem}
+table.pare th{font-family:var(--font-m);font-size:.86rem;letter-spacing:.06em;text-transform:uppercase;color:var(--txt);text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line)}
+table.pare td{padding:.55rem .6rem;border-bottom:1px solid rgba(130,199,255,.1);vertical-align:top;line-height:1.5}
+table.pare td b{font-family:var(--font-m)}
+table.pare td:first-child b{color:var(--gold)}
+table.pare td:last-child b{color:var(--bolt)}
+
+/* ---- кнопки ---- */
+.btn{font-family:var(--font-b);font-weight:700;font-size:1rem;color:var(--txt);cursor:pointer;
+  min-height:44px;padding:.6rem 1.3rem;border-radius:12px;border:1px solid #3a4a7a;
+  background:linear-gradient(180deg,#1b2544,#12192f);
+  transition:border-color .2s, box-shadow .2s, color .2s}
+.btn:hover{border-color:var(--bolt);color:#fff;box-shadow:0 0 14px rgba(130,199,255,.35)}
+.btn:focus-visible{outline:2px solid var(--bolt);outline-offset:2px}
+.btn.primary{border-color:var(--bolt);background:linear-gradient(180deg,#1e3a63,#14233f);box-shadow:0 0 14px rgba(130,199,255,.25)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:default;box-shadow:none}
+.btn.small{font-size:.94rem;padding:.45rem .9rem}
+
+/* ---- упражнения ---- */
+.ex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.8rem;margin-top:1rem}
+.ex-card{border:1px solid var(--line);border-radius:14px;padding:.8rem .9rem;background:rgba(18,26,48,.7);transition:border-color .25s, background .25s}
+.ex-card .ctx{font-size:.95rem;color:var(--muted);margin-bottom:.25rem;min-height:1.2em;font-style:italic}
+.ex-card .word{font-family:var(--font-m);font-size:1.14rem;letter-spacing:.01em;margin-bottom:.6rem;word-break:break-word}
+.slot{display:inline-block;min-width:1.1em;text-align:center;border-bottom:2px solid var(--bolt);color:var(--gold);
+  font-size:1.26em;font-weight:700;line-height:1;margin:0 .06em;vertical-align:baseline}
+.ex-card .opts{display:flex;gap:.5rem;flex-wrap:wrap}
+.opt{font-family:var(--font-m);font-size:1.05rem;font-weight:700;min-width:44px;min-height:44px;padding:.35rem .7rem;border-radius:10px;border:1px solid #3a4a7a;background:#131b33;color:var(--txt);cursor:pointer;transition:border-color .18s,background .18s}
+.opt:hover{border-color:var(--bolt)}
+.opt:focus-visible{outline:2px solid var(--bolt);outline-offset:2px}
+.opt.sel{border-color:var(--bolt);background:linear-gradient(180deg,#274a7d,#1a2f52);color:#fff}
+.ex-card .hint{display:none;font-size:1rem;margin-top:.55rem;color:#cfdcf5;line-height:1.5;border-top:1px dashed rgba(130,199,255,.22);padding-top:.5rem}
+.ex-card.reveal .hint{display:block}
+.ex-card.correct{border-color:var(--ok);background:rgba(99,230,165,.08)}
+.ex-card.correct .slot{color:var(--ok);border-bottom-color:var(--ok)}
+.ex-card.wrong{border-color:var(--bad);background:rgba(255,122,138,.08)}
+.ex-card.wrong .slot{color:var(--bad);border-bottom-color:var(--bad)}
+.ex-card.empty{border-color:var(--wait);background:rgba(255,194,102,.07)}
+.ex-card.empty .slot{border-bottom-color:var(--wait)}
+.ex-card.frozen{opacity:.72}
+.ex-card.frozen .opt{cursor:default}
+.mark{display:inline-block;font-family:var(--font-b);font-size:.9rem;font-weight:700;margin-left:.4rem;padding:.05rem .5rem;border-radius:999px;vertical-align:middle}
+.ex-card.correct .mark{color:#0b2b1c;background:var(--ok)}
+.ex-card.wrong .mark{color:#3a0910;background:var(--bad)}
+.ex-card.empty .mark{color:#33230a;background:var(--wait)}
+.ex-foot{display:flex;align-items:center;gap:.8rem;margin-top:1.2rem;flex-wrap:wrap}
+.ex-score{font-family:var(--font-b);font-size:1.02rem;color:var(--txt)}
+.ex-score .g{color:var(--ok);font-weight:700}
+.ex-score .r{color:var(--bad);font-weight:700}
+.ex-score .y{color:var(--wait);font-weight:700}
+.ex-note{width:100%;font-size:.98rem;color:var(--muted);line-height:1.5}
+
+/* ---- флеш-карты ---- */
+.fc-wrap{margin-top:1rem}
+.fc{border:1px solid var(--line);border-radius:18px;background:rgba(18,26,48,.75);padding:1.6rem 1.2rem;text-align:center;min-height:11rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem}
+.fc .fw{font-family:var(--font-m);font-size:clamp(1.4rem,4.5vw,2rem);font-weight:700;word-break:break-word}
+.fc .fctx{font-size:1rem;color:var(--muted);font-style:italic}
+.fc .fback{font-size:1.03rem;line-height:1.55;color:#cfdcf5;max-width:34rem}
+.fc-bar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:.9rem}
+.fc-count{font-family:var(--font-m);font-size:.95rem;color:var(--muted)}
+
+/* ---- блок ЕГЭ ---- */
+.ege-q{font-size:1.04rem;line-height:1.55;margin-bottom:.3rem}
+.ege-rows{display:flex;flex-direction:column;gap:.6rem;margin-top:.9rem}
+.ege-row{display:flex;align-items:flex-start;gap:.9rem;border:1px solid var(--line);border-radius:14px;padding:.75rem 1rem;min-height:44px;background:rgba(18,26,48,.7);cursor:pointer;transition:border-color .2s,background .2s;user-select:none}
+.ege-row:hover{border-color:var(--bolt)}
+.ege-row .num{font-family:var(--font-d);font-size:1rem;color:var(--muted);width:1.6rem;flex:none;text-align:center;padding-top:.15rem}
+.ege-row .words{font-family:var(--font-m);font-size:1.04rem;line-height:1.75;word-break:break-word}
+.ege-row.sel{border-color:var(--bolt);background:rgba(130,199,255,.12)}
+.ege-row.sel .num{color:var(--bolt)}
+.ege-row.correct{border-color:var(--ok);background:rgba(99,230,165,.09)}
+.ege-row.correct .num{color:var(--ok)}
+.ege-row.wrong{border-color:var(--bad);background:rgba(255,122,138,.09)}
+.ege-row.wrong .num{color:var(--bad)}
+.ege-row.missed{border-color:var(--ok);border-style:dashed}
+.ege-row .why{font-family:var(--font-b);font-size:1rem;color:#cfdcf5;margin-top:.35rem;line-height:1.5}
+.ege-row.locked{cursor:default}
+
+/* ---- навигация ---- */
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:.5rem;
+  padding:.6rem 1.1rem calc(.6rem + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(5,7,13,.94) 40%)}
+#nav .btn{min-width:6.5rem}
+#navMid{display:flex;align-items:center;gap:.5rem}
+#counter{font-family:var(--font-m);font-size:.92rem;color:var(--txt);letter-spacing:.05em;background:transparent;border:1px solid var(--line);border-radius:999px;padding:.5rem .9rem;min-height:44px;cursor:pointer}
+#counter:hover{border-color:var(--bolt)}
+#calmBtn{font-family:var(--font-b);font-size:.9rem;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:.5rem .8rem;min-height:44px;cursor:pointer}
+#calmBtn:hover{border-color:var(--bolt);color:var(--txt)}
+body.calm #calmBtn{color:var(--gold);border-color:rgba(255,217,102,.5)}
+#nav.hidden{display:none}
+
+/* ---- оглавление ---- */
+#tocBack{position:fixed;inset:0;z-index:60;background:rgba(3,6,14,.72);backdrop-filter:blur(3px);display:none}
+#tocBack.open{display:block}
+#toc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(46rem,94vw);max-height:82dvh;
+  background:#0d1424;border:1px solid var(--line);border-radius:18px;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+#tocHead{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.2rem;border-bottom:1px solid var(--line)}
+#tocHead h3{margin:0;font-size:1.15rem;color:var(--flash)}
+#tocBody{overflow:auto;padding:.6rem 1.2rem 1.2rem}
+.toc-sec{font-family:var(--font-m);font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;color:var(--bolt2);margin:1rem 0 .4rem}
+.toc-item{display:flex;align-items:center;gap:.7rem;width:100%;text-align:left;padding:.55rem .6rem;min-height:44px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--txt);cursor:pointer;font-family:var(--font-b);font-size:1rem}
+.toc-item:hover{background:rgba(130,199,255,.08);border-color:var(--line)}
+.toc-item.cur{border-color:var(--bolt);background:rgba(130,199,255,.12)}
+.toc-item .n{font-family:var(--font-m);font-size:.9rem;color:var(--muted);width:1.9rem;flex:none}
+.toc-item .t{flex:1;min-width:0}
+.toc-item .ty{font-family:var(--font-m);font-size:.86rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.1rem .5rem;flex:none}
+.toc-item .pc{font-family:var(--font-m);font-size:.9rem;width:3.2rem;text-align:right;flex:none}
+.sq{width:.8rem;height:.8rem;border-radius:3px;flex:none;background:rgba(130,199,255,.2)}
+.sq.hi{background:var(--ok)}.sq.mid{background:var(--wait)}.sq.lo{background:var(--bad)}
+
+/* ---- ИНТРО ---- */
+#s-intro{max-height:none;min-height:calc(100dvh - 7.5rem);display:none}
+#s-intro.active{display:flex;align-items:center;justify-content:center;animation:none}
+.intro-wrap{text-align:center;position:relative;width:100%}
+#boltSvg{position:absolute;left:50%;top:-40dvh;transform:translateX(-50%);height:48dvh;width:auto;pointer-events:none}
+#boltSvg path{stroke:var(--flash);stroke-width:5;fill:none;stroke-linejoin:round;stroke-linecap:round;
+  filter:drop-shadow(0 0 8px #fff) drop-shadow(0 0 22px var(--bolt));stroke-dasharray:1200;stroke-dashoffset:1200}
+#s-intro.play #boltSvg path{animation:strike .5s .4s ease-in forwards}
+#s-intro.done #boltSvg path{stroke-dashoffset:0}
+@keyframes strike{to{stroke-dashoffset:0}}
+.intro-eyebrow{font-family:var(--font-m);letter-spacing:.4em;text-transform:uppercase;font-size:clamp(.78rem,2vw,1rem);color:var(--muted)}
+.intro-title{font-family:var(--font-d);font-size:clamp(2.8rem,11vw,7rem);line-height:1.02;margin:.3rem 0 .4rem;
+  background:linear-gradient(180deg,#ffffff 8%, var(--bolt) 55%, var(--bolt2) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 16px rgba(130,199,255,.5))}
+.intro-sub{font-size:clamp(.98rem,2.4vw,1.25rem);color:var(--txt);letter-spacing:.08em}
+#startBtn{margin-top:1.8rem;font-size:1.12rem;padding:.8rem 2.2rem}
+.intro-hint{margin-top:1.1rem;font-size:.95rem;color:var(--muted)}
+
+/* карта правил */
+.map{display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:.8rem;margin-top:1rem}
+.prefix-col{display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1.1rem;margin:.9rem 0 .3rem}
+.prefix-col .pfx{font-family:var(--font-m);font-size:1.04rem;padding:.55rem .85rem;border:1px solid var(--line);border-radius:11px;background:linear-gradient(180deg,rgba(24,35,66,.5),rgba(12,18,34,.55))}
+
+/* финал */
+.final-score{font-family:var(--font-d);font-size:clamp(2.2rem,7vw,4rem);color:var(--gold);margin:.5rem 0;display:flex;align-items:center;justify-content:center;gap:.28em}
+.final-score .bolt-sep{font-size:.82em;color:var(--bolt)}
+.final-list{margin-top:.6rem}
+.final-list .row{display:flex;justify-content:space-between;gap:1rem;border-bottom:1px dashed rgba(130,199,255,.15);padding:.45rem .1rem;font-size:1rem}
+.final-list .row span:last-child{font-family:var(--font-m);color:var(--bolt);flex:none}
+.footer-note{margin-top:1rem;font-size:.95rem;color:var(--muted)}
+.review-h{font-family:var(--font-h);font-weight:700;font-size:1.2rem;color:var(--flash);margin-bottom:.25rem}
+.review-sub{font-size:.98rem;color:var(--muted);margin-bottom:.9rem}
+.review-item{display:flex;align-items:center;gap:.9rem;border:1px solid var(--line);border-radius:14px;padding:.75rem 1rem;margin-bottom:.6rem;background:rgba(18,26,48,.6)}
+.review-item.lead{border-color:rgba(255,122,138,.55);background:rgba(255,122,138,.08)}
+.review-item.clear{border-color:rgba(99,230,165,.5);background:rgba(99,230,165,.07)}
+.review-item .rt{flex:1;min-width:0}
+.review-item .rt .name{font-weight:700;font-size:1rem}
+.review-item .rt .slide-ref{font-family:var(--font-m);font-size:.85rem;color:var(--bolt);cursor:pointer;background:none;border:none;padding:.2rem 0;text-align:left}
+.review-item .rt .slide-ref:hover{text-decoration:underline}
+.review-bar{flex:none;width:6.5rem;height:.55rem;border-radius:6px;background:rgba(130,199,255,.12);overflow:hidden}
+.review-bar span{display:block;height:100%;border-radius:6px}
+.review-frac{flex:none;font-family:var(--font-m);font-size:.92rem;width:3.4rem;text-align:right}
+.review-badge{flex:none;font-family:var(--font-b);font-size:.8rem;font-weight:700;padding:.15rem .55rem;border-radius:999px}
+.review-badge.hi{color:#ffd0d6;background:rgba(255,122,138,.18);border:1px solid rgba(255,122,138,.5)}
+.review-badge.mid{color:var(--gold);background:rgba(255,217,102,.14);border:1px solid rgba(255,217,102,.45)}
+.review-badge.lo{color:var(--ok);background:rgba(99,230,165,.14);border:1px solid rgba(99,230,165,.45)}
+.review-wait{color:var(--muted);font-size:.98rem;border:1px dashed var(--line);border-radius:14px;padding:1rem}
+#copyOut{width:100%;margin-top:.8rem;font-family:var(--font-m);font-size:.9rem;background:#0b1120;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:.6rem;display:none}
+::selection{background:rgba(130,199,255,.35)}
+
+/* ---- адаптив: 620 и 400 ---- */
+@media(max-width:620px){
+  #deck{padding:1.1rem .7rem 6.2rem}
+  .card{padding:1.1rem 1rem;border-radius:16px}
+  .grid2,.grid3,.prefix-col{grid-template-columns:1fr}
+  .ex-grid{grid-template-columns:1fr}
+  p,li{font-size:1.02rem}
+  table.pare{font-size:.99rem}
+  table.pare td,table.pare th{padding:.45rem .35rem}
+  #nav{padding:.5rem .6rem calc(.5rem + env(safe-area-inset-bottom))}
+  #nav .btn{min-width:0;padding:.6rem .8rem}
+  .toc-item .ty{display:none}
+  .review-bar{width:3.5rem}
+  .ege-row{padding:.7rem .7rem}
+  .ege-row .words{font-size:1rem}
+}
+@media(max-width:400px){
+  .card{padding:.9rem .75rem}
+  h2{font-size:1.22rem}
+  .eyebrow{font-size:.86rem;letter-spacing:.1em}
+  .ex-card .word{font-size:1.06rem}
+  #nav .btn{font-size:.92rem;padding:.6rem .6rem}
+  #counter{font-size:.84rem;padding:.5rem .6rem}
+  #calmBtn{font-size:.84rem;padding:.5rem .55rem}
+  .review-frac{display:none}
+  .review-badge{font-size:.74rem}
+}
+</style>
+</head>
+<body>
+<div id="storm">
+  <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+  <div id="rain"></div>
+</div>
+<div id="flash"></div>
+<div id="progress"><div class="fill"></div></div>
+
+<div id="deck">
+
+<!-- 1 ИНТРО -->
+<section class="slide" id="s-intro" data-sec="Старт" data-title="Титул" data-type="интро">
+  <div class="intro-wrap">
+    <svg id="boltSvg" viewBox="0 0 200 520" aria-hidden="true">
+      <path d="M118 6 L84 150 L128 158 L70 300 L118 310 L54 512 L150 250 L104 240 L162 118 L112 110 Z"/>
+    </svg>
+    <div class="intro-eyebrow">ЕГЭ по русскому языку</div>
+    <h1 class="intro-title">ЗАДАНИЕ&nbsp;10</h1>
+    <div class="intro-sub">ПРАВОПИСАНИЕ ПРИСТАВОК</div>
+    <button class="btn primary" id="startBtn">Начать</button>
+    <div class="intro-hint">Прогресс сохраняется. Нажмите на счётчик слайдов внизу — откроется оглавление.</div>
+  </div>
+</section>
+
+<!-- 2 КАРТА -->
+<section class="slide" data-sec="Старт" data-title="Карта задания" data-type="карта">
+  <div class="card">
+    <div class="eyebrow">Задание 10 <span class="blk">// карта грозового фронта</span></div>
+    <h2>Что проверяет задание 10</h2>
+    <p>Формулировка из демоверсии: <b class="hl">«Укажите варианты ответов, в которых во всех словах одного ряда пропущена одна и та же буква. Запишите номера ответов.»</b></p>
+    <p class="muted">Рядов пять, верных обычно два-три. Внутри одного ряда правила <b class="hl">перемешаны</b>: ряд разваливается на том слове, о котором вы не подумали.</p>
+    <div class="map">
+      <div class="tile"><div class="num">01</div><h4>Неизменяемые приставки</h4><p class="muted">гласная и согласная: п<b class="e">о</b>дбодрить, на<b class="e">д</b>смотрщик</p></div>
+      <div class="tile"><div class="num">02</div><h4>ПРА/ПРО и РАЗ/РОЗ</h4><p class="muted">пр<b class="e">а</b>родина, р<b class="e">о</b>счерк — но р<b class="e">а</b>списание</p></div>
+      <div class="tile"><div class="num">03</div><h4>Приставки на З/С</h4><p class="muted">бе<b class="e">з</b>донный / бе<b class="e">с</b>крайний и ловушки</p></div>
+      <div class="tile"><div class="num">04</div><h4>ПРЕ- и ПРИ-</h4><p class="muted">значения, паронимы, словарные слова</p></div>
+      <div class="tile"><div class="num">05</div><h4>И/Ы после приставок</h4><p class="muted">под<b class="e">ы</b>грать, но сверх<b class="e">и</b>нтересный</p></div>
+      <div class="tile"><div class="num">06</div><h4>Ъ и Ь</h4><p class="muted">об<b class="e">ъ</b>ект, бул<b class="e">ь</b>он, ин<b class="e">—</b>яз</p></div>
+    </div>
+    <div class="callout blue"><b>Стратегия:</b> сначала определите, <i>какое правило</i> прячется в каждом слове, и только потом вставляйте букву. Слова в ряду могут работать по трём разным правилам сразу.</div>
+  </div>
+</section>
+
+<!-- 3 Блок 1: гласная -->
+<section class="slide" data-sec="Блок 1. Неизменяемые приставки" data-title="Гласная в приставке" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 01 <span class="blk">// гласная в приставке</span></div>
+    <h2>Приставка пишется одинаково — какой бы её ни слышали</h2>
+    <p>Безударная гласная в приставке <b class="hl">не проверяется</b> и не меняется. Приставок «па-», «пад-», «нда-» не существует:</p>
+    <p style="margin-top:.7rem">
+      <span class="tag">ПО-</span><span class="tag">ДО-</span><span class="tag">О-</span><span class="tag">ОБ- / ОБО-</span><span class="tag">ОТ- / ОТО-</span><span class="tag">ПОД- / ПОДО-</span><span class="tag">НАД- / НАДО-</span><span class="tag">НА-</span><span class="tag">ЗА-</span><span class="tag">СО-</span><span class="tag">ПРЕД-</span><span class="tag">ПЕРЕ-</span><span class="tag">ПРО-</span><span class="tag">ПОЗА-</span><span class="tag">В- / ВО-</span><span class="tag">НЕ-</span>
+    </p>
+    <div class="grid2">
+      <div class="tile"><h4>Слышим одно, пишем другое</h4><p class="w">п<b class="e">о</b>переменно, п<b class="e">о</b>дбодрить, п<b class="e">о</b>одаль, з<b class="e">а</b>облачный, н<b class="e">а</b>кусить, с<b class="e">о</b>звучие, нед<b class="e">о</b>верчивый, нен<b class="e">а</b>глядный</p></div>
+      <div class="tile"><h4>Двойные приставки складываются</h4><p>Приставок может быть две — каждая пишется по своему правилу:</p><p class="w" style="margin-top:.4rem">не + о + хватный = н<b class="e">ео</b>хватный<br>не + до + чёты = нед<b class="e">о</b>чёты<br>по + за + вчера = п<b class="e">оза</b>вчера</p></div>
+    </div>
+    <div class="callout blue"><b>Иноязычные приставки тоже неизменяемы.</b> Их гласная — словарная: <span class="w">ант<b class="i">и</b>плагиат, арх<b class="i">и</b>важный, ультр<b class="i">а</b>модный, экстр<b class="i">а</b>ординарный, д<b class="i">е</b>монтаж, д<b class="i">е</b>зориентировать, д<b class="i">и</b>сбаланс, <b class="i">а</b>социальный</span>.</div>
+  </div>
+</section>
+
+<!-- 4 Блок 1: согласная -->
+<section class="slide" data-sec="Блок 1. Неизменяемые приставки" data-title="Согласная Д/Т" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 01 <span class="blk">// согласная в приставке</span></div>
+    <h2>Д или Т: приставка не оглушается на письме</h2>
+    <p>Приставки <b class="hl">ПОД-, НАД-, ОТ-, ПРЕД-</b> перед глухим согласным звучат как «пот-», «нат-», «прет-». На письме — без изменений:</p>
+    <div class="grid2">
+      <div class="tile"><h4>Пишем <b class="i">Д</b></h4><p class="w">по<b class="i">д</b>точить пилу, по<b class="i">д</b>толкнуть, на<b class="i">д</b>кусить, на<b class="i">д</b>смотрщик, пре<b class="i">д</b>теча, пре<b class="i">д</b>полагать</p><p class="muted" style="margin-top:.4rem">Проверка: подо мной, надо мной, предо мной.</p></div>
+      <div class="tile viol"><h4>Пишем <b class="e">Т</b></h4><p class="w">о<b class="e">т</b>далился, о<b class="e">т</b>дежурить, о<b class="e">т</b>глагольный, о<b class="e">т</b>печаток</p><p class="muted" style="margin-top:.4rem">Приставки «од-» не существует. Есть только ОТ- / ОТО-.</p></div>
+    </div>
+    <div class="callout"><b>Как не перепутать ПОД- и ОТ-:</b> обе перед глухим звучат одинаково. Смотрите на смысл: <span class="w">по<b class="i">д</b>бежать</span> — «приблизиться снизу», <span class="w">о<b class="e">т</b>бежать</span> — «удалиться». Значение подсказывает приставку, приставка — букву.</div>
+  </div>
+</section>
+
+<!-- 5 УПР 1 -->
+<section class="slide" data-sec="Блок 1. Неизменяемые приставки" data-title="Практика: гласная и согласная" data-type="практика" data-ex="ex1">
+  <div class="card">
+    <div class="eyebrow">Разряд 1 <span class="blk">// тренировка</span></div>
+    <h2>Гласная или согласная в неизменяемой приставке?</h2>
+    <p class="muted">Первая проверка покажет, где верно, но не откроет букву. Ответ и объяснение — после второй.</p>
+    <div class="ex" id="ex1"></div>
+  </div>
+</section>
+
+<!-- 6 Блок 1б: ПРА/ПРО, РАЗ/РОЗ -->
+<section class="slide" data-sec="Блок 2. ПРА/ПРО и РАЗ/РОЗ" data-title="ПРА/ПРО, РАЗ/РОЗ" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 02 <span class="blk">// две приставки со своей логикой</span></div>
+    <h2>ПРА- или ПРО-, РАЗ- или РОЗ-</h2>
+    <div class="grid2">
+      <div class="tile"><h4>ПРА- = древность, исконность, родство</h4><p class="w">пр<b class="e">а</b>бабушка, пр<b class="e">а</b>отцы, пр<b class="e">а</b>родина, пр<b class="e">а</b>язык, пр<b class="e">а</b>славянский, пр<b class="e">а</b>индоевропейский, пр<b class="e">а</b>латинский (язык)</p></div>
+      <div class="tile viol"><h4>ПРО- = всё остальное, в том числе «в поддержку»</h4><p class="w">пр<b class="i">о</b>бежать, пр<b class="i">о</b>делка, пр<b class="i">о</b>ректор, пр<b class="i">о</b>российский, пр<b class="i">о</b>коммунистический, пр<b class="i">о</b>латинская (деятельность)</p></div>
+    </div>
+    <div class="callout"><b>Исключение:</b> <span class="w">пр<b class="i">о</b>образ</span> — хотя это «первоначальный образ», пишется ПРО-.</div>
+    <h3>РАЗ- / РАС- и РОЗ- / РОС-</h3>
+    <p>Здесь решает <b class="hl">ударение</b>, а не значение: без ударения — <b class="e">А</b>, под ударением — <b class="i">О</b>.</p>
+    <p class="w" style="margin-top:.5rem">р<b class="e">а</b>списание, р<b class="e">а</b>зровнять, р<b class="e">а</b>ссыпать, р<b class="e">а</b>зыграть &nbsp;//&nbsp; р<b class="i">о</b>спись, р<b class="i">о</b>счерк, р<b class="i">о</b>ссыпь, р<b class="i">о</b>зыгрыш, р<b class="i">о</b>звальни</p>
+    <div class="callout blue"><b>Отдельно — <span class="w">разыскной</span>.</b> Действующая норма — с <b class="e">А</b>: разыскной отдел, разыскные мероприятия. Проверять словом <span class="w">р<b class="i">о</b>зыск</span> <b>нельзя</b>: под ударением там О, но прилагательное живёт по общему правилу безударной приставки РАЗ-. Точно так же <span class="w">р<b class="i">о</b>зыгрыш → р<b class="e">а</b>зыграть</span>. В старых учебниках можно встретить «розыскной» — это устаревший вариант.</div>
+  </div>
+</section>
+
+<!-- 7 УПР 2 -->
+<section class="slide" data-sec="Блок 2. ПРА/ПРО и РАЗ/РОЗ" data-title="Практика: ПРА/ПРО, РАЗ/РОЗ" data-type="практика" data-ex="ex2">
+  <div class="card">
+    <div class="eyebrow">Разряд 2 <span class="blk">// тренировка</span></div>
+    <h2>ПРА/ПРО, РАЗ/РОЗ и гости из других языков</h2>
+    <p class="muted">Смотрите на контекст в скобках: у некоторых слов от него зависит буква.</p>
+    <div class="ex" id="ex2"></div>
+  </div>
+</section>
+
+<!-- 8 Блок 3: З/С -->
+<section class="slide" data-sec="Блок 3. Приставки на З/С" data-title="Правило З/С" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 03 <span class="blk">// приставки на З/С</span></div>
+    <h2>З — перед звонкими, С — перед глухими</h2>
+    <p>Свой согласный слушают только <b class="hl">шесть приставок</b>:</p>
+    <div class="prefix-col">
+      <div class="pfx"><b class="i">БЕЗ-</b> / <b class="e">БЕС-</b></div>
+      <div class="pfx"><b class="i">ВОЗ-</b> (<b class="i">ВЗ-</b>) / <b class="e">ВОС-</b> (<b class="e">ВС-</b>)</div>
+      <div class="pfx"><b class="i">ИЗ-</b> / <b class="e">ИС-</b></div>
+      <div class="pfx"><b class="i">НИЗ-</b> / <b class="e">НИС-</b></div>
+      <div class="pfx"><b class="i">РАЗ-</b> (<b class="i">РОЗ-</b>) / <b class="e">РАС-</b> (<b class="e">РОС-</b>)</div>
+      <div class="pfx"><b class="i">ЧРЕЗ-</b> (<b class="i">ЧЕРЕЗ-</b>) / <b class="e">ЧРЕС-</b> (<b class="e">ЧЕРЕС-</b>)</div>
+    </div>
+    <div class="grid2">
+      <div class="tile"><h4><b class="i">З</b> — перед гласными и звонкими</h4><p class="w">бе<b class="i">з</b>донный, во<b class="i">з</b>главить, в<b class="i">з</b>бираться, и<b class="i">з</b>бежать, ни<b class="i">з</b>вергнуть, ра<b class="i">з</b>будить, чре<b class="i">з</b>мерный</p><p class="muted" style="margin-top:.4rem">Звонкие: б в г д ж з + л м н р й</p></div>
+      <div class="tile viol"><h4><b class="e">С</b> — перед глухими</h4><p class="w">бе<b class="e">с</b>шумный, во<b class="e">с</b>кликнуть, в<b class="e">с</b>пугнуть, и<b class="e">с</b>править, ни<b class="e">с</b>падать, ра<b class="e">с</b>прямить, чере<b class="e">с</b>чур</p><p class="muted" style="margin-top:.4rem">Глухие: <span class="w">ф к т ш с х ц ч щ п</span> — «Степка, хочешь щец? Фи!»</p></div>
+    </div>
+    <div class="callout blue"><b>Двойные З и С на стыке:</b> <span class="w">бе<b class="i">зз</b>вёздный, бе<b class="e">сс</b>ердечный, во<b class="i">зз</b>вание, во<b class="e">сс</b>тановить, и<b class="i">зз</b>ябнуть, и<b class="e">сс</b>ушить, ра<b class="i">зз</b>адорить, ра<b class="e">сс</b>вет</span>. Буква приставки не пропадает, даже если корень начинается с такой же.</div>
+  </div>
+</section>
+
+<!-- 9 Блок 3: ловушки -->
+<section class="slide" data-sec="Блок 3. Приставки на З/С" data-title="Ловушки З/С" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 03 <span class="blk">// ⚠ ловушки</span></div>
+    <h2>Пять случаев, когда правило З/С не работает</h2>
+    <div class="grid2">
+      <div class="tile warn"><h4>1. З входит в корень</h4><p>В словах <span class="w">Здание, Здесь, Здешний, Здоровье, Здравствуй, ни Зги</span> приставки нет вообще. З — часть корня, менять её не на что.</p><p class="muted" style="margin-top:.4rem">И с приставкой НЕ-: <span class="w">не<b class="i">з</b>дешний, не<b class="i">з</b>доровится</span>.</p></div>
+      <div class="tile warn"><h4>2. НИЗкий, НИЗший</h4><p>Здесь <span class="w">низ-</span> — корень, а не приставка. Перед глухим З остаётся: <span class="w">ни<b class="i">з</b>кий, ни<b class="i">з</b>ший</span>. Сравните: <span class="w">ни<b class="e">с</b>падать</span> — там НИС- приставка.</p></div>
+      <div class="tile warn"><h4>3. Приставки «З-» не существует</h4><p>Приставка С- неизменяема перед любым согласным: <span class="w"><b class="e">с</b>дать, <b class="e">с</b>делать, <b class="e">с</b>гореть, <b class="e">с</b>бить, <b class="e">с</b>жить, <b class="e">с</b>дача</span>. Слышим «з», пишем С.</p></div>
+      <div class="tile warn"><h4>4. НЕ + С = две приставки</h4><p>Приставки «НЕС-» нет: <span class="w">не<b class="e">с</b>гибаемый, не<b class="e">с</b>держанный, не<b class="e">с</b>жатый, не<b class="e">с</b>добровать, не<b class="e">с</b>говорчивый, пере<b class="e">с</b>данный</span> — это НЕ- (или ПЕРЕ-) плюс приставка С-.</p></div>
+      <div class="tile warn"><h4>5. БЛИЗ- в сложных словах</h4><p>Первая часть <span class="w">близ</span> не меняется даже перед глухим: <span class="w">бли<b class="i">з</b>лежащий, бли<b class="i">з</b>сидящий</span>.</p></div>
+      <div class="tile viol"><h4>ДИЗ- / ДИС-: своё правило</h4><p>Звонкость ни при чём. <b class="i">ДИЗ-</b> — перед гласными и Ъ: <span class="w">диз<b class="i">ъ</b>юнкция, дизассоциация</span>. <b class="e">ДИС-</b> — перед согласными: <span class="w">ди<b class="e">с</b>комфорт, ди<b class="e">с</b>гармония, ди<b class="e">с</b>баланс, ди<b class="e">с</b>бактериоз</span>.</p></div>
+    </div>
+    <div class="callout red"><b>Проверьте себя:</b> <span class="w">ди<b class="e">с</b>гармония</span> — С перед звонким Г. Правило З/С здесь не действует вообще, работает правило иноязычной приставки.</div>
+  </div>
+</section>
+
+<!-- 10 УПР 3 -->
+<section class="slide" data-sec="Блок 3. Приставки на З/С" data-title="Практика: З или С" data-type="практика" data-ex="ex3">
+  <div class="card">
+    <div class="eyebrow">Разряд 3 <span class="blk">// тренировка</span></div>
+    <h2>З или С?</h2>
+    <p class="muted">Приставка слушает первый звук корня, а не букву.</p>
+    <div class="ex" id="ex3"></div>
+  </div>
+</section>
+
+<!-- 11 УПР 4 -->
+<section class="slide" data-sec="Блок 3. Приставки на З/С" data-title="Практика: ловушки З/С" data-type="практика" data-ex="ex4">
+  <div class="card">
+    <div class="eyebrow">Разряд 4 <span class="blk">// ловушки</span></div>
+    <h2>З/С: обойди мины</h2>
+    <p class="muted">Здесь спрятаны корни-обманки, двойные приставки и иноязычные ДИЗ/ДИС.</p>
+    <div class="ex" id="ex4"></div>
+  </div>
+</section>
+
+<!-- 12 ПРЕ -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Значения ПРЕ-" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 04 <span class="blk">// приставка ПРЕ-</span></div>
+    <h2>ПРЕ-: всего два значения</h2>
+    <div class="grid2">
+      <div class="tile"><h4>1. Высокая степень качества = ОЧЕНЬ</h4><p class="w">пр<b class="e">е</b>восходный, пр<b class="e">е</b>мудрый, пр<b class="e">е</b>неприятный, пр<b class="e">е</b>увеличивать, пр<b class="e">е</b>успевать, пр<b class="e">е</b>старелый, пр<b class="e">е</b>длинный, пр<b class="e">е</b>спокойный, пр<b class="e">е</b>восходство</p></div>
+      <div class="tile viol"><h4>2. Значение приставки ПЕРЕ- («через», «по-другому»)</h4><p class="w">пр<b class="e">е</b>вращать, пр<b class="e">е</b>ображать, пр<b class="e">е</b>ступать (закон), пр<b class="e">е</b>рвать, пр<b class="e">е</b>града, пр<b class="e">е</b>творить (в жизнь), пр<b class="e">е</b>образование</p></div>
+    </div>
+    <div class="callout blue"><b>Приём проверки:</b> подставьте вместо приставки слово «очень» или приставку «пере-». Получилось осмысленно — пишем <b class="e">Е</b>. <span class="w">пр<b class="e">е</b>града</span> = «перегородка», <span class="w">пр<b class="e">е</b>милый</span> = «очень милый».</div>
+    <div class="callout"><b>Осторожно с проверкой:</b> она работает только там, где приставка живая. В словах <span class="w">президент, преодолеть, препятствие</span> подставить «очень» тоже как будто можно — но это ложный след. О них — через два слайда.</div>
+  </div>
+</section>
+
+<!-- 13 ПРИ -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Значения ПРИ-" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 04 <span class="blk">// приставка ПРИ-</span></div>
+    <h2>ПРИ-: шесть значений</h2>
+    <div class="grid3">
+      <div class="tile"><h4>1. Близость</h4><p class="w">пр<b class="i">и</b>брежный, пр<b class="i">и</b>городный, пр<b class="i">и</b>вокзальный, пр<b class="i">и</b>дорожный, пр<b class="i">и</b>вратник, пр<b class="i">и</b>людно</p></div>
+      <div class="tile"><h4>2. Приближение, присоединение</h4><p class="w">пр<b class="i">и</b>шить, пр<b class="i">и</b>ехать, пр<b class="i">и</b>лететь, пр<b class="i">и</b>бавить, пр<b class="i">и</b>землиться, пр<b class="i">и</b>клеить</p></div>
+      <div class="tile"><h4>3. Неполнота действия («чуть-чуть»)</h4><p class="w">пр<b class="i">и</b>открыть, пр<b class="i">и</b>сесть, пр<b class="i">и</b>болеть, пр<b class="i">и</b>уныть, пр<b class="i">и</b>встать, пр<b class="i">и</b>держать</p></div>
+      <div class="tile"><h4>4. Доведение до конца</h4><p class="w">пр<b class="i">и</b>думать, пр<b class="i">и</b>бить, пр<b class="i">и</b>готовить, пр<b class="i">и</b>выкнуть, пр<b class="i">и</b>смирел, пр<b class="i">и</b>ручить</p></div>
+      <div class="tile"><h4>5. Сопутствующее действие</h4><p class="w">пр<b class="i">и</b>плясывать, пр<b class="i">и</b>певать, пр<b class="i">и</b>говаривать, жить пр<b class="i">и</b>певаючи</p></div>
+      <div class="tile"><h4>6. Действие в своих интересах</h4><p class="w">пр<b class="i">и</b>беречь, пр<b class="i">и</b>прятать, пр<b class="i">и</b>копить, пр<b class="i">и</b>своить</p></div>
+    </div>
+    <div class="callout"><b>Значений много — и это хорошо:</b> если хоть одно подошло, пишите И. Если не подошло ни одно и «очень / пере-» тоже не работают — слово словарное, объяснение выдумывать не нужно.</div>
+  </div>
+</section>
+
+<!-- 14 УПР 5 -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Практика: значения" data-type="практика" data-ex="ex5">
+  <div class="card">
+    <div class="eyebrow">Разряд 5 <span class="blk">// тренировка</span></div>
+    <h2>ПРЕ- или ПРИ-: определи значение</h2>
+    <p class="muted">Проговаривайте про себя: «очень», «пере-», «близость», «чуть-чуть», «до конца», «попутно», «для себя».</p>
+    <div class="ex" id="ex5"></div>
+  </div>
+</section>
+
+<!-- 15 Паронимы 1 -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Паронимы, часть 1" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 04 <span class="blk">// пары-двойники, часть 1</span></div>
+    <h2>Одно звучание — два слова</h2>
+    <p class="muted">Здесь букву диктует не приставка, а смысл фразы. Без контекста задача не решается вообще.</p>
+    <table class="pare">
+      <tr><th>ПРЕ- (пере- / очень)</th><th>ПРИ- (близость / присоединение / чуть-чуть)</th></tr>
+      <tr><td><b>пребывать</b> — находиться: <i>пребывать в неведении, пребывать в Москве</i></td><td><b>прибывать</b> — приезжать: <i>прибывать в столицу, поезд прибывает</i></td></tr>
+      <tr><td><b>предать</b> — изменить: <i>предать друга, предать огласке, старинное предание</i></td><td><b>придать</b> — прибавить: <i>придать форму, придать значение, приданое невесты</i></td></tr>
+      <tr><td><b>предел</b> — граница: <i>предел терпению, предел прочности</i></td><td><b>придел</b> — пристройка, боковой алтарь: <i>придел храма</i></td></tr>
+      <tr><td><b>преступить</b> — переступить, нарушить: <i>преступить закон, преступный сговор</i></td><td><b>приступить</b> — начать: <i>приступить к работе</i></td></tr>
+      <tr><td><b>претворить</b> — воплотить: <i>претворить мечту в жизнь</i></td><td><b>притворить</b> — неплотно закрыть: <i>притворить дверь</i>; <b>притвориться</b> — сделать вид</td></tr>
+      <tr><td><b>претерпеть</b> — пережить, вынести: <i>претерпеть лишения, претерпеть изменения</i></td><td><b>притерпеться</b> — привыкнуть: <i>притерпеться к боли</i></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 16 Паронимы 2 -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Паронимы, часть 2" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 04 <span class="blk">// пары-двойники, часть 2</span></div>
+    <h2>Ещё шесть пар</h2>
+    <table class="pare">
+      <tr><th>ПРЕ-</th><th>ПРИ-</th></tr>
+      <tr><td><b>преемник</b> — продолжатель: <i>преемник поэта, преемственность поколений</i></td><td><b>приёмник</b> — устройство: <i>старый радиоприёмник</i></td></tr>
+      <tr><td><b>преходящий</b> — временный: <i>преходящая слава</i>; <b>непреходящие</b> ценности — вечные</td><td><b>приходящий</b> — тот, кто приходит: <i>приходящая няня, приходящий гость</i></td></tr>
+      <tr><td><b>презирать</b> — считать ничтожным: <i>презирать труса, смотреть с презрением</i></td><td><b>призирать</b> — заботиться, давать приют: <i>призирать сироту</i></td></tr>
+      <tr><td><b>преклонить</b> — склонить с почтением: <i>преклонить колени</i>; <b>преклонный</b> возраст</td><td><b>приклонить</b> — пригнуть, приблизить: <i>приклонить ветку к земле, голову приклонить</i></td></tr>
+      <tr><td><b>превратно</b> — искажённо: <i>превратно понял меня</i></td><td><b>привратник</b> — сторож у ворот: <i>служить привратником</i></td></tr>
+      <tr><td><b>преуменьшить</b> — представить менее важным, чем есть: <i>преуменьшить опасность</i></td><td><b>приуменьшить</b> — немного уменьшить: <i>приуменьшить расходы</i></td></tr>
+    </table>
+    <div class="callout red"><b>Ловушка на симметрию.</b> Пара <span class="w">преуменьшить / приуменьшить</span> существует: оба слова есть, буква зависит от смысла. А вот пары <span class="w">преувеличить / приувеличить</span> <b>нет</b>: слова «приувеличить» в языке не существует, всегда только <span class="w">пр<b class="e">е</b>увеличить</span>. Симметрию здесь достраивать нельзя.</div>
+  </div>
+</section>
+
+<!-- 17 УПР 6 -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Практика: паронимы 1" data-type="практика" data-ex="ex6">
+  <div class="card">
+    <div class="eyebrow">Разряд 6 <span class="blk">// смысл решает</span></div>
+    <h2>Выбери букву по контексту</h2>
+    <p class="muted">Одно и то же слово встретится дважды — с разными продолжениями. Читайте подпись над словом.</p>
+    <div class="ex" id="ex6"></div>
+  </div>
+</section>
+
+<!-- 18 УПР 7 -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Практика: паронимы 2" data-type="практика" data-ex="ex7">
+  <div class="card">
+    <div class="eyebrow">Разряд 7 <span class="blk">// смысл решает</span></div>
+    <h2>Пары-двойники: вторая партия</h2>
+    <div class="ex" id="ex7"></div>
+  </div>
+</section>
+
+<!-- 19 Сросшиеся -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Приставка срослась с корнем" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 04 <span class="blk">// ⚠ зона турбулентности</span></div>
+    <h2>Когда ПРЕ/ПРИ — уже не приставки</h2>
+    <p>Во многих словах приставка <b class="hl">срослась с корнем</b>: значение стёрлось, и объяснить букву через «очень / пере / близость» <b>невозможно</b>. Это словарные слова.</p>
+    <div class="grid2">
+      <div class="tile"><h4><b class="e">ПРЕ</b> — запомнить</h4><p class="w">пр<b class="e">е</b>одолеть, пр<b class="e">е</b>пятствие, пр<b class="e">е</b>небрегать, пр<b class="e">е</b>имущество, пр<b class="e">е</b>словутый, пр<b class="e">е</b>смыкаться, пр<b class="e">е</b>кословить (беспрекословно), знаки пр<b class="e">е</b>пинания, камень пр<b class="e">е</b>ткновения, пр<b class="e">е</b>льщать, пр<b class="e">е</b>грешение, пр<b class="e">е</b>поны, непр<b class="e">е</b>ложный, пр<b class="e">е</b>ломление, пр<b class="e">е</b>стол, пр<b class="e">е</b>валировать</p></div>
+      <div class="tile viol"><h4><b class="i">ПРИ</b> — запомнить</h4><p class="w">пр<b class="i">и</b>чина, пр<b class="i">и</b>мер, пр<b class="i">и</b>вет, пр<b class="i">и</b>каз, пр<b class="i">и</b>рода, пр<b class="i">и</b>сяга, пр<b class="i">и</b>тязание, пр<b class="i">и</b>ключение, пр<b class="i">и</b>личный, пр<b class="i">и</b>лежный, пр<b class="i">и</b>вередливый, пр<b class="i">и</b>чуда, пр<b class="i">и</b>дирчивый, пр<b class="i">и</b>скорбный, пр<b class="i">и</b>страстие, пр<b class="i">и</b>сутствие, пр<b class="i">и</b>боры, пр<b class="i">и</b>меты</p></div>
+    </div>
+    <div class="callout"><b>Правило безопасности:</b> если значение приставки не определяется ни одним пунктом — не выдумывайте объяснение. Ложное объяснение опаснее незнания: оно уводит к неверной букве. Просто запомните написание.</div>
+  </div>
+</section>
+
+<!-- 20 Заимствованные -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Заимствованные слова" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 04 <span class="blk">// ⚠ иностранцы</span></div>
+    <h2>ПРЕ/ПРИ здесь никогда и не было приставкой</h2>
+    <p>В заимствованных словах <span class="w">пре-</span> и <span class="w">при-</span> — часть иноязычного корня. Правило значений к ним <b>неприменимо в принципе</b>:</p>
+    <div class="grid2">
+      <div class="tile"><h4><b class="e">ПРЕ</b> в заимствованиях</h4><p class="w">пр<b class="e">е</b>зидент, пр<b class="e">е</b>зидиум, пр<b class="e">е</b>зентация, пр<b class="e">е</b>мьера, пр<b class="e">е</b>парат, пр<b class="e">е</b>стиж, пр<b class="e">е</b>тензия, пр<b class="e">е</b>тендент, пр<b class="e">е</b>людия, пр<b class="e">е</b>йскурант, пр<b class="e">е</b>цедент, пр<b class="e">е</b>амбула, пр<b class="e">е</b>зумпция, пр<b class="e">е</b>рогатива, пр<b class="e">е</b>фектура</p></div>
+      <div class="tile viol"><h4><b class="i">ПРИ</b> в заимствованиях</h4><p class="w">пр<b class="i">и</b>вилегия, пр<b class="i">и</b>оритет, пр<b class="i">и</b>митивный, пр<b class="i">и</b>мадонна, пр<b class="i">и</b>нцесса, пр<b class="i">и</b>ватизация, пр<b class="i">и</b>ватный</p></div>
+    </div>
+    <div class="callout blue"><b>Типичная логика-ловушка:</b> «пр<b>е</b>зидент — потому что очень главный», «пр<b>и</b>оритет — потому что приближение». Оба объяснения выдуманы. Президент — от латинского <i>praesidens</i>, приоритет — от <i>prior</i>. Буква словарная, и никакой смысл её не подскажет.</div>
+    <div class="callout"><b>Из списка словарных слов ЕГЭ 2026:</b> <span class="w">предварительный, презентация, президент, президиум, преображение, преобразование, преодоление, прецедент, привилегия, примитивный, приоритет</span>.</div>
+  </div>
+</section>
+
+<!-- 21 УПР 8 -->
+<section class="slide" data-sec="Блок 4. ПРЕ- и ПРИ-" data-title="Практика: словарные" data-type="практика" data-ex="ex8">
+  <div class="card">
+    <div class="eyebrow">Разряд 8 <span class="blk">// только память</span></div>
+    <h2>Сросшиеся и заимствованные</h2>
+    <p class="muted">Здесь правило значений не работает. Если рука тянется объяснить — это сигнал, что слово словарное.</p>
+    <div class="ex" id="ex8"></div>
+  </div>
+</section>
+
+<!-- 22 И/Ы правило -->
+<section class="slide" data-sec="Блок 5. И и Ы после приставок" data-title="Основное правило" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 05 <span class="blk">// И и Ы после приставок</span></div>
+    <h2>После русской приставки на согласную И превращается в Ы</h2>
+    <ul>
+      <li><span class="w">Играть → под<b class="e">ы</b>грать, раз<b class="e">ы</b>грать, с<b class="e">ы</b>грать, об<b class="e">ы</b>грать</span></li>
+      <li><span class="w">Искать → от<b class="e">ы</b>скать, под<b class="e">ы</b>скать, раз<b class="e">ы</b>скать, из<b class="e">ы</b>скание</span></li>
+      <li><span class="w">Идея → без<b class="e">ы</b>дейный; Инициатива → без<b class="e">ы</b>нициативный; Имя → без<b class="e">ы</b>мянный</span></li>
+      <li><span class="w">История → пред<b class="e">ы</b>стория; Июль → пред<b class="e">ы</b>юльский; Итог → под<b class="e">ы</b>тожить</span></li>
+      <li><span class="w">Иней → об<b class="e">ы</b>ндеветь; Импровизировать → с<b class="e">ы</b>мпровизировать; Иметь → воз<b class="e">ы</b>меть</span></li>
+    </ul>
+    <div class="callout blue"><b>После приставки на гласную</b> ничего не меняется: <span class="w">по<b class="i">и</b>грать, по<b class="i">и</b>скать, за<b class="i">и</b>нтересовать, по<b class="i">и</b>здержаться</span>.</div>
+    <div class="callout"><b>Две приставки — правило всё равно работает:</b> <span class="w">не + без + известный = небез<b class="e">ы</b>звестный</span>, <span class="w">небез<b class="e">ы</b>нтересный</span>. Смотрим на ту приставку, что стоит прямо перед корнем.</div>
+  </div>
+</section>
+
+<!-- 23 И/Ы исключения -->
+<section class="slide" data-sec="Блок 5. И и Ы после приставок" data-title="Когда И сохраняется" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 05 <span class="blk">// когда правило не работает</span></div>
+    <h2>Пять случаев, когда И остаётся И</h2>
+    <div class="grid2">
+      <div class="tile warn"><h4>1. Исключение: вз<b class="i">и</b>мать</h4><p>Единственное слово-исключение. Сравните с однокоренным по правилу: <span class="w">из<b class="e">ы</b>мать</span>. И не путайте с <span class="w">вз<b class="e">ы</b>скать, вз<b class="e">ы</b>скание</span> — там всё по общему правилу.</p></div>
+      <div class="tile"><h4>2. После МЕЖ- и СВЕРХ-</h4><p class="w">меж<b class="i">и</b>нститутский, меж<b class="i">и</b>здательский, меж<b class="i">и</b>гровой, сверх<b class="i">и</b>нтересный, сверх<b class="i">и</b>зысканный, сверх<b class="i">и</b>нтуиция</p><p class="muted" style="margin-top:.4rem">Обе приставки <b>русские</b>. Это именно исключение, а не «иноязычность».</p></div>
+      <div class="tile"><h4>3. После иноязычных приставок</h4><p>ДЕЗ-, КОНТР-, ПОСТ-, СУБ-, СУПЕР-, ТРАНС-, ПАН-, ГИПЕР-: <span class="w">дез<b class="i">и</b>нформация, контр<b class="i">и</b>гра, пост<b class="i">и</b>мпрессионизм, суб<b class="i">и</b>нспектор, супер<b class="i">и</b>гра, пан<b class="i">и</b>сламизм</span></p></div>
+      <div class="tile"><h4>4. Сложносокращённые слова</h4><p class="w">мед<b class="i">и</b>нститут, пед<b class="i">и</b>нститут, спорт<b class="i">и</b>нвентарь, сельхоз<b class="i">и</b>нвентарь, фин<b class="i">и</b>нспектор, спец<b class="i">и</b>нтернат</p><p class="muted" style="margin-top:.4rem">«Мед-» — не приставка, а обрубок слова «медицинский».</p></div>
+      <div class="tile"><h4>5. После ДВУХ-, ТРЁХ-, ЧЕТЫРЁХ-</h4><p class="w">двух<b class="i">и</b>мпульсный, трёх<b class="i">и</b>мпульсный, четырёх<b class="i">и</b>гольный</p></div>
+      <div class="tile viol"><h4>Как запомнить</h4><p>Ы появляется только после <b>русской приставки на согласную</b>. МЕЖ- и СВЕРХ- — русские, но исключены. Всё иностранное и всё сложносокращённое бережёт И.</p></div>
+    </div>
+    <div class="callout red"><b>Главный узел задания 10.</b> Одна и та же приставка ведёт себя по-разному в двух правилах:<br>
+      <span class="w">сверх<b class="i">и</b>нтересный</span>, но <span class="w">сверх<b class="e">ъ</b>естественный</span> &nbsp;·&nbsp;
+      <span class="w">меж<b class="i">и</b>нститутский</span>, но <span class="w">меж<b class="e">ъ</b>языковой</span> &nbsp;·&nbsp;
+      <span class="w">двух<b class="i">и</b>мпульсный</span>, но <span class="w">двух<b class="e">ъ</b>ярусный</span>.<br>
+      Это не противоречие: правило И/Ы — про начальную <b>И</b> корня, правило Ъ — про начальные <b>Е, Ё, Ю, Я</b>. Разные буквы — разные правила.</div>
+  </div>
+</section>
+
+<!-- 24 УПР 9 -->
+<section class="slide" data-sec="Блок 5. И и Ы после приставок" data-title="Практика: И или Ы" data-type="практика" data-ex="ex9">
+  <div class="card">
+    <div class="eyebrow">Разряд 9 <span class="blk">// тренировка</span></div>
+    <h2>И или Ы?</h2>
+    <p class="muted">Сначала определите приставку: русская она или нет, и на что оканчивается.</p>
+    <div class="ex" id="ex9"></div>
+  </div>
+</section>
+
+<!-- 25 Ъ -->
+<section class="slide" data-sec="Блок 6. Разделительные Ъ и Ь" data-title="Твёрдый знак" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 06 <span class="blk">// разделительный Ъ</span></div>
+    <h2>Твёрдый знак: только перед Е, Ё, Ю, Я</h2>
+    <div class="grid3">
+      <div class="tile"><h4>1. После русской приставки на согласную</h4><p class="w">под<b class="e">ъ</b>езд, с<b class="e">ъ</b>ёмка, об<b class="e">ъ</b>явление, раз<b class="e">ъ</b>езд, без<b class="e">ъ</b>ядерный, пред<b class="e">ъ</b>явить, с<b class="e">ъ</b>язвить, от<b class="e">ъ</b>явленный, из<b class="e">ъ</b>явить, меж<b class="e">ъ</b>языковой, сверх<b class="e">ъ</b>естественный</p></div>
+      <div class="tile"><h4>2. После иноязычной приставки на согласную</h4><p class="muted">АБ-, АД-, ДИЗ-, ИН-, ИНТЕР-, КОН-, КОНТР-, ОБ-, ПАН-, СУБ-, СУПЕР-, ТРАНС-, ГИПЕР-:</p><p class="w">ад<b class="e">ъ</b>ютант, ин<b class="e">ъ</b>екция, кон<b class="e">ъ</b>юнктура, кон<b class="e">ъ</b>юнктивит, суб<b class="e">ъ</b>ект, транс<b class="e">ъ</b>европейский, диз<b class="e">ъ</b>юнкция, контр<b class="e">ъ</b>ярус, супер<b class="e">ъ</b>яхта, гипер<b class="e">ъ</b>ядро</p></div>
+      <div class="tile"><h4>3. После ДВУХ-, ТРЁХ-, ЧЕТЫРЁХ-</h4><p class="w">двух<b class="e">ъ</b>ярусный, трёх<b class="e">ъ</b>язычный, четырёх<b class="e">ъ</b>ярусный</p></div>
+    </div>
+    <div class="callout"><b>Нет Е/Ё/Ю/Я — нет знака:</b> <span class="w">с<b class="i">э</b>кономить, от<b class="i">у</b>тюжить, двух<b class="i">э</b>тажный, четырёх<b class="i">а</b>ктный, без<b class="i">о</b>пасный, контр<b class="i">у</b>дар, супер<b class="i">о</b>бложка</span>. Приставка есть, а разделять нечего.</div>
+    <div class="callout red"><b>В сложносокращённых словах Ъ не пишется:</b> <span class="w">ин<b class="i">я</b>з, дет<b class="i">я</b>сли, парт<b class="i">я</b>чейка, воен<b class="i">ю</b>рист, Мин<b class="i">ю</b>ст</span>. Здесь первая часть — не приставка, а обрубок слова.</div>
+  </div>
+</section>
+
+<!-- 26 Ь -->
+<section class="slide" data-sec="Блок 6. Разделительные Ъ и Ь" data-title="Мягкий знак и словарные" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Блок 06 <span class="blk">// разделительный Ь</span></div>
+    <h2>Мягкий знак: внутри слова, но не после приставки</h2>
+    <div class="grid2">
+      <div class="tile"><h4>1. Перед Е, Ё, Ю, Я, И внутри слова</h4><p class="w">в<b class="i">ь</b>юга, крест<b class="i">ь</b>янин, обез<b class="i">ь</b>яна, солов<b class="i">ь</b>иный, вороб<b class="i">ь</b>иный, п<b class="i">ь</b>еса, п<b class="i">ь</b>едестал, кар<b class="i">ь</b>ера, порт<b class="i">ь</b>ера, прем<b class="i">ь</b>ера, интерв<b class="i">ь</b>ю, комп<b class="i">ь</b>ютер, пас<b class="i">ь</b>янс, увеч<b class="i">ь</b>я, сош<b class="i">ь</b>ют, соб<b class="i">ь</b>ётся</p></div>
+      <div class="tile viol"><h4>2. В иноязычных словах перед О</h4><p class="w">батал<b class="i">ь</b>он, бул<b class="i">ь</b>он, медал<b class="i">ь</b>он, павил<b class="i">ь</b>он, почтал<b class="i">ь</b>он, шампин<b class="i">ь</b>он, компан<b class="i">ь</b>он</p></div>
+    </div>
+    <h3>Четыре слова, на которых валятся все</h3>
+    <div class="grid2">
+      <div class="tile warn"><h4>под<b class="i">ь</b>ячий — Ь</h4><p>Приставка здесь <b>ПО-</b>, а Д принадлежит корню (от слова «дьяк»). Знак стоит не после приставки — значит, мягкий. Сравните: <span class="w">д<b class="i">ь</b>як</span>.</p></div>
+      <div class="tile warn"><h4>фельд<b class="e">ъ</b>егерь — Ъ</h4><p>«Фельд-» — не приставка, а часть немецкого слова. Но пишется Ъ: это словарное исключение, объяснить его правилом нельзя.</p></div>
+      <div class="tile warn"><h4>из<b class="e">ъ</b>ян — Ъ</h4><p>ИЗ- давно не выделяется как приставка, слово тюркское. Ъ — по традиции. Тоже словарное.</p></div>
+      <div class="tile warn"><h4>нюанс — без знака</h4><p>Хотя рука тянется написать «нЬюанс». Никакого знака: <span class="w">нюанс</span>. Как и <span class="w">интерьер</span> — там, наоборот, Ь, потому что слово заимствовано целиком и ИНТЕР- в нём не приставка.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 27 УПР 10 -->
+<section class="slide" data-sec="Блок 6. Разделительные Ъ и Ь" data-title="Практика: Ъ, Ь или ничего" data-type="практика" data-ex="ex10">
+  <div class="card">
+    <div class="eyebrow">Разряд 10 <span class="blk">// тренировка</span></div>
+    <h2>Ъ, Ь или ничего?</h2>
+    <p class="muted">Вариант «—» означает, что знак не нужен.</p>
+    <div class="ex" id="ex10"></div>
+  </div>
+</section>
+
+<!-- 28 Флеш-карты -->
+<section class="slide" data-sec="Повторение" data-title="Флеш-карты: словарные слова" data-type="карточки">
+  <div class="card">
+    <div class="eyebrow">Повторение <span class="blk">// самопроверка</span></div>
+    <h2>Шестнадцать слов, которые надо просто знать</h2>
+    <p class="muted">Вспомните букву, переверните карточку и честно отметьте себя. Эти карточки в общий процент не идут — это тренировка памяти, а не проверка.</p>
+    <div id="fc1" class="fc-wrap"></div>
+  </div>
+</section>
+
+<!-- 29 Сводка ловушек -->
+<section class="slide" data-sec="Повторение" data-title="Все мины задания 10" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Повторение <span class="blk">// карта минного поля</span></div>
+    <h2>Всё, что конфликтует с интуицией</h2>
+    <div class="grid2">
+      <div class="tile warn"><h4>Корень притворяется приставкой</h4><p class="w">Здание, Здесь, Здоровье, Здравствуй, ни Зги, нИЗкий, нИЗший</p></div>
+      <div class="tile warn"><h4>Приставки не существует</h4><p>Нет приставок <b>З-</b>, <b>НЕС-</b>, <b>ОД-</b>, <b>ПАД-</b>. Есть С-, НЕ+С, ОТ-, ПОД-.</p></div>
+      <div class="tile warn"><h4>Проверочное слово не работает</h4><p class="w">разыскной (не «розыск»), разыграть (не «розыгрыш»)</p></div>
+      <div class="tile warn"><h4>Исключения-одиночки</h4><p class="w">взИмать (но изЫмать, взЫскать), прООбраз (но прАродина)</p></div>
+      <div class="tile warn"><h4>Одна приставка — два правила</h4><p class="w">сверхИнтересный / сверхЪестественный, межИнститутский / межЪязыковой, двухИмпульсный / двухЪярусный</p></div>
+      <div class="tile warn"><h4>Знака нет вовсе</h4><p class="w">сЭкономить, отУтюжить, контрУдар, суперОбложка, четырёхАктный, инЯз, детЯсли, партЯчейка, нюанс</p></div>
+      <div class="tile warn"><h4>Иностранцы без правил</h4><p class="w">прЕзидент, прЕзидиум, прЕтендент, прЕцедент, прИвилегия, прИоритет, прИмадонна</p></div>
+      <div class="tile warn"><h4>Словарные Ъ/Ь</h4><p class="w">подЬячий, фельдЪегерь, изЪян, интерЬер, дЬяк</p></div>
+      <div class="tile warn"><h4>Симметрии нет</h4><p class="w">преуменьшить / приуменьшить — оба есть. преувеличить — только так.</p></div>
+      <div class="tile warn"><h4>ДИЗ/ДИС вне правила З/С</h4><p class="w">диСгармония (перед звонким Г!), диСбаланс, но диЗъюнкция</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 30 Итоговая практика -->
+<section class="slide" data-sec="Повторение" data-title="Итоговая практика (16)" data-type="практика" data-ex="exFin">
+  <div class="card">
+    <div class="eyebrow">Финальный разряд <span class="blk">// все правила вперемешку</span></div>
+    <h2>Шестнадцать слов, шесть правил</h2>
+    <p class="muted">Подсказки о том, какое правило работает, здесь нет. Определяйте сами — как на экзамене.</p>
+    <div class="ex" id="exFin"></div>
+  </div>
+</section>
+
+<!-- 31 Алгоритм -->
+<section class="slide" data-sec="Формат ЕГЭ" data-title="Алгоритм решения" data-type="теория">
+  <div class="card">
+    <div class="eyebrow">Перед бурей <span class="blk">// алгоритм</span></div>
+    <h2>Как решать задание 10</h2>
+    <ul>
+      <li><b class="hl">Шаг 1.</b> Разберите <b>каждое слово по отдельности</b>: выделите приставку и корень. Внутри одного ряда правила почти всегда разные.</li>
+      <li><b class="hl">Шаг 2.</b> Определите правило для каждого слова: неизменяемая приставка? З/С? ПРЕ/ПРИ? И/Ы? Ъ/Ь? А может, приставки вообще нет?</li>
+      <li><b class="hl">Шаг 3.</b> Вставьте букву, <b>проговаривая объяснение</b>. Нет объяснения — вспоминайте словарные списки, а не выдумывайте правило.</li>
+      <li><b class="hl">Шаг 4.</b> Пояснение в скобках — <b>часть условия</b>, а не украшение: <i>придел (храма)</i> и <i>предел (терпению)</i> — разные слова.</li>
+      <li><b class="hl">Шаг 5.</b> Ряд подходит, только если буква совпала во <b>всех трёх</b> словах. Одно несовпадение — ряд отбрасываем.</li>
+      <li><b class="hl">Шаг 6.</b> В ответ выпишите номера <b>всех</b> подходящих рядов подряд, без пробелов и запятых: <span class="w">235</span>.</li>
+    </ul>
+    <div class="callout blue"><b>Частая потеря балла:</b> ученик находит один верный ряд и останавливается. Верных почти всегда два-три — проверяйте все пять до конца.</div>
+  </div>
+</section>
+
+<!-- 32-36 ЕГЭ -->
+<section class="slide" data-sec="Формат ЕГЭ" data-title="Задание ЕГЭ № 1" data-type="ЕГЭ" data-ege="ege1">
+  <div class="card">
+    <div class="eyebrow">Формат ЕГЭ <span class="blk">// задание 1 из 5</span></div>
+    <h2>Задание 10</h2>
+    <p class="ege-q">Укажите варианты ответов, в которых во всех словах одного ряда пропущена одна и та же буква. Запишите номера ответов.</p>
+    <div class="ege" id="ege1"></div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Формат ЕГЭ" data-title="Задание ЕГЭ № 2" data-type="ЕГЭ" data-ege="ege2">
+  <div class="card">
+    <div class="eyebrow">Формат ЕГЭ <span class="blk">// задание 2 из 5</span></div>
+    <h2>Задание 10</h2>
+    <p class="ege-q">Укажите варианты ответов, в которых во всех словах одного ряда пропущена одна и та же буква. Запишите номера ответов.</p>
+    <div class="ege" id="ege2"></div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Формат ЕГЭ" data-title="Задание ЕГЭ № 3" data-type="ЕГЭ" data-ege="ege3">
+  <div class="card">
+    <div class="eyebrow">Формат ЕГЭ <span class="blk">// задание 3 из 5</span></div>
+    <h2>Задание 10</h2>
+    <p class="ege-q">Укажите варианты ответов, в которых во всех словах одного ряда пропущена одна и та же буква. Запишите номера ответов.</p>
+    <div class="ege" id="ege3"></div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Формат ЕГЭ" data-title="Задание ЕГЭ № 4" data-type="ЕГЭ" data-ege="ege4">
+  <div class="card">
+    <div class="eyebrow">Формат ЕГЭ <span class="blk">// задание 4 из 5</span></div>
+    <h2>Задание 10</h2>
+    <p class="ege-q">Укажите варианты ответов, в которых во всех словах одного ряда пропущена одна и та же буква. Запишите номера ответов.</p>
+    <div class="ege" id="ege4"></div>
+  </div>
+</section>
+
+<section class="slide" data-sec="Формат ЕГЭ" data-title="Задание ЕГЭ № 5" data-type="ЕГЭ" data-ege="ege5">
+  <div class="card">
+    <div class="eyebrow">Формат ЕГЭ <span class="blk">// задание 5 из 5</span></div>
+    <h2>Задание 10</h2>
+    <p class="ege-q">Укажите варианты ответов, в которых во всех словах одного ряда пропущена одна и та же буква. Запишите номера ответов.</p>
+    <div class="ege" id="ege5"></div>
+  </div>
+</section>
+
+<!-- 37 Финал -->
+<section class="slide" data-sec="Итог" data-title="Результат и темы на повторение" data-type="итог">
+  <div class="card" style="text-align:center">
+    <div class="eyebrow">Гроза прошла <span class="blk">// итоги</span></div>
+    <h2>Небо проясняется</h2>
+    <div class="final-score" id="finalScore">—</div>
+    <p class="muted">верных ответов <b>с первой попытки</b> — так же, как считает экзамен</p>
+    <div class="final-list" id="finalList" style="text-align:left;max-width:36rem;margin:1.2rem auto 0"></div>
+    <div id="reviewBlock" style="max-width:40rem;margin:1.8rem auto 0;text-align:left"></div>
+    <div class="ex-foot" style="justify-content:center;margin-top:1.5rem">
+      <button class="btn primary" id="copyBtn">Скопировать итог</button>
+      <button class="btn" id="recount">Пересчитать</button>
+      <button class="btn ghost" id="restart">К началу</button>
+      <button class="btn ghost small" id="wipe">Сбросить весь прогресс</button>
+    </div>
+    <textarea id="copyOut" rows="10" readonly></textarea>
+    <p class="footer-note">Прогресс сохраняется в этом браузере. Диагностика считается по первой проверке — исправления после «Ещё попытки» на неё не влияют.</p>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<div id="nav" class="hidden">
+  <button class="btn" id="prevBtn">← Назад</button>
+  <div id="navMid">
+    <button id="counter" type="button" aria-haspopup="dialog">1 из 1 ▾</button>
+    <button id="calmBtn" type="button">Спокойный режим</button>
+  </div>
+  <button class="btn" id="nextBtn">Вперёд →</button>
+</div>
+
+<div id="tocBack" role="dialog" aria-modal="true" aria-label="Оглавление">
+  <div id="toc">
+    <div id="tocHead">
+      <h3>Оглавление</h3>
+      <button class="btn small ghost" id="tocClose">Закрыть</button>
+    </div>
+    <div id="tocBody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var STORE_KEY = 'zad10_v2';
+
+/* ================== БАНКИ СЛОВ ==================
+   b   — часть слова до пропуска
+   aft — часть слова после пропуска
+   ans — верная буква ('—' = знак не нужен)
+   o   — варианты именно для этой карточки (иначе берутся общие opts)
+   ctx — контекст-подсказка над словом
+   h   — объяснение, появляется после второй проверки            */
+var EX = {
+
+ex1:{title:'Неизменяемые приставки: гласная и согласная', opts:['а','о'], words:[
+ {b:'п',aft:'дбодрить',ans:'о',h:'Приставка ПОД- пишется всегда одинаково. Приставки «пад-» в русском языке нет.'},
+ {b:'поз',aft:'прошлый',ans:'а',h:'Приставка ПОЗА- неизменяемая: позапрошлый, позавчера, позапрошлогодний.'},
+ {b:'р',aft:'зровнять',ans:'а',h:'РАЗ- без ударения → А. Под ударением была бы РОЗ-: рОзыгрыш.'},
+ {b:'с',aft:'звучие',ans:'о',h:'Приставка СО- неизменяемая: созвучие, сотрудничество, соавтор.'},
+ {b:'п',aft:'переменно',ans:'о',h:'Приставка ПО- неизменяемая: попеременно.'},
+ {b:'з',aft:'облачная',ctx:'…цена',ans:'а',h:'Приставка ЗА- неизменяемая: заоблачный, заморозить.'},
+ {b:'нед',aft:'верчивый',ans:'о',h:'Две приставки: НЕ- + ДО-. Обе неизменяемые.'},
+ {b:'нен',aft:'глядный',ans:'а',h:'Две приставки: НЕ- + НА-. Приставки «на-» и «не-» пишутся всегда одинаково.'},
+ {b:'на',aft:'смотрщик',ans:'д',o:['д','т'],h:'Приставка НАД-: слышим «т», пишем Д. Проверка: надо мной.'},
+ {b:'о',aft:'далился',ans:'т',o:['д','т'],h:'Приставка ОТ-: отдалился. Приставки «од-» не существует.'},
+ {b:'по',aft:'точить',ctx:'…пилу',ans:'д',o:['д','т'],h:'Приставка ПОД-: подточить. Слышим «т», пишем Д. Проверка: подо мной.'},
+ {b:'пре',aft:'теча',ans:'д',o:['д','т'],h:'Приставка ПРЕД-: предтеча — тот, кто идёт впереди. Проверка: предо мной.'}
+]},
+
+ex2:{title:'ПРА/ПРО, РАЗ/РОЗ и иноязычные приставки', opts:['а','о'], words:[
+ {b:'пр',aft:'родина',ans:'а',h:'Значение древности, исконности → ПРА-.'},
+ {b:'пр',aft:'образ',ans:'о',h:'ИСКЛЮЧЕНИЕ. Значение «первоначальный образ» есть, но пишется ПРО-.'},
+ {b:'пр',aft:'латинский',ctx:'…язык',ans:'а',h:'Язык-предок латыни → ПРА-. Решает контекст: здесь речь о древности.'},
+ {b:'пр',aft:'латинская',ctx:'…деятельность',ans:'о',h:'«В поддержку латыни», а не о древности → ПРО-. То же слово, другой контекст — другая буква.'},
+ {b:'пр',aft:'отцы',ans:'а',h:'Далёкие предки, родство по восходящей линии → ПРА-.'},
+ {b:'пр',aft:'ректор',ans:'о',h:'Древности нет, значение обычное → ПРО-.'},
+ {b:'р',aft:'списание',ans:'а',h:'Приставка безударная → РАС-. Ударение падает на корень: расписАние.'},
+ {b:'р',aft:'счерк',ans:'о',h:'Приставка под ударением → РОС-: рОсчерк пера.'},
+ {b:'р',aft:'зыскной',ctx:'…отдел',ans:'а',h:'Приставка безударная → РАЗ-. Проверять словом рОзыск НЕЛЬЗЯ: там О под ударением, а здесь работает общее правило.'},
+ {b:'ант',aft:'плагиат',ans:'и',o:['а','е','и'],h:'Иноязычная приставка АНТИ- неизменяема, её гласная словарная.'},
+ {b:'ультр',aft:'модный',ans:'а',o:['а','е','и'],h:'Иноязычная приставка УЛЬТРА-: ультрамодный, ультраправый.'},
+ {b:'д',aft:'зориентировать',ans:'е',o:['а','е','и'],h:'Иноязычная приставка ДЕЗ-: дезориентировать, дезинформация.'}
+]},
+
+ex3:{title:'Приставки на З/С', opts:['з','с'], words:[
+ {b:'ра',aft:'будить',ans:'з',h:'Перед звонким Б → З.'},
+ {b:'бе',aft:'шумный',ans:'с',h:'Перед глухим Ш → С.'},
+ {b:'во',aft:'становить',ans:'с',h:'Перед глухим С → С. На стыке получается СС: воССтановить.'},
+ {b:'и',aft:'бежать',ans:'з',h:'Перед звонким Б → З.'},
+ {b:'ни',aft:'падать',ans:'с',h:'Перед глухим П → С. Здесь НИС- именно приставка.'},
+ {b:'чре',aft:'мерный',ans:'з',h:'Перед звонким (сонорным) М → З.'},
+ {b:'ра',aft:'свет',ans:'с',h:'Перед глухим С → С. На стыке СС: раССвет.'},
+ {b:'бе',aft:'граничный',ans:'з',h:'Перед звонким Г → З.'},
+ {b:'ни',aft:'послать',ans:'с',h:'Перед глухим П → С: ниспослать.'},
+ {b:'сни',aft:'хождение',ans:'с',h:'Перед глухим Х → С. Приставка НИС-, хотя слышится иначе.'},
+ {b:'во',aft:'звание',ans:'з',h:'Перед звонким З → З. На стыке ЗЗ: воЗЗвание.'},
+ {b:'чере',aft:'чур',ans:'с',h:'Перед глухим Ч → С: чересчур. Пишется слитно и в одно слово.'}
+]},
+
+ex4:{title:'Ловушки З/С', opts:['з','с'], words:[
+ {b:'',aft:'дание',ans:'з',h:'Приставки нет вообще: З — часть корня. Правило З/С не применяется.'},
+ {b:'не',aft:'гибаемый',ans:'с',h:'Две приставки: НЕ- + С-. Приставки «НЕС-» не существует.'},
+ {b:'',aft:'дача',ctx:'…экзамена',ans:'с',h:'Приставка С- неизменяема перед любым согласным. Приставки «З-» нет.'},
+ {b:'ни',aft:'вергнуть',ans:'з',h:'Приставка НИЗ- перед звонким В → З.'},
+ {b:'не',aft:'добровать',ans:'с',h:'НЕ- + С-. Слышим «з», пишем С.'},
+ {b:'',aft:'доровье',ans:'з',h:'З входит в корень, приставки нет.'},
+ {b:'бли',aft:'сидящий',ans:'з',h:'БЛИЗ- в сложных словах не меняется даже перед глухим С.'},
+ {b:'не',aft:'дешний',ans:'з',h:'НЕ- + ЗДЕШНИЙ. З принадлежит корню, менять её не на что.'},
+ {b:'ни',aft:'кий',ans:'з',h:'Здесь низ- — корень, а не приставка. Сравните: ниСпадать — там приставка.'},
+ {b:'',aft:'ги',ctx:'не видно ни …',ans:'з',h:'«Ни зги» — З в корне, приставки нет.'},
+ {b:'пере',aft:'данный',ctx:'…экзамен',ans:'с',h:'Две приставки: ПЕРЕ- + С-. Приставка С- неизменяема.'},
+ {b:'ди',aft:'баланс',ans:'с',h:'Иноязычная приставка ДИС- перед согласной. Правило звонкости здесь не работает вообще.'}
+]},
+
+ex5:{title:'ПРЕ/ПРИ: значения', opts:['е','и'], words:[
+ {b:'пр',aft:'морский',ans:'и',h:'Близость: расположенный при море → ПРИ-.'},
+ {b:'пр',aft:'открыть',ans:'и',h:'Неполнота действия, «чуть-чуть» → ПРИ-.'},
+ {b:'пр',aft:'градить',ans:'е',h:'Заменяется на «перегородить» → ПРЕ-.'},
+ {b:'пр',aft:'милый',ans:'е',h:'= очень милый → ПРЕ-.'},
+ {b:'пр',aft:'шить',ans:'и',h:'Присоединение → ПРИ-.'},
+ {b:'пр',aft:'рвать',ans:'е',h:'Значение приставки ПЕРЕ- («перервать») → ПРЕ-.'},
+ {b:'пр',aft:'землиться',ans:'и',h:'Приближение к земле → ПРИ-.'},
+ {b:'пр',aft:'увеличить',ans:'е',h:'= очень увеличить → ПРЕ-. Формы «приувеличить» в языке нет.'},
+ {b:'пр',aft:'плясывать',ans:'и',h:'Сопутствующее действие: приплясывать, припевать, приговаривать → ПРИ-.'},
+ {b:'пр',aft:'длинный',ans:'е',h:'= очень длинный → ПРЕ-.'},
+ {b:'пр',aft:'смирел',ans:'и',h:'Доведение действия до конца: стал смирным → ПРИ-.'},
+ {b:'пр',aft:'вставать',ans:'и',h:'Неполнота действия: встать не полностью → ПРИ-.'}
+]},
+
+ex6:{title:'Паронимы ПРЕ/ПРИ, часть 1', opts:['е','и'], words:[
+ {b:'пр',aft:'бывать',ctx:'…в столицу',ans:'и',h:'Прибывать = приезжать, приближение → ПРИ-.'},
+ {b:'пр',aft:'бывать',ctx:'…в неведении',ans:'е',h:'Пребывать = находиться где-то → ПРЕ-.'},
+ {b:'пр',aft:'дать',ctx:'…форму изделию',ans:'и',h:'Придать = прибавить, внести → ПРИ-.'},
+ {b:'пр',aft:'дать',ctx:'…друга',ans:'е',h:'Предать = изменить. Сюда же: предать огласке, старинное предание → ПРЕ-.'},
+ {b:'пр',aft:'дел',ctx:'…терпению',ans:'е',h:'Предел = граница → ПРЕ-.'},
+ {b:'пр',aft:'дел',ctx:'…храма',ans:'и',h:'Придел = боковая пристройка с алтарём → ПРИ-.'},
+ {b:'пр',aft:'ступить',ctx:'…закон',ans:'е',h:'Преступить = переступить, нарушить → ПРЕ-.'},
+ {b:'пр',aft:'ступить',ctx:'…к работе',ans:'и',h:'Приступить = начать → ПРИ-.'},
+ {b:'пр',aft:'творить',ctx:'…дверь',ans:'и',h:'Притворить = неплотно закрыть, неполнота действия → ПРИ-.'},
+ {b:'пр',aft:'творить',ctx:'…мечту в жизнь',ans:'е',h:'Претворить = воплотить, «перевести» в реальность → ПРЕ-.'},
+ {b:'пр',aft:'терпеться',ctx:'…к боли',ans:'и',h:'Притерпеться = привыкнуть → ПРИ-.'},
+ {b:'пр',aft:'терпеть',ctx:'…лишения',ans:'е',h:'Претерпеть = пережить, вынести → ПРЕ-.'}
+]},
+
+ex7:{title:'Паронимы ПРЕ/ПРИ, часть 2', opts:['е','и'], words:[
+ {b:'пр',aft:'емник',ctx:'…поэта',ans:'е',h:'Преемник = продолжатель, тот, кто перенимает → ПРЕ-.'},
+ {b:'радиопр',aft:'ёмник',ctx:'старый …',ans:'и',h:'Приёмник = устройство, которое принимает → ПРИ-.'},
+ {b:'пр',aft:'ходящий',ctx:'…гость',ans:'и',h:'Приходящий = тот, кто приходит → ПРИ-.'},
+ {b:'пр',aft:'ходящая',ctx:'…слава',ans:'е',h:'Преходящий = временный, проходящий мимо → ПРЕ-. Сравните: непреходящие ценности.'},
+ {b:'пр',aft:'зирать',ctx:'…труса',ans:'е',h:'Презирать = считать ничтожным → ПРЕ-.'},
+ {b:'пр',aft:'зирать',ctx:'…сироту',ans:'и',h:'Призирать = заботиться, давать приют → ПРИ-.'},
+ {b:'пр',aft:'клонить',ctx:'…колени',ans:'е',h:'Преклонить колени — с почтением, высокая степень → ПРЕ-.'},
+ {b:'пр',aft:'клонить',ctx:'…ветку к земле',ans:'и',h:'Приклонить = пригнуть, приблизить → ПРИ-.'},
+ {b:'пр',aft:'вратник',ctx:'служить …ом',ans:'и',h:'Привратник = сторож при вратах, близость → ПРИ-.'},
+ {b:'пр',aft:'вратно',ctx:'…понял меня',ans:'е',h:'Превратно = искажённо, «перевёрнуто» → ПРЕ-.'},
+ {b:'пр',aft:'клонный',ctx:'…возраст',ans:'е',h:'Преклонный возраст — словарное, с ПРЕ-.'},
+ {b:'пр',aft:'увеличить',ctx:'…заслуги',ans:'е',h:'= очень увеличить → ПРЕ-. Слова «приувеличить» не существует, здесь варианта нет.'}
+]},
+
+ex8:{title:'Сросшиеся и заимствованные ПРЕ/ПРИ', opts:['е','и'], words:[
+ {b:'пр',aft:'зидент',ans:'е',h:'Заимствование из латыни (praesidens). ПРЕ — часть корня, значения нет.'},
+ {b:'пр',aft:'вилегия',ans:'и',h:'Заимствование из латыни. ПРИ — часть корня.'},
+ {b:'пр',aft:'пятствие',ans:'е',h:'Приставка срослась с корнем. Словарное слово.'},
+ {b:'пр',aft:'чина',ans:'и',h:'Приставка срослась с корнем. Словарное слово.'},
+ {b:'пр',aft:'небрегать',ans:'е',h:'Приставка срослась с корнем: пренебрегать, пренебрежение.'},
+ {b:'пр',aft:'оритет',ans:'и',h:'Заимствование (лат. prior — первый). С «приближением» не связано.'},
+ {b:'пр',aft:'тензия',ans:'е',h:'Заимствование. Словарное слово.'},
+ {b:'пр',aft:'рода',ans:'и',h:'Приставка срослась с корнем. Словарное слово.'},
+ {b:'пр',aft:'словутый',ans:'е',h:'Приставка срослась с корнем. Словарное слово.'},
+ {b:'пр',aft:'мадонна',ans:'и',h:'Заимствование из итальянского (prima donna). Словарное слово.'},
+ {b:'пр',aft:'ключение',ans:'и',h:'Приставка срослась с корнем. Словарное слово.'},
+ {b:'пр',aft:'смыкаться',ans:'е',h:'Приставка срослась с корнем: пресмыкаться, пресмыкающиеся.'}
+]},
+
+ex9:{title:'И и Ы после приставок', opts:['и','ы'], words:[
+ {b:'без',aft:'дейный',ans:'ы',h:'Русская приставка БЕЗ- на согласную → Ы (идея → безыдейный).'},
+ {b:'сверх',aft:'нтересный',ans:'и',h:'После СВЕРХ- сохраняется И. Приставка русская, но входит в число исключений.'},
+ {b:'под',aft:'тожить',ans:'ы',h:'Русская приставка ПОД- на согласную → Ы (итог → подытожить).'},
+ {b:'дез',aft:'нформация',ans:'и',h:'Иноязычная приставка ДЕЗ- → И.'},
+ {b:'вз',aft:'мать',ctx:'…плату',ans:'и',h:'ИСКЛЮЧЕНИЕ: взимать. Единственное слово, где после русской приставки на согласную осталась И.'},
+ {b:'вз',aft:'скать',ctx:'…штраф',ans:'ы',h:'Взыскать — по общему правилу → Ы. Не путайте с исключением «взимать».'},
+ {b:'мед',aft:'нститут',ans:'и',h:'Сложносокращённое слово: «мед-» — обрубок слова «медицинский», а не приставка → И.'},
+ {b:'пред',aft:'стория',ans:'ы',h:'Русская приставка ПРЕД- на согласную → Ы.'},
+ {b:'контр',aft:'гра',ans:'и',h:'Иноязычная приставка КОНТР- → И.'},
+ {b:'небез',aft:'звестный',ans:'ы',h:'Две приставки: НЕ- + БЕЗ-. Перед корнем стоит русская БЕЗ- на согласную → Ы.'},
+ {b:'с',aft:'мпровизировать',ans:'ы',h:'Русская приставка С- на согласную → Ы.'},
+ {b:'двух',aft:'мпульсный',ans:'и',h:'После ДВУХ-, ТРЁХ-, ЧЕТЫРЁХ- сохраняется И.'}
+]},
+
+ex10:{title:'Разделительные Ъ и Ь', opts:['ъ','ь','—'], words:[
+ {b:'ад',aft:'ютант',ans:'ъ',h:'Иноязычная приставка АД- на согласную + Ю → Ъ.'},
+ {b:'в',aft:'юга',ans:'ь',h:'Приставки нет, В — часть корня. Разделительный Ь внутри слова.'},
+ {b:'под',aft:'езд',ans:'ъ',h:'Русская приставка ПОД- на согласную + Е → Ъ.'},
+ {b:'бул',aft:'он',ans:'ь',h:'Иноязычное слово, Ь перед О: бульон, медальон, павильон.'},
+ {b:'с',aft:'экономить',ans:'—',h:'Э не входит в список Е, Ё, Ю, Я — разделять нечего, знак не нужен.'},
+ {b:'двух',aft:'ярусный',ans:'ъ',h:'После ДВУХ- перед Я → Ъ. А вот И/Ы здесь была бы И: двухИмпульсный.'},
+ {b:'солов',aft:'иный',ans:'ь',h:'Внутри слова перед И, не после приставки → Ь.'},
+ {b:'контр',aft:'удар',ans:'—',h:'После У знак не нужен. Сравните: контрЪярус — там Я.'},
+ {b:'транс',aft:'европейский',ans:'ъ',h:'Иноязычная приставка ТРАНС- на согласную + Е → Ъ.'},
+ {b:'под',aft:'ячий',ans:'ь',h:'Приставка здесь ПО-, а Д — часть корня (от «дьяк»). Знак стоит не после приставки → Ь.'},
+ {b:'н',aft:'юанс',ans:'—',h:'Словарное слово: нюанс пишется без мягкого знака.'},
+ {b:'фельд',aft:'егерь',ans:'ъ',h:'Словарное исключение: «фельд-» не приставка, но пишется Ъ.'}
+]},
+
+exFin:{title:'Итоговая практика', opts:['а','о'], words:[
+ {b:'поз',aft:'вчера',ans:'а',o:['а','о'],h:'Неизменяемая приставка ПОЗА-.'},
+ {b:'на',aft:'ломить',ans:'д',o:['д','т'],h:'Приставка НАД-: слышим «т», пишем Д.'},
+ {b:'и',aft:'подтишка',ans:'с',o:['з','с'],h:'Перед глухим П → С: исподтишка.'},
+ {b:'пр',aft:'сягать',ctx:'…на верность',ans:'и',o:['е','и'],h:'Присяга — словарное слово с ПРИ-.'},
+ {b:'сверх',aft:'естественный',ans:'ъ',o:['ъ','ь','—'],h:'Русская приставка СВЕРХ- на согласную + Е → Ъ.'},
+ {b:'супер',aft:'обложка',ans:'—',o:['ъ','ь','—'],h:'После О знак не нужен: приставка есть, разделять нечего.'},
+ {b:'из',aft:'ян',ans:'ъ',o:['ъ','ь','—'],h:'Словарное: изъян. ИЗ- здесь давно не приставка, Ъ пишется по традиции.'},
+ {b:'с',aft:'знова',ans:'ы',o:['и','ы'],h:'Русская приставка С- на согласную → Ы: сызнова, сызмала.'},
+ {b:'воз',aft:'меть',ctx:'…желание',ans:'ы',o:['и','ы'],h:'Русская приставка ВОЗ- на согласную → Ы (иметь → возыметь).'},
+ {b:'пост',aft:'мпрессионизм',ans:'и',o:['и','ы'],h:'Иноязычная приставка ПОСТ- → И.'},
+ {b:'пр',aft:'амбула',ctx:'…Конституции',ans:'е',o:['е','и'],h:'Заимствование, ПРЕ — часть корня. Словарное слово.'},
+ {b:'пр',aft:'даное',ctx:'…невесты',ans:'и',o:['е','и'],h:'Приданое = то, что придано невесте → ПРИ-. Не путайте с «предать».'},
+ {b:'арх',aft:'важный',ans:'и',o:['а','е','и'],h:'Иноязычная приставка АРХИ-: архиважный, архисложный.'},
+ {b:'экстр',aft:'ординарный',ans:'а',o:['а','е','и'],h:'Иноязычная приставка ЭКСТРА-: экстраординарный, экстракласс.'},
+ {b:'чре',aft:'вычайный',ans:'з',o:['з','с'],h:'Перед звонким В → З: чрезвычайный.'},
+ {b:'ин',aft:'яз',ans:'—',o:['ъ','ь','—'],h:'Сложносокращённое слово («иностранные языки») — Ъ не пишется. Как детясли, партячейка.'}
+]}
+};
+
+/* ================== ФЛЕШ-КАРТЫ (в общий процент не идут) ================== */
+var FC = {fc1:[
+ {w:'пр_зидиум',ans:'президиум',h:'Заимствование из латыни. Значения у ПРЕ- нет — словарное.'},
+ {w:'пр_цедент',ans:'прецедент',h:'Заимствование. В списке словарных слов ЕГЭ.'},
+ {w:'пр_зумпция',ans:'презумпция',h:'Заимствование: презумпция невиновности.'},
+ {w:'пр_рогатива',ans:'прерогатива',h:'Заимствование: исключительное право.'},
+ {w:'пр_амбула',ans:'преамбула',h:'Заимствование: вводная часть документа.'},
+ {w:'знаки пр_пинания',ans:'препинания',h:'Приставка срослась с корнем. Только запоминание.'},
+ {w:'камень пр_ткновения',ans:'преткновения',h:'Устойчивое выражение, приставка срослась с корнем.'},
+ {w:'беспр_кословно',ans:'беспрекословно',h:'От «прекословить». Приставка срослась с корнем.'},
+ {w:'пр_вередливый',ans:'привередливый',h:'Приставка срослась с корнем. Словарное слово.'},
+ {w:'пр_митивный',ans:'примитивный',h:'Заимствование. В списке словарных слов ЕГЭ.'},
+ {w:'пр_ватизация',ans:'приватизация',h:'Заимствование от лат. privatus — частный.'},
+ {w:'пр_даное невесты',ans:'приданое',h:'То, что придано невесте → ПРИ-. Не путать с «предать».'},
+ {w:'фельд_егерь',ans:'фельдъегерь',h:'Ъ, хотя «фельд-» не приставка. Словарное исключение.'},
+ {w:'из_ян',ans:'изъян',h:'Ъ, хотя ИЗ- здесь давно не приставка. Словарное.'},
+ {w:'под_ячий',ans:'подьячий',h:'Ь: приставка ПО-, а Д — часть корня (от «дьяк»).'},
+ {w:'ин_яз',ans:'иняз',h:'Знака нет: сложносокращённое слово, первая часть — не приставка.'}
+]};
+
+/* ================== ЗАДАНИЯ ЕГЭ ==================
+   Верные ряды НЕ прописаны вручную: они вычисляются из букв.
+   Ряд верен тогда и только тогда, когда во всех трёх словах одна буква. */
+var EGE = {
+ege1:{rows:[
+ {w:[{b:'пр',aft:'образ',ans:'о'},{b:'пр',aft:'родина',ans:'а'},{b:'перев',aft:'плотиться',ans:'о'}],
+  why:'прОобраз (исключение) — прАродина (древность) — перевОплотиться (приставка ВО-). О, А, О.'},
+ {w:[{b:'бли',aft:'лежащий',ans:'з'},{b:'ни',aft:'вергать',ans:'з'},{b:'обе',aft:'заразить',ans:'з'}],
+  why:'блиЗлежащий (БЛИЗ- не меняется) — ниЗвергать (перед звонким В) — обеЗзаразить (перед звонким З). Везде З.'},
+ {w:[{b:'пр',aft:'увеличивать',ctx:'(заслуги)',ans:'е'},{b:'пр',aft:'рогатива',ans:'е'},{b:'пр',aft:'словутый',ans:'е'}],
+  why:'прЕувеличивать (= очень) — прЕрогатива (заимствование) — прЕсловутый (срослось с корнем). Везде Е, но по трём разным причинам.'},
+ {w:[{b:'супер',aft:'яркий',ans:'ъ'},{b:'ин',aft:'екция',ans:'ъ'},{b:'под',aft:'ячий',ans:'ь'}],
+  why:'суперЪяркий — инЪекция — подЬячий. Третье слово ломает ряд: там приставка ПО-, а не ПОД-.'},
+ {w:[{b:'без',aft:'мянный',ans:'ы'},{b:'вз',aft:'скать',ans:'ы'},{b:'пред',aft:'нфарктный',ans:'ы'}],
+  why:'безЫмянный — взЫскать — предЫнфарктный. Везде русская приставка на согласную → Ы.'}
+]},
+ege2:{rows:[
+ {w:[{b:'пр',aft:'небрегать',ans:'е'},{b:'пр',aft:'дание',ctx:'(старины)',ans:'е'},{b:'пр',aft:'дел',ctx:'(терпению)',ans:'е'}],
+  why:'прЕнебрегать (словарное) — прЕдание старины (от «предать») — прЕдел терпению (граница). Везде Е.'},
+ {w:[{b:'ди',aft:'бактериоз',ans:'с'},{b:'ра',aft:'цветка',ans:'с'},{b:'не',aft:'говорчивый',ans:'с'}],
+  why:'диСбактериоз (иноязычная ДИС-) — раСцветка (перед глухим Ц) — неСговорчивый (НЕ- + С-). Везде С, по трём разным правилам.'},
+ {w:[{b:'непр',aft:'ложный',ctx:'(обет)',ans:'е'},{b:'пр',aft:'творить',ctx:'(дверь)',ans:'и'},{b:'пр',aft:'твориться',ctx:'(спящим)',ans:'и'}],
+  why:'непрЕложный (словарное) — прИтворить дверь (неполнота) — прИтвориться спящим. Е, И, И.'},
+ {w:[{b:'воен',aft:'юрист',ans:'—'},{b:'парт',aft:'ячейка',ans:'—'},{b:'диз',aft:'юнкция',ans:'ъ'}],
+  why:'военюрист и партячейка — сложносокращённые, знак не пишется. дизЪюнкция — иноязычная приставка ДИЗ-. Ряд ломается на третьем слове.'},
+ {w:[{b:'с',aft:'змала',ans:'ы'},{b:'по',aft:'здержаться',ans:'и'},{b:'сам',aft:'здат',ans:'и'}],
+  why:'сЫзмала (приставка С- на согласную) — поИздержаться (приставка на гласную) — самИздат (сложносокращённое). Ы, И, И.'}
+]},
+ege3:{rows:[
+ {w:[{b:'п',aft:'верье',ans:'о'},{b:'п',aft:'одаль',ans:'о'},{b:'р',aft:'спись',ans:'о'}],
+  why:'пОверье — пОодаль — рОспись (приставка под ударением: рОспись, но рАсписание). Везде О.'},
+ {w:[{b:'от',aft:'явленный',ans:'ъ'},{b:'п',aft:'едестал',ans:'ь'},{b:'об',aft:'ём',ans:'ъ'}],
+  why:'отЪявленный — пЬедестал (приставки нет, Ь в корне) — обЪём. Ъ, Ь, Ъ.'},
+ {w:[{b:'пр',aft:'бывать',ctx:'(в город)',ans:'и'},{b:'пр',aft:'дел',ctx:'(в храме)',ans:'и'},{b:'пр',aft:'ступать',ctx:'(к делу)',ans:'и'}],
+  why:'прИбывать в город (приезжать) — прИдел храма (пристройка) — прИступать к делу (начинать). Везде И: пояснения в скобках решают всё.'},
+ {w:[{b:'сверх',aft:'зысканный',ans:'и'},{b:'меж',aft:'здательский',ans:'и'},{b:'вз',aft:'мать',ctx:'(налог)',ans:'и'}],
+  why:'сверхИзысканный и межИздательский — исключения СВЕРХ-/МЕЖ-. взИмать — единственное слово-исключение. Везде И.'},
+ {w:[{b:'во',aft:'становить',ans:'с'},{b:'и',aft:'черпать',ans:'с'},{b:'бе',aft:'донный',ans:'з'}],
+  why:'воССтановить — иСчерпать — беЗдонный (перед звонким Д). С, С, З.'}
+]},
+ege4:{rows:[
+ {w:[{b:'кон',aft:'юнктивит',ans:'ъ'},{b:'п',aft:'еса',ans:'ь'},{b:'ад',aft:'ютант',ans:'ъ'}],
+  why:'конЪюнктивит — пЬеса (приставки нет) — адЪютант. Ъ, Ь, Ъ.'},
+ {w:[{b:'на',aft:'кусить',ans:'д'},{b:'пре',aft:'теча',ans:'д'},{b:'по',aft:'точить',ans:'д'}],
+  why:'наДкусить — преДтеча — поДточить. Везде Д: приставки НАД-, ПРЕД-, ПОД- не оглушаются на письме.'},
+ {w:[{b:'и',aft:'рисованный',ans:'з'},{b:'бе',aft:'пощадный',ans:'с'},{b:'ро',aft:'черк',ans:'с'}],
+  why:'иЗрисованный (перед звонким Р) — беСпощадный (перед глухим П) — роСчерк. З, С, С.'},
+ {w:[{b:'пр',aft:'ходящая',ctx:'(няня)',ans:'и'},{b:'пр',aft:'терпеться',ctx:'(к боли)',ans:'и'},{b:'пр',aft:'зумпция',ctx:'(невиновности)',ans:'е'}],
+  why:'прИходящая няня (та, что приходит) — прИтерпеться (привыкнуть) — прЕзумпция (заимствование). И, И, Е.'},
+ {w:[{b:'пост',aft:'мпрессионизм',ans:'и'},{b:'суб',aft:'нспектор',ans:'и'},{b:'сельхоз',aft:'нвентарь',ans:'и'}],
+  why:'постИмпрессионизм и субИнспектор — иноязычные приставки. сельхозИнвентарь — сложносокращённое. Везде И.'}
+]},
+ege5:{rows:[
+ {w:[{b:'сверх',aft:'естественный',ans:'ъ'},{b:'из',aft:'явить',ans:'ъ'},{b:'контр',aft:'ярус',ans:'ъ'}],
+  why:'сверхЪестественный — изЪявить — контрЪярус. Везде Ъ. Обратите внимание: у той же СВЕРХ- в правиле И/Ы была бы И.'},
+ {w:[{b:'',aft:'дирать',ctx:'(кожуру)',ans:'с'},{b:'ди',aft:'пропорция',ans:'с'},{b:'ни ',aft:'ги',ans:'з'}],
+  why:'Сдирать (приставка С-, приставки «З-» нет) — диСпропорция — ни Зги (З в корне). С, С, З.'},
+ {w:[{b:'пр',aft:'оритеты',ans:'и'},{b:'пр',aft:'бежать',ctx:'(домой)',ans:'и'},{b:'пр',aft:'возмочь',ctx:'(трудности)',ans:'е'}],
+  why:'прИоритеты (заимствование) — прИбежать (приближение) — прЕвозмочь (= пере-). И, И, Е.'},
+ {w:[{b:'чере',aft:'чур',ans:'с'},{b:'ра',aft:'щедриться',ans:'с'},{b:'не',aft:'гораемый',ans:'с'}],
+  why:'череСчур — раСщедриться (перед глухим Щ) — неСгораемый (НЕ- + С-). Везде С.'},
+ {w:[{b:'двух',aft:'мпульсный',ans:'и'},{b:'фин',aft:'нспектор',ans:'и'},{b:'меж',aft:'нститутский',ans:'и'}],
+  why:'двухИмпульсный (после ДВУХ-) — финИнспектор (сложносокращённое) — межИнститутский (исключение МЕЖ-). Везде И.'}
+]}
+};
+
+/* Верные ряды вычисляются из данных */
+Object.keys(EGE).forEach(function(id){
+  EGE[id].answers = EGE[id].rows.map(function(r,i){
+    var f = r.w[0].ans;
+    return r.w.every(function(x){return x.ans===f;}) ? i+1 : 0;
+  }).filter(function(n){return n>0;});
+});
+
+/* ================== ТЕМЫ ДЛЯ ДИАГНОСТИКИ ================== */
+var TOPICS = [
+ {name:'Неизменяемые приставки', ex:['ex1'], ref:'теория'},
+ {name:'ПРА/ПРО и РАЗ/РОЗ', ex:['ex2'], ref:'теория'},
+ {name:'Приставки на З / С', ex:['ex3','ex4'], ref:'теория'},
+ {name:'ПРЕ- и ПРИ-: значения и паронимы', ex:['ex5','ex6','ex7'], ref:'теория'},
+ {name:'ПРЕ/ПРИ: словарные слова', ex:['ex8'], ref:'теория'},
+ {name:'И / Ы после приставок', ex:['ex9'], ref:'теория'},
+ {name:'Разделительные Ъ и Ь', ex:['ex10'], ref:'теория'},
+ {name:'Всё вперемешку', ex:['exFin'], ref:'практика'},
+ {name:'Задания формата ЕГЭ', ege:['ege1','ege2','ege3','ege4','ege5'], ref:'задания'}
+];
+
+/* ================== СОСТОЯНИЕ ================== */
+var S = {slide:0, calm:false, visited:{}, ex:{}, ege:{}, fc:{}};
+Object.keys(EX).forEach(function(id){ S.ex[id]={picks:{},stage:0,first:null,frozen:{}}; });
+Object.keys(EGE).forEach(function(id){ S.ege[id]={sel:{},stage:0,first:null,frozen:{}}; });
+Object.keys(FC).forEach(function(id){ S.fc[id]={know:{},pos:0}; });
+
+function save(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({
+    slide:S.slide, calm:S.calm, visited:S.visited, ex:S.ex, ege:S.ege, fc:S.fc
+  })); }catch(e){}
+}
+function load(){
+  try{
+    var raw=localStorage.getItem(STORE_KEY); if(!raw) return;
+    var d=JSON.parse(raw); if(!d) return;
+    if(typeof d.slide==='number') S.slide=d.slide;
+    S.calm=!!d.calm; S.visited=d.visited||{};
+    Object.keys(EX).forEach(function(id){ if(d.ex&&d.ex[id]) S.ex[id]=d.ex[id]; });
+    Object.keys(EGE).forEach(function(id){ if(d.ege&&d.ege[id]) S.ege[id]=d.ege[id]; });
+    Object.keys(FC).forEach(function(id){ if(d.fc&&d.fc[id]) S.fc[id]=d.fc[id]; });
+  }catch(e){}
+}
+load();
+
+/* ================== УТИЛИТЫ ================== */
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+function shuffled(n){
+  var a=[],i,j,t; for(i=0;i<n;i++)a.push(i);
+  for(i=n-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); t=a[i];a[i]=a[j];a[j]=t; }
+  return a;
+}
+function shown(a){ return a==='—' ? '' : a; }
+var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function flash(str,dur){
+  if(reduceMotion||S.calm) return;
+  var f=document.getElementById('flash');
+  f.style.opacity=str; setTimeout(function(){f.style.opacity=0;}, dur||110);
+}
+
+/* порядок карточек перемешивается при каждой загрузке страницы */
+var ORDER={};
+Object.keys(EX).forEach(function(id){ ORDER[id]=shuffled(EX[id].words.length); });
+
+/* ================== УПРАЖНЕНИЯ ================== */
+var exDom={};
+
+function buildExercise(id){
+  var box=document.getElementById(id); if(!box) return;
+  var data=EX[id];
+  var grid=el('div','ex-grid');
+  var cards=[];
+  ORDER[id].forEach(function(idx){
+    var w=data.words[idx];
+    var card=el('div','ex-card');
+    card.appendChild(el('div','ctx', w.ctx||'&nbsp;'));
+    var word=el('div','word','');
+    card.appendChild(word);
+    var optsBox=el('div','opts');
+    var list=w.o||data.opts;
+    var btns=[];
+    list.forEach(function(o){
+      var b=el('button','opt', o==='—'?'—':o.toUpperCase());
+      b.type='button';
+      b.addEventListener('click',function(){ pick(id,idx,o); });
+      optsBox.appendChild(b); btns.push({v:o,node:b});
+    });
+    card.appendChild(optsBox);
+    card.appendChild(el('div','hint', w.h||''));
+    grid.appendChild(card);
+    cards.push({idx:idx,node:card,word:word,btns:btns});
+  });
+  box.appendChild(grid);
+
+  var foot=el('div','ex-foot');
+  var mainBtn=el('button','btn primary','Проверить'); mainBtn.type='button';
+  var retryBtn=el('button','btn','Ещё попытка'); retryBtn.type='button';
+  var resetBtn=el('button','btn ghost small','Сбросить'); resetBtn.type='button';
+  var score=el('span','ex-score','');
+  var note=el('div','ex-note','');
+  foot.appendChild(mainBtn); foot.appendChild(retryBtn); foot.appendChild(resetBtn); foot.appendChild(score); foot.appendChild(note);
+  box.appendChild(foot);
+
+  mainBtn.addEventListener('click',function(){ checkExercise(id); });
+  retryBtn.addEventListener('click',function(){ retryExercise(id); });
+  resetBtn.addEventListener('click',function(){ resetExercise(id); });
+
+  exDom[id]={cards:cards,mainBtn:mainBtn,retryBtn:retryBtn,resetBtn:resetBtn,score:score,note:note};
+  renderExercise(id);
+}
+
+function letterFor(id,idx){
+  var st=S.ex[id], w=EX[id].words[idx];
+  if(st.stage===3) return shown(w.ans)|| (w.ans==='—'?'∅':'');
+  var p=st.picks[idx];
+  if(p==null) return '_';
+  return shown(p) || '∅';
+}
+
+function renderExercise(id){
+  var d=exDom[id]; if(!d) return;
+  var st=S.ex[id], data=EX[id];
+  d.cards.forEach(function(c){
+    var w=data.words[c.idx], p=st.picks[c.idx], good=(p===w.ans);
+    c.node.className='ex-card';
+    if(st.stage===1){
+      if(p==null) c.node.classList.add('empty');
+      else c.node.classList.add(good?'correct':'wrong');
+    } else if(st.stage===2){
+      if(st.frozen[c.idx]) c.node.classList.add('correct','frozen');
+    } else if(st.stage===3){
+      if(p==null) c.node.classList.add('empty');
+      else c.node.classList.add(good?'correct':'wrong');
+      c.node.classList.add('reveal');
+    }
+    var mark='';
+    if(st.stage===1||st.stage===3){
+      mark = p==null ? '<span class="mark">не отвечено</span>'
+           : (good?'<span class="mark">верно</span>':'<span class="mark">неверно</span>');
+    }
+    c.word.innerHTML = w.b + '<span class="slot">'+letterFor(id,c.idx)+'</span>' + w.aft + mark;
+    var locked = (st.stage===1) || (st.stage===3) || (st.stage===2 && st.frozen[c.idx]);
+    c.btns.forEach(function(b){
+      b.node.classList.toggle('sel', p===b.v);
+      b.node.disabled = locked;
+    });
+  });
+
+  var f=st.first;
+  if(st.stage===0){
+    d.mainBtn.textContent='Проверить'; d.mainBtn.style.display='';
+    d.retryBtn.style.display='none'; d.score.innerHTML=''; d.note.innerHTML='';
+  } else if(st.stage===1){
+    d.mainBtn.textContent='Показать ответы'; d.mainBtn.style.display='';
+    d.retryBtn.style.display = (f && (f.wrong+f.empty)>0) ? '' : 'none';
+    d.score.innerHTML='Верно: <span class="g">'+f.ok+'</span> · неверно: <span class="r">'+f.wrong+'</span> · не отвечено: <span class="y">'+f.empty+'</span> из '+f.total;
+    d.note.innerHTML = (f.wrong+f.empty)>0
+      ? 'Правильные буквы пока скрыты. Нажмите «Ещё попытка» — верные позиции закрепятся, остальные откроются для исправления.'
+      : 'Все позиции верны. Нажмите «Показать ответы», чтобы увидеть разбор каждого слова.';
+  } else if(st.stage===2){
+    d.mainBtn.textContent='Проверить'; d.mainBtn.style.display='';
+    d.retryBtn.style.display='none';
+    d.score.innerHTML='Первая попытка: <span class="g">'+f.ok+'</span> из '+f.total;
+    d.note.innerHTML='Верные позиции закреплены. Исправьте остальные и проверьте снова — тогда откроются ответы и объяснения.';
+  } else {
+    var now=countNow(id);
+    d.mainBtn.style.display='none'; d.retryBtn.style.display='none';
+    d.score.innerHTML='Первая попытка: <span class="g">'+f.ok+'</span> из '+f.total+' · сейчас: <span class="g">'+now.ok+'</span> из '+f.total;
+    d.note.innerHTML='В диагностику идёт результат первой попытки. Под каждым словом — объяснение.';
+  }
+}
+
+function countNow(id){
+  var st=S.ex[id], data=EX[id], ok=0, wrong=0, empty=0;
+  data.words.forEach(function(w,i){
+    var p=st.picks[i];
+    if(p==null) empty++; else if(p===w.ans) ok++; else wrong++;
+  });
+  return {ok:ok,wrong:wrong,empty:empty,total:data.words.length};
+}
+
+function pick(id,idx,letter){
+  var st=S.ex[id];
+  if(st.stage===1||st.stage===3) return;
+  if(st.stage===2 && st.frozen[idx]) return;
+  st.picks[idx] = (st.picks[idx]===letter) ? null : letter;
+  if(st.picks[idx]==null) delete st.picks[idx];
+  renderExercise(id); save();
+}
+
+function checkExercise(id){
+  var st=S.ex[id];
+  if(st.stage===1){ st.stage=3; renderExercise(id); save(); refreshFinal(); return; }
+  var c=countNow(id);
+  if(st.stage===0){
+    st.first={ok:c.ok,wrong:c.wrong,empty:c.empty,total:c.total};
+    st.stage=1;
+    flash(c.wrong===0&&c.empty===0?0.3:0.12,110);
+  } else if(st.stage===2){
+    st.stage=3;
+  }
+  renderExercise(id); save(); refreshFinal();
+}
+
+function retryExercise(id){
+  var st=S.ex[id], data=EX[id];
+  st.frozen={};
+  data.words.forEach(function(w,i){ if(st.picks[i]===w.ans) st.frozen[i]=true; });
+  st.stage=2;
+  renderExercise(id); save();
+}
+
+function resetExercise(id){
+  if(!confirm('Сбросить это упражнение вместе с результатом первой попытки?')) return;
+  S.ex[id]={picks:{},stage:0,first:null,frozen:{}};
+  renderExercise(id); save(); refreshFinal(); 
+}
+
+/* ================== ЕГЭ ================== */
+var egeDom={};
+
+function rowHTML(row,reveal){
+  return row.w.map(function(x){
+    var mid = reveal ? (shown(x.ans)||'∅') : '_';
+    return x.b+'<span class="slot">'+mid+'</span>'+x.aft +
+      (x.ctx?' <span class="muted" style="font-family:var(--font-b)">'+x.ctx+'</span>':'');
+  }).join(',&nbsp; ');
+}
+
+function buildEge(id){
+  var box=document.getElementById(id); if(!box) return;
+  var data=EGE[id];
+  var wrap=el('div','ege-rows'); var rows=[];
+  data.rows.forEach(function(row,idx){
+    var r=el('div','ege-row');
+    r.appendChild(el('div','num',String(idx+1)));
+    var body=el('div','words','');
+    r.appendChild(body);
+    r.addEventListener('click',function(){ toggleRow(id,idx); });
+    wrap.appendChild(r); rows.push({node:r,body:body});
+  });
+  box.appendChild(wrap);
+
+  var foot=el('div','ex-foot');
+  var mainBtn=el('button','btn primary','Проверить'); mainBtn.type='button';
+  var retryBtn=el('button','btn','Ещё попытка'); retryBtn.type='button';
+  var resetBtn=el('button','btn ghost small','Сбросить'); resetBtn.type='button';
+  var score=el('span','ex-score','');
+  var note=el('div','ex-note','');
+  foot.appendChild(mainBtn); foot.appendChild(retryBtn); foot.appendChild(resetBtn); foot.appendChild(score); foot.appendChild(note);
+  box.appendChild(foot);
+  mainBtn.addEventListener('click',function(){ checkEge(id); });
+  retryBtn.addEventListener('click',function(){ retryEge(id); });
+  resetBtn.addEventListener('click',function(){ resetEge(id); });
+
+  egeDom[id]={rows:rows,mainBtn:mainBtn,retryBtn:retryBtn,resetBtn:resetBtn,score:score,note:note};
+  renderEge(id);
+}
+
+function egeShould(id){
+  var m={}; EGE[id].answers.forEach(function(n){ m[n-1]=true; }); return m;
+}
+
+function renderEge(id){
+  var d=egeDom[id]; if(!d) return;
+  var st=S.ege[id], data=EGE[id], should=egeShould(id);
+  var reveal = st.stage===3;
+  d.rows.forEach(function(r,idx){
+    r.node.className='ege-row';
+    if(st.sel[idx]) r.node.classList.add('sel');
+    if(st.stage===1||st.stage===3){
+      r.node.classList.add('locked');
+      if(st.sel[idx]&&should[idx]) r.node.classList.add('correct');
+      else if(st.sel[idx]&&!should[idx]) r.node.classList.add('wrong');
+      else if(!st.sel[idx]&&should[idx]) r.node.classList.add(st.stage===3?'missed':'wrong');
+    } else if(st.stage===2 && st.frozen[idx]){
+      r.node.classList.add('locked','correct');
+    }
+    var html=rowHTML(data.rows[idx],reveal);
+    if(reveal) html+='<div class="why">'+data.rows[idx].why+'</div>';
+    r.body.innerHTML=html;
+  });
+  var f=st.first;
+  if(st.stage===0){
+    d.mainBtn.textContent='Проверить'; d.mainBtn.style.display='';
+    d.retryBtn.style.display='none'; d.score.innerHTML=''; 
+    d.note.innerHTML='Отметьте все ряды, где во всех словах пропущена одна и та же буква.';
+  } else if(st.stage===1){
+    d.mainBtn.textContent='Показать ответ'; d.mainBtn.style.display='';
+    d.retryBtn.style.display = f.ok<f.total ? '' : 'none';
+    d.score.innerHTML='Правильных решений по рядам: <span class="'+(f.ok===f.total?'g':'r')+'">'+f.ok+'</span> из '+f.total+'. Буквы пока скрыты.';
+    d.note.innerHTML = f.ok<f.total
+      ? 'Красным отмечены ряды, по которым решение неверно. Нажмите «Ещё попытка» — верные останутся закреплёнными.'
+      : 'Все пять рядов разобраны верно. Нажмите «Показать ответ» для разбора.';
+  } else if(st.stage===2){
+    d.mainBtn.textContent='Проверить'; d.mainBtn.style.display='';
+    d.retryBtn.style.display='none';
+    d.score.innerHTML='Первая попытка: <span class="g">'+f.ok+'</span> из '+f.total;
+    d.note.innerHTML='Верно разобранные ряды закреплены. Пересмотрите остальные.';
+  } else {
+    d.mainBtn.style.display='none'; d.retryBtn.style.display='none';
+    d.score.innerHTML='Ответ: <b class="e">'+data.answers.join('')+'</b> · первая попытка: <span class="g">'+f.ok+'</span> из '+f.total;
+    d.note.innerHTML='Пунктиром обведены ряды, которые надо было отметить, но вы их пропустили.';
+  }
+}
+
+function toggleRow(id,idx){
+  var st=S.ege[id];
+  if(st.stage===1||st.stage===3) return;
+  if(st.stage===2 && st.frozen[idx]) return;
+  st.sel[idx]=!st.sel[idx];
+  if(!st.sel[idx]) delete st.sel[idx];
+  renderEge(id); save();
+}
+
+function countEge(id){
+  var st=S.ege[id], should=egeShould(id), n=EGE[id].rows.length, ok=0;
+  for(var i=0;i<n;i++){ if(!!st.sel[i]===!!should[i]) ok++; }
+  return {ok:ok,total:n};
+}
+
+function checkEge(id){
+  var st=S.ege[id];
+  if(st.stage===1){ st.stage=3; renderEge(id); save(); refreshFinal(); return; }
+  if(st.stage===0){
+    if(Object.keys(st.sel).length===0){
+      egeDom[id].note.innerHTML='Пока не отмечен ни один ряд. Пустой ответ не засчитывается ни как верный, ни как неверный — выберите хотя бы один ряд.';
+      return;
+    }
+    var c=countEge(id);
+    st.first={ok:c.ok,total:c.total};
+    st.stage=1;
+    flash(c.ok===c.total?0.3:0.12,110);
+  } else if(st.stage===2){
+    st.stage=3;
+  }
+  renderEge(id); save(); refreshFinal();
+}
+
+function retryEge(id){
+  var st=S.ege[id], should=egeShould(id), n=EGE[id].rows.length;
+  st.frozen={};
+  for(var i=0;i<n;i++){ if(!!st.sel[i]===!!should[i]) st.frozen[i]=true; }
+  st.stage=2; renderEge(id); save();
+}
+
+function resetEge(id){
+  if(!confirm('Сбросить это задание вместе с результатом первой попытки?')) return;
+  S.ege[id]={sel:{},stage:0,first:null,frozen:{}};
+  renderEge(id); save(); refreshFinal();
+}
+
+/* ================== ФЛЕШ-КАРТЫ ================== */
+var fcDom={}, fcOrder={};
+Object.keys(FC).forEach(function(id){ fcOrder[id]=shuffled(FC[id].length); });
+
+function buildFC(id){
+  var box=document.getElementById(id); if(!box) return;
+  var card=el('div','fc','');
+  var bar=el('div','fc-bar','');
+  var flipBtn=el('button','btn primary','Показать ответ'); flipBtn.type='button';
+  var knowBtn=el('button','btn','Знал'); knowBtn.type='button';
+  var noBtn=el('button','btn ghost','Не знал'); noBtn.type='button';
+  var cnt=el('span','fc-count','');
+  bar.appendChild(flipBtn); bar.appendChild(knowBtn); bar.appendChild(noBtn); bar.appendChild(cnt);
+  box.appendChild(card); box.appendChild(bar);
+  fcDom[id]={card:card,flip:flipBtn,know:knowBtn,no:noBtn,cnt:cnt,open:false};
+  flipBtn.addEventListener('click',function(){ fcDom[id].open=!fcDom[id].open; renderFC(id); });
+  knowBtn.addEventListener('click',function(){ markFC(id,true); });
+  noBtn.addEventListener('click',function(){ markFC(id,false); });
+  renderFC(id);
+}
+
+function markFC(id,val){
+  var st=S.fc[id], ord=fcOrder[id];
+  st.know[ord[st.pos]] = val;
+  st.pos = (st.pos+1) % ord.length;
+  fcDom[id].open=false;
+  renderFC(id); save();
+}
+
+function renderFC(id){
+  var d=fcDom[id]; if(!d) return;
+  var st=S.fc[id], ord=fcOrder[id], list=FC[id];
+  if(st.pos>=ord.length) st.pos=0;
+  var item=list[ord[st.pos]];
+  if(d.open){
+    d.card.innerHTML='<div class="fw">'+item.ans+'</div><div class="fback">'+item.h+'</div>';
+    d.flip.textContent='Скрыть ответ';
+  } else {
+    d.card.innerHTML='<div class="fctx">вспомните букву</div><div class="fw">'+item.w.replace('_','<span class="slot">_</span>')+'</div>';
+    d.flip.textContent='Показать ответ';
+  }
+  var known=0,seen=0;
+  Object.keys(st.know).forEach(function(k){ seen++; if(st.know[k]) known++; });
+  d.cnt.textContent='Карточка '+(st.pos+1)+' из '+list.length+' · знал: '+known+' из '+seen;
+}
+
+/* ================== ИТОГ ================== */
+function topicStats(t){
+  var ok=0,wrong=0,empty=0,total=0,started=false;
+  (t.ex||[]).forEach(function(id){
+    var st=S.ex[id]; total+=EX[id].words.length;
+    if(st.first){ started=true; ok+=st.first.ok; wrong+=st.first.wrong; empty+=st.first.empty; }
+  });
+  (t.ege||[]).forEach(function(id){
+    var st=S.ege[id]; total+=EGE[id].rows.length;
+    if(st.first){ started=true; ok+=st.first.ok; wrong+=(st.first.total-st.first.ok); }
+  });
+  var answered=ok+wrong;
+  return {t:t,ok:ok,wrong:wrong,empty:empty,total:total,answered:answered,started:started,
+          pct: answered? Math.round(ok/answered*100) : null};
+}
+
+function refreshFinal(){
+  if(document.querySelector('.slide.active') && document.getElementById('finalScore')){
+    renderFinal();
+  }
+}
+
+function renderFinal(){
+  var list=document.getElementById('finalList'); if(!list) return;
+  list.innerHTML='';
+  var ok=0, ans=0, max=0;
+  Object.keys(EX).forEach(function(id){
+    var st=S.ex[id], n=EX[id].words.length; max+=n;
+    var txt;
+    if(st.first){ ok+=st.first.ok; ans+=st.first.ok+st.first.wrong;
+      txt=st.first.ok+' / '+n + (st.first.empty?' (пропущено '+st.first.empty+')':''); }
+    else txt='— / '+n;
+    list.appendChild(el('div','row','<span>'+EX[id].title+'</span><span>'+txt+'</span>'));
+  });
+  Object.keys(EGE).forEach(function(id,i){
+    var st=S.ege[id], n=EGE[id].rows.length; max+=n;
+    var txt;
+    if(st.first){ ok+=st.first.ok; ans+=n; txt=st.first.ok+' / '+n; } else txt='— / '+n;
+    list.appendChild(el('div','row','<span>Задание ЕГЭ № '+(i+1)+'</span><span>'+txt+'</span>'));
+  });
+  document.getElementById('finalScore').innerHTML = ok+'<span class="bolt-sep">⚡</span>'+max;
+  renderReview();
+}
+
+function renderReview(){
+  var block=document.getElementById('reviewBlock'); if(!block) return;
+  var rows=TOPICS.map(topicStats);
+  var started=rows.filter(function(r){return r.started;});
+  if(!started.length){
+    block.innerHTML='<div class="review-h">Темы на повторение</div>'+
+      '<div class="review-wait">Пройдите упражнения и задания ЕГЭ — и здесь появятся темы, на которые стоит потратить время ещё раз. Считается результат первой проверки, пропущенные позиции в минус не идут.</div>';
+    return;
+  }
+  function pri(r){ if(!r.started) return 1; if(r.wrong>0) return 2; return 0; }
+  rows.sort(function(a,b){
+    var pa=pri(a),pb=pri(b);
+    if(pa!==pb) return pb-pa;
+    if(pa===2) return (a.pct||0)-(b.pct||0);
+    return 0;
+  });
+  var worst=rows.filter(function(r){return r.started&&r.wrong>0;})[0];
+  var head='Темы на повторение', sub;
+  if(worst) sub='Больше всего ошибок — <b style="color:var(--bad)">'+worst.t.name+'</b>. С неё и начните.';
+  else sub='В пройденных темах ошибок с первой попытки нет.';
+  var html='<div class="review-h">'+head+'</div><div class="review-sub">'+sub+'</div>';
+  rows.forEach(function(r,i){
+    var cls='review-item', badge='', bcls='', color='rgba(130,199,255,.25)', frac='—';
+    if(!r.started){ badge='не пройдено'; bcls=''; }
+    else {
+      frac=r.ok+'/'+r.answered;
+      if(r.wrong===0){ cls+=' clear'; badge='усвоено'; bcls='lo'; color='var(--ok)'; }
+      else if(r.pct>=70){ badge='почти'; bcls='mid'; color='var(--wait)'; }
+      else { if(i===0) cls+=' lead'; badge='слабое место'; bcls='hi'; color='var(--bad)'; }
+    }
+    var pct = r.pct==null?0:r.pct;
+    var goto = firstSlideOfTopic(r.t);
+    html+='<div class="'+cls+'"><div class="rt"><div class="name">'+r.t.name+'</div>'+
+      '<button class="slide-ref" data-go="'+goto+'" type="button">↩ вернуться к теме</button></div>'+
+      '<div class="review-bar"><span style="width:'+pct+'%;background:'+color+'"></span></div>'+
+      '<div class="review-frac">'+frac+'</div>'+
+      (badge?'<span class="review-badge '+bcls+'">'+badge+'</span>':'')+'</div>';
+  });
+  block.innerHTML=html;
+  block.querySelectorAll('.slide-ref[data-go]').forEach(function(b){
+    b.addEventListener('click',function(){ show(parseInt(b.getAttribute('data-go'),10)); });
+  });
+}
+
+/* первый слайд раздела, к которому относится тема */
+function firstSlideOfTopic(t){
+  var key = (t.ex&&t.ex[0]) || (t.ege&&t.ege[0]);
+  for(var i=0;i<slides.length;i++){
+    if(slides[i].getAttribute('data-ex')===key || slides[i].getAttribute('data-ege')===key){
+      var sec=slides[i].getAttribute('data-sec');
+      for(var j=0;j<slides.length;j++){ if(slides[j].getAttribute('data-sec')===sec) return j; }
+      return i;
+    }
+  }
+  return 0;
+}
+
+/* ================== КОПИРОВАНИЕ ИТОГА ================== */
+function buildReport(){
+  var L=[]; L.push('Задание 10 ЕГЭ — правописание приставок. Результат по первой попытке.');
+  L.push('');
+  var ok=0,max=0;
+  Object.keys(EX).forEach(function(id){
+    var st=S.ex[id],n=EX[id].words.length; max+=n;
+    if(st.first){ ok+=st.first.ok;
+      L.push('• '+EX[id].title+': '+st.first.ok+' из '+n+(st.first.empty?' (не отвечено: '+st.first.empty+')':''));
+    } else L.push('• '+EX[id].title+': не пройдено');
+  });
+  Object.keys(EGE).forEach(function(id,i){
+    var st=S.ege[id],n=EGE[id].rows.length; max+=n;
+    if(st.first){ ok+=st.first.ok; L.push('• Задание ЕГЭ № '+(i+1)+': '+st.first.ok+' из '+n+' рядов разобрано верно'); }
+    else L.push('• Задание ЕГЭ № '+(i+1)+': не пройдено');
+  });
+  L.push(''); L.push('Итого: '+ok+' из '+max);
+  L.push('');
+  L.push('Темы на повторение:');
+  var rows=TOPICS.map(topicStats).filter(function(r){return r.started;})
+    .sort(function(a,b){return (a.pct||0)-(b.pct||0);});
+  if(!rows.length) L.push('— пока нечего показать');
+  rows.forEach(function(r){
+    L.push('— '+r.t.name+': '+r.pct+'%'+(r.wrong?' (ошибок: '+r.wrong+')':' — усвоено')+(r.empty?', пропущено '+r.empty:''));
+  });
+  return L.join('\n');
+}
+
+/* ================== ОГЛАВЛЕНИЕ ================== */
+var slides=document.querySelectorAll('.slide');
+var tocBack=document.getElementById('tocBack');
+var tocBody=document.getElementById('tocBody');
+
+function slidePct(s){
+  var exId=s.getAttribute('data-ex'), egeId=s.getAttribute('data-ege');
+  if(exId){ var st=S.ex[exId]; if(!st||!st.first) return null;
+    var a=st.first.ok+st.first.wrong; return a? Math.round(st.first.ok/a*100) : 0; }
+  if(egeId){ var e=S.ege[egeId]; if(!e||!e.first) return null;
+    return Math.round(e.first.ok/e.first.total*100); }
+  return null;
+}
+function sqClass(p,visited){
+  if(p==null) return visited?'':'';
+  if(p>=80) return 'hi'; if(p>=55) return 'mid'; return 'lo';
+}
+
+function buildToc(){
+  tocBody.innerHTML='';
+  var lastSec=null, cur=null;
+  slides.forEach(function(s,i){
+    var sec=s.getAttribute('data-sec')||'Слайды';
+    if(sec!==lastSec){ tocBody.appendChild(el('div','toc-sec',sec)); lastSec=sec; }
+    var p=slidePct(s);
+    var b=el('button','toc-item'+(i===S.slide?' cur':''),'');
+    b.type='button';
+    var sq=el('span','sq '+sqClass(p,S.visited[i]));
+    if(p==null && S.visited[i]) sq.style.background='rgba(130,199,255,.45)';
+    b.appendChild(sq);
+    b.appendChild(el('span','n',String(i+1)));
+    b.appendChild(el('span','t', s.getAttribute('data-title')||'Слайд'));
+    b.appendChild(el('span','ty', s.getAttribute('data-type')||''));
+    b.appendChild(el('span','pc', p==null?'':p+'%'));
+    b.addEventListener('click',function(){ closeToc(); show(i); });
+    tocBody.appendChild(b);
+    if(i===S.slide) cur=b;
+  });
+  if(cur) setTimeout(function(){ cur.scrollIntoView({block:'center'}); },0);
+}
+function openToc(){ buildToc(); tocBack.classList.add('open'); }
+function closeToc(){ tocBack.classList.remove('open'); }
+function tocOpen(){ return tocBack.classList.contains('open'); }
+
+document.getElementById('counter').addEventListener('click',function(){ tocOpen()?closeToc():openToc(); });
+document.getElementById('tocClose').addEventListener('click',closeToc);
+tocBack.addEventListener('click',function(e){ if(e.target===tocBack) closeToc(); });
+
+/* ================== НАВИГАЦИЯ ================== */
+var nav=document.getElementById('nav');
+var counter=document.getElementById('counter');
+var progressFill=document.querySelector('#progress .fill');
+var introEl=document.getElementById('s-intro');
+
+function show(i){
+  if(i<0||i>=slides.length) return;
+  S.slide=i; S.visited[i]=true;
+  slides.forEach(function(s,k){ s.classList.toggle('active',k===i); });
+  if(i===0){ nav.classList.add('hidden'); introEl.classList.remove('play'); introEl.classList.add('done'); }
+  else nav.classList.remove('hidden');
+  counter.textContent=(i+1)+' из '+slides.length+' ▾';
+  progressFill.style.width=(i/(slides.length-1)*100)+'%';
+  document.getElementById('prevBtn').disabled=(i<=0);
+  document.getElementById('nextBtn').disabled=(i>=slides.length-1);
+  if(slides[i].getAttribute('data-type')==='итог') renderFinal();
+  var d=document.getElementById('deck'); if(d) d.scrollTop=0;
+  save();
+}
+function next(){ show(S.slide+1); }
+function prev(){ show(S.slide-1); }
+document.getElementById('nextBtn').addEventListener('click',next);
+document.getElementById('prevBtn').addEventListener('click',prev);
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&tocOpen()){ closeToc(); return; }
+  if(tocOpen()) return;
+  var t=e.target&&e.target.tagName;
+  if(t==='TEXTAREA'||t==='INPUT') return;
+  if(e.key==='ArrowRight'||e.key==='PageDown') next();
+  if(e.key==='ArrowLeft'||e.key==='PageUp') prev();
+});
+
+document.getElementById('startBtn').addEventListener('click',function(){ flash(0.35,140); show(1); });
+document.getElementById('restart').addEventListener('click',function(){ show(0); });
+document.getElementById('recount').addEventListener('click',renderFinal);
+document.getElementById('wipe').addEventListener('click',function(){
+  if(!confirm('Стереть весь прогресс по этому тренажёру? Отменить будет нельзя.')) return;
+  try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+  location.reload();
+});
+
+/* копирование итога с запасным вариантом для file:// */
+document.getElementById('copyBtn').addEventListener('click',function(){
+  var txt=buildReport(), out=document.getElementById('copyOut');
+  var btn=this;
+  function fallback(){
+    out.style.display='block'; out.value=txt; out.focus(); out.select();
+    var done=false;
+    try{ done=document.execCommand('copy'); }catch(e){}
+    btn.textContent = done ? 'Скопировано' : 'Выделите текст и скопируйте';
+    setTimeout(function(){ btn.textContent='Скопировать итог'; },2500);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText&&location.protocol!=='file:'){
+    navigator.clipboard.writeText(txt).then(function(){
+      btn.textContent='Скопировано';
+      setTimeout(function(){ btn.textContent='Скопировать итог'; },2000);
+    },fallback);
+  } else fallback();
+});
+
+/* спокойный режим */
+var calmBtn=document.getElementById('calmBtn');
+function applyCalm(){
+  document.body.classList.toggle('calm',S.calm);
+  calmBtn.textContent = S.calm ? 'Гроза выключена' : 'Спокойный режим';
+  calmBtn.setAttribute('aria-pressed',S.calm?'true':'false');
+}
+calmBtn.addEventListener('click',function(){ S.calm=!S.calm; applyCalm(); save(); });
+applyCalm();
+
+/* ================== СТАРТ ================== */
+Object.keys(EX).forEach(buildExercise);
+Object.keys(EGE).forEach(buildEge);
+Object.keys(FC).forEach(buildFC);
+
+show(S.slide||0);
+if(S.slide===0 && !reduceMotion && !S.calm){
+  introEl.classList.remove('done'); introEl.classList.add('play');
+  setTimeout(function(){ flash(0.5,160); },900);
+  setTimeout(function(){ introEl.classList.remove('play'); introEl.classList.add('done'); },3000);
+}
+
+/* экспорт для автоматической проверки */
+window.__t={S:S,EX:EX,EGE:EGE,FC:FC,TOPICS:TOPICS,show:show,
+  checkExercise:checkExercise,retryExercise:retryExercise,pick:pick,
+  checkEge:checkEge,toggleRow:toggleRow,buildReport:buildReport,openToc:openToc,closeToc:closeToc};
+})();
+</script>
+
+</body>
+</html>
