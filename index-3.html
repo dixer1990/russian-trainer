@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Тренажёры по русскому языку. Подготовка к ЕГЭ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0C1219;
+    --panel:rgba(255,255,255,.05);
+    --panel-hi:rgba(255,255,255,.08);
+    --line:rgba(255,255,255,.14);
+    --text:#ECF1F5;
+    --dim:#93A6B4;
+    --gold:#E0B060;
+    --f-head:'PT Serif', Georgia, serif;
+    --f-body:'PT Sans', 'Segoe UI', system-ui, sans-serif;
+    --f-mono:'JetBrains Mono', Consolas, monospace;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0; min-height:100dvh;
+    background:
+      radial-gradient(ellipse 80% 55% at 15% -5%, rgba(224,176,96,.10), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 90% 5%, rgba(95,160,200,.09), transparent 60%),
+      var(--bg);
+    color:var(--text); font-family:var(--f-body);
+    font-size:clamp(1rem,.96rem + .18vw,1.06rem); line-height:1.6;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:clamp(34px,7vw,72px) clamp(16px,4vw,28px) 60px;}
+
+  header{margin-bottom:clamp(28px,5vw,44px);}
+  .sup{font-family:var(--f-mono); font-size:.82rem; letter-spacing:.24em;
+    color:var(--gold); margin-bottom:12px;}
+  h1{font-family:var(--f-head); font-weight:700; line-height:1.12; margin:0 0 12px;
+    font-size:clamp(1.9rem,1.3rem + 2.6vw,3rem);}
+  .sub{color:var(--dim); max-width:52ch; margin:0;}
+
+  .list{display:flex; flex-direction:column; gap:11px;}
+  a.card, div.card{
+    display:flex; align-items:center; gap:clamp(13px,3vw,20px);
+    background:var(--panel); border:1px solid var(--line); border-radius:14px;
+    padding:clamp(14px,3vw,18px) clamp(15px,3vw,20px);
+    color:var(--text); text-decoration:none; min-height:44px;
+    transition:border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  a.card:hover{background:var(--panel-hi); border-color:var(--gold); transform:translateY(-1px);}
+  a.card:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+  div.card{background:transparent; border-style:dashed;}
+  div.card .name{color:#C9D3DB;}
+
+  .num{font-family:var(--f-mono); font-weight:700;
+    font-size:clamp(1.5rem,4.5vw,2rem); line-height:1;
+    color:var(--gold); min-width:2.2ch; text-align:right;}
+  div.card .num{color:var(--dim);}
+  .body{flex:1; min-width:0;}
+  .name{font-family:var(--f-head); font-weight:700;
+    font-size:clamp(1.05rem,2.6vw,1.2rem); line-height:1.3; margin-bottom:3px;}
+  .name, .desc{display:block;}
+  .desc{color:var(--dim); font-size:.92rem; line-height:1.45;}
+  .go{font-family:var(--f-mono); font-size:1.15rem; color:var(--dim); flex:0 0 auto;}
+  a.card:hover .go{color:var(--gold);}
+  .soon{font-family:var(--f-mono); font-size:.74rem; letter-spacing:.08em;
+    color:var(--dim); border:1px solid var(--line); border-radius:7px;
+    padding:3px 9px; flex:0 0 auto; white-space:nowrap;}
+
+  #list{display:flex; flex-direction:column; gap:clamp(30px,6vw,44px);}
+  .group[hidden]{display:none;}
+  .gtitle{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px;
+    margin:0 0 13px; padding-bottom:8px; border-bottom:1px solid var(--line);}
+  .gname{font-family:var(--f-head); font-weight:700; line-height:1.25;
+    font-size:clamp(1.2rem,1rem + .9vw,1.45rem);}
+  .grange{font-family:var(--f-mono); font-size:.8rem; color:var(--dim);}
+  .pts{display:inline-block; vertical-align:2px; margin-left:8px;
+    font-family:var(--f-mono); font-size:.72rem; font-weight:400; line-height:1.3;
+    color:var(--gold); border:1px solid rgba(224,176,96,.45); border-radius:6px;
+    padding:1px 7px; white-space:nowrap;}
+  .facts{color:var(--dim); max-width:52ch; margin:10px 0 0;}
+
+  .toc{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 clamp(26px,5vw,38px);}
+  .toc button{
+    display:inline-flex; align-items:baseline; gap:8px;
+    min-height:44px; padding:10px 15px; border-radius:10px;
+    background:var(--panel); border:1px solid var(--line); color:var(--text);
+    font:inherit; font-size:.95rem; line-height:1.2; cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .toc button:hover{border-color:var(--gold);}
+  .toc button:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+  .toc button[aria-pressed="true"]{
+    background:rgba(224,176,96,.14); border-color:var(--gold); color:#F6E3BE;}
+  .toc .trange{font-family:var(--f-mono); font-size:.76rem; color:var(--dim);}
+  .toc button[aria-pressed="true"] .trange{color:var(--gold);}
+
+  footer{margin-top:clamp(30px,6vw,48px); padding-top:20px;
+    border-top:1px solid var(--line); color:var(--dim); font-size:.9rem;}
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+  @media (max-width:420px){
+    .go{display:none;}
+    .num{font-size:1.45rem; min-width:2ch;}
+    div.card{display:grid; grid-template-columns:auto 1fr; column-gap:13px; row-gap:9px;}
+    div.card .soon{grid-column:2; justify-self:start;}
+    .toc{gap:7px;}
+    .toc button{padding:9px 12px; font-size:.9rem;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="sup">ЕГЭ по русскому языку</div>
+    <h1>Тренажёры по заданиям</h1>
+    <p class="sub">Каждый тренажёр — теория, практика и задания в формате экзамена. Прогресс сохраняется в браузере: можно закрыть вкладку и вернуться позже.</p>
+    <p class="facts">В экзамене 27 заданий: 26 с кратким ответом и сочинение. На работу даётся 3 часа 30 минут, максимум — 50 первичных баллов.</p>
+  </header>
+
+  <nav class="toc" id="toc" aria-label="Разделы экзамена"></nav>
+
+  <div id="list"></div>
+
+  <footer>Номера и названия заданий — по демоверсии, спецификации и кодификатору ФИПИ на 2027 год. Открывается на компьютере и на телефоне, ничего устанавливать не нужно.</footer>
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   КАК ОТКРЫТЬ ТРЕНАЖЁР НА ГЛАВНОЙ СТРАНИЦЕ
+
+   1. Загрузите файл в репозиторий под именем zadanieNN.html,
+      где NN — номер задания из двух цифр:
+      zadanie01.html, zadanie02.html … zadanie09.html,
+      zadanie10.html … zadanie27.html
+   2. Найдите ниже этот номер и замените ready:false на ready:true.
+
+   Имя файла страница составляет сама из номера, вписывать его не нужно.
+
+   num   — номер задания ЕГЭ (в кавычках, с нулём впереди: "09")
+   name  — название задания
+   desc  — что ученик делает в задании, одна строка
+   pts   — баллы; указаны только там, где не 1 балл
+   ready — true, если файл уже загружен; false — карточка «скоро»
+   ------------------------------------------------------------------ */
+var GROUPS = [
+  {id:"tekst", title:"Анализ текста", short:"Анализ текста", range:"1–3",
+   items:[
+    {num:"01", name:"Логико-смысловые отношения в тексте",
+     desc:"Подобрать слово на место пропуска так, чтобы сохранилась смысловая связь предложений.",
+     ready:false},
+    {num:"02", name:"Лексическое значение слова",
+     desc:"Выбрать словарные толкования, которые совпадают со значением выделенных слов в тексте.",
+     ready:false},
+    {num:"03", name:"Функциональная стилистика. Культура речи",
+     desc:"Выбрать верные характеристики фрагмента: цель автора, стилистические особенности, языковые средства.",
+     ready:false}
+  ]},
+
+  {id:"normy", title:"Языковые нормы", short:"Языковые нормы", range:"4–8",
+   items:[
+    {num:"04", name:"Нормы ударения",
+     desc:"Найти слова, в которых буква ударного гласного выделена верно.",
+     ready:false},
+    {num:"05", name:"Паронимы и их употребление",
+     desc:"Найти неверно употреблённое слово и заменить его паронимом.",
+     ready:false},
+    {num:"06", name:"Лексическая сочетаемость. Тавтология. Плеоназм",
+     desc:"Исправить лексическую ошибку: убрать лишнее слово или заменить неверно употреблённое.",
+     ready:false},
+    {num:"07", name:"Словообразовательные, морфологические и синтаксические нормы",
+     desc:"Найти ошибку в выделенном слове — в том, как оно образовано, в его форме или согласовании — и записать слово правильно.",
+     ready:false},
+    {num:"08", name:"Синтаксические нормы", pts:"2 балла",
+     desc:"Сопоставить виды грамматических ошибок с предложениями, в которых они допущены.",
+     ready:false}
+  ]},
+
+  {id:"orfografiya", title:"Орфография", short:"Орфография", range:"9–15",
+   items:[
+    {num:"09", name:"Правописание гласных и согласных в корне",
+     desc:"Проверяемые, непроверяемые и чередующиеся гласные; о – ё после шипящих, ы – и после ц.",
+     ready:true},
+    {num:"10", name:"Правописание приставок",
+     desc:"Приставки на з/с, пре- и при-, неизменяемые приставки; ы – и после приставок; разделительные ъ и ь.",
+     ready:true},
+    {num:"11", name:"Правописание суффиксов",
+     desc:"Суффиксы существительных, прилагательных, глаголов и наречий — кроме суффиксов причастий и деепричастий.",
+     ready:false},
+    {num:"12", name:"Личные окончания глаголов и суффиксы причастий",
+     desc:"Окончания глаголов I и II спряжения; гласные в суффиксах причастий и деепричастий.",
+     ready:false},
+    {num:"13", name:"Правописание НЕ и НИ",
+     desc:"Слитно или раздельно: НЕ и НИ со словами разных частей речи.",
+     ready:false},
+    {num:"14", name:"Слитное, дефисное и раздельное написание",
+     desc:"Наречия, производные предлоги, союзы, местоимения, частицы; слова с пол- и полу-.",
+     ready:true},
+    {num:"15", name:"Н и НН в словах различных частей речи",
+     desc:"Прилагательные, причастия и отглагольные прилагательные, наречия на -о и -е.",
+     ready:true}
+  ]},
+
+  {id:"punktuaciya", title:"Пунктуация", short:"Пунктуация", range:"16–21",
+   items:[
+    {num:"16", name:"Однородные члены и сложное предложение",
+     desc:"Найти предложения, в которых нужна одна запятая: однородные члены или части сложного предложения.",
+     ready:false},
+    {num:"17", name:"Знаки препинания при обособлении",
+     desc:"Обособленные определения, приложения и обстоятельства: причастные и деепричастные обороты.",
+     ready:false},
+    {num:"18", name:"Вводные конструкции, обращения, междометия",
+     desc:"Отличить вводные слова от членов предложения и расставить запятые.",
+     ready:false},
+    {num:"19", name:"Знаки препинания в сложном предложении",
+     desc:"Запятые в сложноподчинённом предложении, в том числе с несколькими придаточными.",
+     ready:false},
+    {num:"20", name:"Сложное предложение с разными видами связи",
+     desc:"Запятые на стыке союзов, когда в одном предложении есть сочинительная и подчинительная связь.",
+     ready:false},
+    {num:"21", name:"Пунктуационный анализ",
+     desc:"Найти в тексте предложения, где тире, двоеточие или запятая ставятся по одному и тому же правилу.",
+     ready:false}
+  ]},
+
+  {id:"vyrazitelnost", title:"Выразительность и работа с текстом", short:"Выразительность и текст", range:"22–26",
+   items:[
+    {num:"22", name:"Изобразительно-выразительные средства", pts:"2 балла",
+     desc:"Сопоставить примеры с названиями средств: тропы, фигуры речи, фонетические средства.",
+     ready:false},
+    {num:"23", name:"Смысловой анализ текста",
+     desc:"Определить, какие высказывания соответствуют или не соответствуют содержанию текста.",
+     ready:false},
+    {num:"24", name:"Типы речи и смысловые связи предложений",
+     desc:"Проверить утверждения: описание, повествование, рассуждение; причина, условие, следствие.",
+     ready:false},
+    {num:"25", name:"Лексика и фразеология в тексте",
+     desc:"Выписать слово по признаку: синоним, антоним, фразеологизм, книжное или разговорное слово.",
+     ready:false},
+    {num:"26", name:"Средства связи предложений",
+     desc:"Найти предложения, связанные с предыдущим повтором, местоимением, однокоренным словом, синонимом.",
+     ready:false}
+  ]},
+
+  {id:"sochinenie", title:"Сочинение", short:"Сочинение", range:"27",
+   items:[
+    {num:"27", name:"Сочинение по исходному тексту", pts:"22 балла",
+     desc:"Позиция автора, комментарий с двумя примерами и связью между ними, своё отношение с аргументом. От 150 слов.",
+     ready:false}
+  ]}
+];
+
+/* ---------- ниже служебная часть, её менять не нужно ---------- */
+
+var list = "", toc = '<button type="button" data-show="all">Все задания</button>';
+
+GROUPS.forEach(function(g){
+  var label = g.range.indexOf("–") > -1 ? "задания " + g.range : "задание " + g.range;
+  toc += '<button type="button" data-show="' + g.id + '">' + g.short +
+    '<span class="trange">' + g.range + '</span></button>';
+
+  list += '<section class="group" data-group="' + g.id + '">' +
+    '<h2 class="gtitle"><span class="gname">' + g.title + '</span>' +
+    '<span class="grange">' + label + '</span></h2><div class="list">';
+
+  g.items.forEach(function(t){
+    var pts = t.pts ? '<span class="pts">' + t.pts + '</span>' : '';
+    var head = '<span class="num">' + t.num + '</span>' +
+      '<span class="body"><span class="name">' + t.name + pts + '</span>' +
+      '<span class="desc">' + t.desc + '</span></span>';
+    if(t.ready){
+      list += '<a class="card" href="zadanie' + t.num + '.html">' + head + '<span class="go">&rarr;</span></a>';
+    } else {
+      list += '<div class="card">' + head + '<span class="soon">скоро</span></div>';
+    }
+  });
+  list += '</div></section>';
+});
+
+document.getElementById("list").innerHTML = list;
+document.getElementById("toc").innerHTML = toc;
+
+var tocButtons = document.querySelectorAll("#toc button");
+var sections = document.querySelectorAll("#list .group");
+
+function show(id){
+  var known = false;
+  for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].id === id) known = true;
+  if (!known) id = "all";
+
+  for (var j = 0; j < sections.length; j++){
+    sections[j].hidden = !(id === "all" || sections[j].getAttribute("data-group") === id);
+  }
+  for (var k = 0; k < tocButtons.length; k++){
+    tocButtons[k].setAttribute("aria-pressed", tocButtons[k].getAttribute("data-show") === id ? "true" : "false");
+  }
+  /* адрес вида …/#orfografiya открывает сразу нужный раздел.
+     В окне предпросмотра браузер менять адрес не разрешает —
+     тогда просто пропускаем этот шаг, фильтр работает и без него. */
+  try {
+    history.replaceState(null, "", id === "all" ? location.pathname + location.search : "#" + id);
+  } catch (e) {}
+}
+
+for (var b = 0; b < tocButtons.length; b++){
+  tocButtons[b].addEventListener("click", function(){ show(this.getAttribute("data-show")); });
+}
+
+show(location.hash.replace("#", ""));
+</script>
+</body>
+</html>
