@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Задание 11. Правописание суффиксов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#0A0820; --bg2:#100D2C; --bg3:#161239;
+    --panel:rgba(255,255,255,.055);
+    --panel-2:rgba(255,255,255,.09);
+    --panel-solid:#13102F;
+    --line:rgba(200,205,255,.17);
+    --text:#EEF0FB;
+    --dim:#B3B7DA;
+    --cyan:#6FDCE3;
+    --pink:#F4A6D8;
+    --neon-c:#00F0E6; --neon-m:#FF3FD2;
+    --green:#5BE0A4; --green-bg:rgba(91,224,164,.15);
+    --red:#FF8B8B;   --red-bg:rgba(255,139,139,.15);
+    --amber:#FFD27A; --amber-bg:rgba(255,210,122,.13);
+    --on-accent:#0A0820;
+
+    --f-head:'PT Serif', Georgia, serif;
+    --f-body:'PT Sans', 'Segoe UI', system-ui, sans-serif;
+    --f-mono:'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+
+    --step: clamp(1rem, .96rem + .18vw, 1.08rem);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0; min-height:100dvh; height:100dvh;
+    background:
+      radial-gradient(ellipse 70% 45% at 12% 0%, rgba(111,220,227,.09) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 45% at 92% 8%, rgba(244,166,216,.08) 0%, transparent 60%),
+      linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:var(--f-body);
+    font-size:var(--step);
+    line-height:1.6;
+    display:flex; flex-direction:column;
+    overflow:hidden; position:relative;
+  }
+
+  /* ---------- каркас ---------- */
+  .bar{height:5px;background:rgba(255,255,255,.08);flex:0 0 auto;position:relative;z-index:3;}
+  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--pink),var(--cyan));transition:width .35s ease;}
+
+  .stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    display:flex;align-items:flex-start;justify-content:center;
+    padding:34px 22px 28px;position:relative;z-index:1;}
+  .slide{width:100%;max-width:880px;animation:appear .35s ease-out;}
+  @keyframes appear{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+  .nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);background:rgba(10,8,32,.82);
+    backdrop-filter:blur(10px);position:relative;z-index:3;}
+  .nav button{
+    font-family:var(--f-body);font-size:.95rem;color:var(--text);
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;
+    min-height:44px;padding:0 16px;cursor:pointer;}
+  .nav button:hover:not(:disabled){border-color:var(--cyan);}
+  .nav button:disabled{opacity:.35;cursor:default;}
+  .nav .calm-btn{font-size:.82rem;padding:0 12px;min-height:44px;}
+  .calm-btn[aria-pressed="true"]{border-color:var(--cyan);color:var(--cyan);}
+
+  :where(button,input,[tabindex]):focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+
+  /* спокойный режим и системная настройка «уменьшить движение» */
+  body.calm .slide{animation:none !important;}
+  body.calm .drop{display:none !important;}
+  body.calm .boot .ln{animation:none !important;opacity:1 !important;}
+  @media (prefers-reduced-motion: reduce){
+    .slide,.boot .ln{animation:none !important;opacity:1 !important;}
+    *{transition-duration:.01ms !important;}
+  }
+
+  /* ---------- типографика ---------- */
+  h1{font-family:var(--f-head);font-weight:700;line-height:1.15;margin:0 0 14px;
+    font-size:clamp(1.6rem, 1.25rem + 1.7vw, 2.4rem);}
+  h2{font-family:var(--f-head);font-weight:700;line-height:1.2;margin:0 0 12px;
+    font-size:clamp(1.35rem, 1.1rem + 1.2vw, 1.85rem);}
+  h3{font-family:var(--f-head);font-weight:700;font-size:1.12rem;color:var(--cyan);margin:0 0 8px;}
+  p{margin:0 0 10px;}
+  .kicker{font-family:var(--f-mono);font-size:.86rem;color:var(--cyan);margin-bottom:8px;}
+  .lead{color:var(--dim);max-width:66ch;margin-bottom:18px;}
+  b.hl{color:var(--pink);}
+
+  /* ---------- титул: неоновая заставка ---------- */
+  .hero{position:relative;overflow:hidden;border-radius:20px;
+    min-height:min(76dvh,660px);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:30px 18px;
+    background:
+      radial-gradient(ellipse 55% 40% at 50% 55%, rgba(0,240,230,.10) 0%, transparent 65%),
+      radial-gradient(ellipse 70% 55% at 50% 55%, rgba(255,63,210,.08) 0%, transparent 70%),
+      radial-gradient(ellipse at 50% 45%, #140733 0%, #06021A 80%);
+    border:1px solid rgba(0,240,230,.22);
+    box-shadow:0 0 0 1px rgba(255,63,210,.10) inset, 0 20px 60px rgba(0,0,0,.45);}
+  .hero canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px);}
+  body.calm .hero::after{display:none;}
+  .hero-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;}
+  .boot{font-family:var(--f-mono);font-size:.84rem;line-height:1.7;color:#9FA6D8;
+    text-align:left;margin-bottom:22px;min-height:5.1em;}
+  .boot .ln{opacity:0;animation:lnIn .3s ease forwards;}
+  .boot .ln.ok{color:var(--green);}
+  .boot .ln:nth-child(1){animation-delay:.1s;}
+  .boot .ln:nth-child(2){animation-delay:.45s;}
+  .boot .ln:nth-child(3){animation-delay:.8s;}
+  @keyframes lnIn{from{opacity:0;transform:translateX(-6px);}to{opacity:1;transform:translateX(0);}}
+  .hero-sup{font-family:var(--f-body);font-size:clamp(.95rem,2.6vw,1.12rem);letter-spacing:.08em;color:#CFE9F2;
+    text-shadow:0 0 18px rgba(0,240,230,.55);}
+  .hero-sup::after{content:"";display:block;width:4.5rem;height:2px;margin:12px auto 0;
+    background:var(--neon-c);box-shadow:0 0 12px var(--neon-c);}
+  .hero-title{font-family:var(--f-head);font-weight:700;color:#fff;
+    font-size:clamp(2.8rem,11vw,5.4rem);line-height:1;margin:18px 0 10px;
+    text-shadow:0 2px 10px rgba(0,0,0,.7), 0 0 26px rgba(255,63,210,.75), 0 0 54px rgba(0,240,230,.35);}
+  .hero-sub{font-family:var(--f-head);color:#FFE3F6;font-size:clamp(1.15rem,3.6vw,1.5rem);margin-bottom:6px;}
+  .hero-sub::after{content:"";display:block;width:4.5rem;height:2px;margin:14px auto 0;
+    background:var(--neon-m);box-shadow:0 0 12px var(--neon-m);}
+  .hero-note{color:#C3C8EA;max-width:36ch;font-size:.98rem;margin:16px 0 24px;}
+  .start{font-family:var(--f-body);font-size:1.08rem;font-weight:700;
+    background:var(--neon-c);color:#04141A;border:0;border-radius:13px;
+    min-height:52px;padding:0 36px;cursor:pointer;
+    box-shadow:0 0 22px rgba(0,240,230,.45);}
+  .start:hover{filter:brightness(1.08);}
+
+  /* ---------- карта ---------- */
+  .map-group{font-family:var(--f-head);font-size:1.05rem;color:var(--pink);margin:18px 0 8px;}
+  .map{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+  .tile{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--cyan);
+    border-radius:12px;padding:12px 14px;text-align:left;cursor:pointer;
+    font-family:var(--f-body);color:var(--text);font-size:1rem;min-height:44px;
+    transition:border-color .15s, background .15s;}
+  .tile:hover{background:var(--panel-2);border-left-color:var(--pink);}
+  .tile b{display:block;font-family:var(--f-mono);font-size:.95rem;margin-bottom:3px;}
+  .tile span{color:var(--dim);font-size:.9rem;line-height:1.45;display:block;}
+
+  /* ---------- блоки правил ---------- */
+  .rule{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:15px 17px;margin-bottom:12px;}
+  .rule .ex{font-family:var(--f-mono);font-size:.95rem;color:var(--cyan);
+    line-height:1.8;margin:8px 0 0;}
+  u{text-decoration:none;color:var(--pink);font-weight:700;}
+  .steps{margin:0;padding-left:1.25em;}
+  .steps li{margin-bottom:9px;}
+  .trap{background:var(--amber-bg);border:1px solid rgba(255,210,122,.32);
+    border-left:3px solid var(--amber);border-radius:11px;padding:14px 16px;margin-top:12px;font-size:1rem;}
+  .trap b{color:var(--amber);}
+  .memo{background:rgba(111,220,227,.09);border:1px dashed rgba(111,220,227,.4);
+    border-radius:10px;padding:11px 14px;margin-top:10px;
+    font-family:var(--f-mono);font-size:.95rem;color:var(--text);line-height:1.7;}
+  .src{color:var(--dim);font-size:.9rem;margin-top:8px;}
+
+  /* ---------- упражнения ---------- */
+  .instr{color:var(--dim);margin-bottom:12px;max-width:64ch;}
+  .peek{font-family:var(--f-body);font-size:.95rem;color:var(--text);
+    background:transparent;border:1px dashed var(--line);border-radius:10px;
+    min-height:44px;padding:0 14px;cursor:pointer;margin-bottom:14px;}
+  .peek:hover{border-color:var(--pink);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:14px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 12px;}
+  .card .ctx{font-size:.9rem;color:var(--dim);margin-bottom:3px;line-height:1.4;}
+  .word{font-family:var(--f-mono);font-size:1.08rem;font-weight:700;margin-bottom:9px;overflow-wrap:anywhere;}
+  .blank{display:inline-block;min-width:1.4em;text-align:center;
+    border-bottom:2px solid var(--dim);color:var(--pink);font-size:1.22em;font-weight:700;line-height:1.1;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{font-family:var(--f-mono);font-size:1.02rem;font-weight:700;color:var(--text);
+    background:transparent;border:1.5px solid var(--dim);border-radius:10px;
+    min-height:44px;min-width:50px;padding:0 14px;cursor:pointer;}
+  .chip:hover:not(:disabled){border-color:var(--cyan);}
+  .chip.on{background:var(--cyan);color:var(--on-accent);border-color:var(--cyan);}
+  .chip:disabled{cursor:default;opacity:.5;}
+  .chip.on:disabled{opacity:1;}
+  .card.ok{border-color:var(--green);background:var(--green-bg);}
+  .card.no{border-color:var(--red);background:var(--red-bg);}
+  .card.na{border-color:var(--amber);background:var(--amber-bg);}
+  .why{font-size:1em;line-height:1.5;margin-top:9px;padding-top:9px;
+    border-top:1px solid var(--line);color:var(--text);}
+  .why .fix{font-family:var(--f-mono);color:var(--green);font-weight:700;}
+  .flag{font-size:.9rem;margin-top:7px;}
+  .flag.na{color:var(--amber);}
+
+  /* выбор правила */
+  .qtext{font-family:var(--f-mono);font-size:1.08rem;font-weight:700;margin-bottom:9px;}
+  .pick{display:flex;flex-direction:column;gap:8px;}
+  .pick button{font-family:var(--f-body);font-size:1rem;color:var(--text);text-align:left;line-height:1.35;
+    background:transparent;border:1.5px solid var(--dim);border-radius:10px;
+    min-height:44px;padding:8px 13px;cursor:pointer;}
+  .pick button:hover:not(:disabled){border-color:var(--cyan);}
+  .pick button.on{background:var(--cyan);color:var(--on-accent);border-color:var(--cyan);}
+  .pick button:disabled{cursor:default;opacity:.55;}
+  .pick button.on:disabled{opacity:1;}
+  .grid.wide{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));}
+
+  /* ---------- футер упражнения ---------- */
+  .foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;}
+  .btn{font-family:var(--f-body);font-size:1rem;font-weight:700;border-radius:11px;
+    min-height:46px;padding:0 20px;cursor:pointer;border:1px solid transparent;}
+  .btn.main{background:var(--cyan);color:var(--on-accent);}
+  .btn.main:hover{filter:brightness(1.08);}
+  .btn.ghost{background:transparent;color:var(--text);border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--cyan);}
+  .score{font-family:var(--f-mono);font-size:.95rem;color:var(--dim);}
+  .score b.g{color:var(--green);} .score b.r{color:var(--red);} .score b.a{color:var(--amber);}
+  .hint2{flex-basis:100%;color:var(--dim);font-size:.95rem;}
+
+  /* ---------- флеш-карты ---------- */
+  .flash{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:8px;padding:24px 18px;text-align:center;cursor:pointer;margin-bottom:12px;width:100%;
+    color:var(--text);font-family:var(--f-body);font-size:1rem;}
+  .flash .fw{font-family:var(--f-mono);font-size:clamp(1.3rem,5vw,1.8rem);font-weight:700;}
+  .flash .fc{color:var(--dim);font-size:.95rem;}
+  .flash .fh{color:var(--cyan);font-size:1rem;max-width:44ch;}
+  .flash .tap{color:var(--dim);font-size:.9rem;}
+  .flash-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .flash-nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+  /* ---------- ЕГЭ ---------- */
+  .ege-q{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;margin-bottom:14px;font-size:1.02rem;}
+  .rows{display:flex;flex-direction:column;gap:9px;margin-bottom:14px;}
+  .erow{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;
+    background:var(--panel);border:1.5px solid var(--line);border-radius:12px;
+    padding:11px 14px;cursor:pointer;min-height:48px;color:var(--text);font-family:var(--f-body);font-size:1rem;}
+  .erow:hover:not(:disabled){border-color:var(--cyan);}
+  .erow.on{border-color:var(--cyan);background:rgba(111,220,227,.12);}
+  .erow.ok{border-color:var(--green);background:var(--green-bg);}
+  .erow.no{border-color:var(--red);background:var(--red-bg);}
+  .erow.miss{border-color:var(--amber);background:var(--amber-bg);}
+  .erow:disabled{cursor:default;}
+  .enum{font-family:var(--f-mono);font-weight:700;color:var(--cyan);flex:0 0 auto;}
+  .ewords{font-family:var(--f-mono);font-size:1rem;line-height:1.7;overflow-wrap:anywhere;}
+  .ewords .cx{font-family:var(--f-body);color:var(--dim);}
+  .ekey{font-family:var(--f-body);font-size:.98rem;color:var(--text);margin-top:6px;line-height:1.5;}
+  .ekey i{font-style:normal;color:var(--dim);}
+  .ans-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .ans-line label{font-family:var(--f-head);font-size:1.08rem;}
+  .ans{font-family:var(--f-mono);font-size:1.25rem;font-weight:700;letter-spacing:.18em;
+    width:8.5ch;min-height:48px;padding:0 12px;border-radius:10px;
+    background:rgba(255,255,255,.07);border:1.5px solid var(--dim);color:var(--text);}
+  .ans:disabled{opacity:.8;}
+  .ans.ok{border-color:var(--green);} .ans.no{border-color:var(--red);} .ans.na{border-color:var(--amber);}
+
+  /* ---------- финал ---------- */
+  .gauges{display:flex;gap:26px;flex-wrap:wrap;justify-content:flex-start;margin:6px 0 20px;}
+  .gauge{text-align:center;}
+  .gauge svg{width:clamp(122px,32vw,152px);height:auto;}
+  .gauge .lab{font-size:.92rem;color:var(--dim);margin-top:5px;}
+  .topics{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+  .topic{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 14px;
+    border-left:3px solid var(--dim);}
+  .topic.bad{border-left-color:var(--red);}
+  .topic.mid{border-left-color:var(--amber);}
+  .topic.good{border-left-color:var(--green);}
+  .topic .tn{flex:1 1 auto;min-width:150px;}
+  .topic .tv{font-family:var(--f-mono);font-size:.95rem;color:var(--dim);}
+  .topic button{font-family:var(--f-body);font-size:.95rem;color:var(--text);
+    background:transparent;border:1px solid var(--line);border-radius:9px;
+    min-height:44px;padding:0 13px;cursor:pointer;}
+  .topic button:hover{border-color:var(--cyan);}
+  .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--pink);
+    border-radius:11px;padding:15px 17px;font-size:1rem;}
+  .copied{color:var(--green);font-size:.95rem;font-family:var(--f-mono);}
+  .copybox{width:100%;min-height:11rem;margin:0 0 16px;padding:12px;border-radius:10px;
+    background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--text);
+    font-family:var(--f-mono);font-size:.9rem;line-height:1.5;}
+
+  /* ---------- оглавление ---------- */
+  .nav-mid{flex:1;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;min-width:0;}
+  .toc-btn{background:transparent;border:1px solid var(--line);border-radius:9px;
+    color:var(--dim);font-family:var(--f-mono);font-size:.86rem;
+    padding:0 14px;min-height:44px;cursor:pointer;white-space:nowrap;}
+  .toc-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+  .toc-overlay{position:fixed;inset:0;z-index:40;background:rgba(6,4,20,.9);display:none;
+    align-items:center;justify-content:center;padding:20px;}
+  .toc-overlay.open{display:flex;}
+  .toc-panel{background:var(--panel-solid);border:1px solid var(--line);border-radius:14px;
+    width:min(760px,100%);max-height:86dvh;display:flex;flex-direction:column;
+    box-shadow:0 24px 70px rgba(0,0,0,.6);}
+  .toc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 18px;border-bottom:1px solid var(--line);}
+  .toc-head h2{margin:0;font-size:1.2rem;color:var(--cyan);}
+  .toc-close{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:9px;
+    min-height:44px;padding:0 15px;cursor:pointer;font-family:var(--f-body);font-weight:700;font-size:.95rem;}
+  .toc-close:hover{border-color:var(--cyan);color:var(--cyan);}
+  .toc-body{overflow-y:auto;padding:10px 12px 16px;-webkit-overflow-scrolling:touch;}
+  .toc-group{font-family:var(--f-head);font-size:.98rem;color:var(--pink);font-weight:700;margin:14px 6px 6px;}
+  .toc-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:transparent;
+    border:1px solid transparent;border-radius:10px;color:var(--text);font-family:var(--f-body);
+    font-size:.98rem;padding:9px 10px;min-height:44px;cursor:pointer;}
+  .toc-item:hover{border-color:var(--line);background:var(--panel);}
+  .toc-item.current{border-color:var(--cyan);background:rgba(111,220,227,.12);}
+  .toc-num{font-family:var(--f-mono);font-size:.85rem;color:var(--dim);min-width:26px;}
+  .toc-name{flex:1;line-height:1.4;}
+  .toc-tag{font-family:var(--f-mono);font-size:.78rem;color:var(--dim);
+    border:1px solid var(--line);border-radius:7px;padding:2px 8px;white-space:nowrap;}
+  .toc-score{font-family:var(--f-mono);font-size:.88rem;min-width:48px;text-align:right;}
+
+  .drop{position:fixed;width:6px;height:6px;border-radius:50%;background:var(--pink);
+    transform:translate(-50%,-50%);pointer-events:none;z-index:60;
+    animation:dropFly .45s ease-out forwards;}
+  @keyframes dropFly{to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.2);opacity:0;}}
+  @media (prefers-reduced-motion: reduce){ .drop{display:none;} }
+
+  /* ---------- телефон ---------- */
+  @media (max-width:620px){
+    .stage{padding:20px 14px 20px;}
+    .grid,.grid.wide{grid-template-columns:1fr;}
+    .map{grid-template-columns:1fr;}
+    .gauges{gap:16px;justify-content:center;}
+    .toc-tag{display:none;}
+    .toc-panel{max-height:90dvh;}
+    .hero{min-height:min(80dvh,620px);border-radius:16px;}
+    .nav .calm-btn{font-size:.78rem;}
+  }
+  @media (max-width:400px){
+    .stage{padding:16px 10px 18px;}
+    .nav{padding-left:8px;padding-right:8px;gap:6px;}
+    .nav button{padding:0 11px;font-size:.9rem;}
+    .toc-btn{padding:0 10px;}
+    .rule,.card,.erow{padding-left:11px;padding-right:11px;}
+    .boot{font-size:.76rem;}
+  }
+</style>
+</head>
+<body>
+  <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+  <div class="toc-overlay" id="tocOverlay" role="dialog" aria-modal="true" aria-label="Оглавление">
+    <div class="toc-panel">
+      <div class="toc-head"><h2>Оглавление</h2><button class="toc-close" id="tocClose" type="button">Закрыть</button></div>
+      <div class="toc-body" id="tocBody"></div>
+    </div>
+  </div>
+  <main class="stage" id="stage"></main>
+  <nav class="nav">
+    <button id="prevBtn" type="button">← Назад</button>
+    <div class="nav-mid">
+      <button class="toc-btn" id="counter" type="button" aria-haspopup="dialog"></button>
+      <button class="calm-btn" id="calmBtn" type="button" aria-pressed="false">Спокойный режим</button>
+    </div>
+    <button id="nextBtn" type="button">Далее →</button>
+  </nav>
+<script>
+/* ==================== БАНКИ СЛОВ ====================
+   Все слова — из презентации-интенсива, «Экспресс-зачётов по орфографии»
+   и демоверсии ФИПИ 2027. Ответы сверены с ключами «Экспресс-зачётов». */
+
+/* --- Существительные: -ЕК-/-ИК-, -ЕЦ-/-ИЦ- --- */
+const P_EK = [
+  {w:["подароч","к"],o:["е","и","о"],a:"е",why:"Подарочка — гласная выпадает, ударение не на суффиксе: -ЕК-."},
+  {w:["горош","к"],o:["е","и","о"],a:"е",ctx:"зелёный",why:"Горошка — гласная выпадает: -ЕК-."},
+  {w:["палисаднич","к"],o:["е","и","о"],a:"е",ctx:"заросший",why:"Палисадничка — гласная выпадает: -ЕК-."},
+  {w:["диванч","к"],o:["е","и","о"],a:"и",why:"Диванчика — гласная сохраняется: -ИК-."},
+  {w:["шалаш","к"],o:["е","и","о"],a:"и",ctx:"тесный",why:"Шалашика — гласная сохраняется: -ИК-."},
+  {w:["огород","к"],o:["е","и","о"],a:"и",ctx:"за домом",why:"Огородика — гласная сохраняется: -ИК-."},
+  {w:["пустяч","к"],o:["е","и","о"],a:"о",ctx:"подарить милый",why:"Ударение падает на суффикс (пустячо́к): после шипящего под ударением пишем <u>О</u>."},
+  {w:["мороз","ц"],o:["е","и"],a:"е",ctx:"утренний",why:"Мужской род, гласная выпадает (морозца): -ЕЦ-."},
+  {w:["метел","ца"],o:["и","е"],a:"и",ctx:"январская",why:"Женский род: -ИЦ-."},
+  {w:["перенос","ца"],o:["и","е"],a:"и",ctx:"сломанная",why:"Женский род: -ИЦ-."},
+  {w:["ружь","цо"],o:["е","и"],a:"е",ctx:"лесника",why:"Средний род, ударение на окончании (ружьецо́): -ЕЦ-."},
+  {w:["масл","це"],o:["и","е"],a:"и",why:"Средний род, ударение до суффикса (ма́слице): -ИЦ-."}
+];
+
+/* --- Существительные: -ИНК-/-ЕНК-, -ИЧК-/-ЕЧК- --- */
+const P_INK = [
+  {w:["смород","нка"],o:["и","е"],a:"и",ctx:"спелая",why:"Есть слово «смородина» с суффиксом -ИН-: пишем -ИНК-."},
+  {w:["бус","нка"],o:["и","е"],a:"и",why:"Есть «бусина»: -ИНК-."},
+  {w:["прогал","нка"],o:["и","е"],a:"и",why:"Есть «прогалина»: -ИНК-."},
+  {w:["трещ","нка"],o:["и","е"],a:"и",ctx:"на вазе",why:"Есть «трещина»: -ИНК-."},
+  {w:["сос","нка"],o:["е","и"],a:"е",ctx:"новогодняя",why:"От «сосна», слова с -ИН- нет: -ЕНК-."},
+  {w:["спал","нка"],o:["е","и"],a:"е",ctx:"принцессы",why:"От «спальня»: -ЕНК-."},
+  {w:["бас","нка"],o:["е","и"],a:"е",why:"От «басня»: -ЕНК-."},
+  {w:["пугов","чка"],o:["и","е"],a:"и",why:"От «пуговица» (на -ИЦА): -ИЧК-."},
+  {w:["луков","чка"],o:["и","е"],a:"и",ctx:"тюльпана",why:"От «луковица»: -ИЧК-."},
+  {w:["ле","чка"],o:["е","и"],a:"е",why:"От «лейка», а не от слова на -ИЦА: -ЕЧК-."},
+  {w:["крош","чка"],o:["е","и"],a:"е",why:"От «крошка»: -ЕЧК-."},
+  {w:["сем","чко"],o:["е","и"],a:"е",ctx:"тыквенное",why:"От «семя» (на -МЯ): -ЕЧК-."}
+];
+
+/* --- Существительные: -ЧИК-/-ЩИК-, -ИНСТВ-/-ЕНСТВ-, -ИЗН- --- */
+const P_CHIK = [
+  {w:["учёт","ик"],o:["ч","щ"],a:"ч",why:"Перед суффиксом Т: -ЧИК-."},
+  {w:["навод","ик"],o:["ч","щ"],a:"ч",ctx:"артиллерийский",why:"Перед суффиксом Д: -ЧИК-."},
+  {w:["извоз","ик"],o:["ч","щ"],a:"ч",ctx:"старый",why:"Перед суффиксом З: -ЧИК-."},
+  {w:["застрой","ик"],o:["ч","щ"],a:"щ",why:"Перед суффиксом Й — это не Д, Т, З, С, Ж: -ЩИК-."},
+  {w:["набор","ик"],o:["ч","щ"],a:"щ",why:"Перед суффиксом Р: -ЩИК-."},
+  {w:["стеколь","ик"],o:["ч","щ"],a:"щ",ctx:"местный",why:"Перед суффиксом Л: -ЩИК-, и после Л пишется мягкий знак."},
+  {w:["чекан","ик"],o:["ч","щ"],a:"щ",ctx:"талантливый",why:"Перед суффиксом Н: -ЩИК-."},
+  {w:["копиров","ик"],o:["ч","щ"],a:"щ",why:"Перед суффиксом В: -ЩИК-."},
+  {w:["больш","нство"],o:["и","е"],a:"и",ctx:"подавляющее",why:"Ударение на окончании (большинство́): -ИНСТВ-."},
+  {w:["перв","нство"],o:["е","и"],a:"е",ctx:"городское",why:"Ударение не на окончании (пе́рвенство): -ЕНСТВ-."},
+  {w:["досто","нство"],o:["и","е"],a:"и",why:"Это не суффикс -ИНСТВ-, а «достоин» + -СТВ-: буква И есть уже в краткой форме."},
+  {w:["бел","зна"],o:["и","е"],a:"и",ctx:"снегов",why:"Суффикс -ИЗН- всегда пишется с И."}
+];
+
+/* --- Прилагательные: -ИВ-/-ЕВ-, -ЧИВ-/-ЛИВ- --- */
+const P_EV = [
+  {w:["никел","вый"],o:["е","и"],a:"е",why:"Л из корня «никель», суффикс безударный: -ЕВ-."},
+  {w:["фасол","вый"],o:["е","и"],a:"е",ctx:"суп",why:"Л из корня «фасоль»: -ЕВ-."},
+  {w:["эмал","вый"],o:["е","и"],a:"е",ctx:"покрытие",why:"Л из корня «эмаль»: -ЕВ-."},
+  {w:["тюл","вый"],o:["е","и"],a:"е",ctx:"занавес",why:"Л из корня «тюль»: -ЕВ-."},
+  {w:["гуттаперч","вый"],o:["е","и"],a:"е",ctx:"гимнаст",why:"Ч из корня «гуттаперча»: -ЕВ-."},
+  {w:["предматч","вый"],o:["е","и"],a:"е",why:"Ч из корня «матч»: -ЕВ-."},
+  {w:["разборч","вый"],o:["и","е"],a:"и",why:"Слова «разборч» нет, значит перед нами -ЧИВ-: всегда И."},
+  {w:["усидч","вый"],o:["и","е"],a:"и",ctx:"первоклассник",why:"Суффикс -ЧИВ-: всегда И."},
+  {w:["приветл","вый"],o:["и","е"],a:"и",why:"Слова «приветл» нет — суффикс -ЛИВ-: всегда И."},
+  {w:["доверч","вый"],o:["и","е"],a:"и",ctx:"щенок",why:"Суффикс -ЧИВ-: всегда И."},
+  {w:["назойл","вый"],o:["и","е"],a:"и",why:"Суффикс -ЛИВ-: всегда И."},
+  {w:["милост","вый"],o:["и","е"],a:"и",ctx:"государь",why:"Исключение: суффикс без ударения, а пишется -ИВ-."}
+];
+
+/* --- Прилагательные: -ИСТ-, -ЧАТ-, -ЕНЬК-/-ОНЬК-, -ЕВАТ- --- */
+const P_IST = [
+  {w:["болот","стая"],o:["и","е"],a:"и",ctx:"местность",why:"Суффикс -ИСТ- всегда с И."},
+  {w:["раскат","стый"],o:["и","е"],a:"и",ctx:"гром",why:"Суффикс -ИСТ- всегда с И."},
+  {w:["непоклад","стый"],o:["и","е"],a:"и",why:"Суффикс -ИСТ- всегда с И."},
+  {w:["коленч","тый"],o:["а","е"],a:"а",ctx:"вал",why:"Суффикс -ЧАТ- всегда с А."},
+  {w:["веснушч","тые"],o:["а","е"],a:"а",ctx:"руки",why:"Суффикс -ЧАТ- всегда с А."},
+  {w:["узорч","тый"],o:["а","е"],a:"а",ctx:"платок",why:"Суффикс -ЧАТ- всегда с А."},
+  {w:["высок","нький"],o:["о","е"],a:"о",ctx:"дубок",why:"Перед суффиксом К: -ОНЬК-."},
+  {w:["голуб","нькие"],o:["е","о"],a:"е",ctx:"цветочки",why:"Перед суффиксом Б, а не Г, К, Х: -ЕНЬК-."},
+  {w:["дешёв","нький"],o:["е","о"],a:"е",ctx:"товар",why:"Перед суффиксом В: -ЕНЬК-."},
+  {w:["ноздр","ватый"],o:["е","о"],a:"е",ctx:"хлеб",why:"После мягкого Р (ноздря): -ЕВАТ-."},
+  {w:["свеж","ватый"],o:["е","о"],a:"е",ctx:"ветер",why:"После шипящего без ударения (свежева́тый): -ЕВАТ-."},
+  {w:["за","нька"],o:["и","е"],a:"и",ctx:"серенький",why:"Исключение: заинька, паинька, баиньки пишутся с И."}
+];
+
+/* --- Прилагательные: -К-/-СК-, -ИНСК-/-ЕНСК- --- */
+const P_SK = [
+  {w:["француз","кий"],o:["с","—"],a:"с",ctx:"язык",why:"Краткой формы нет, основа не на К, Ц, Ч: -СК-."},
+  {w:["черкес","кие"],o:["с","—"],a:"с",ctx:"обычаи",why:"Основа «черкес», краткой формы нет: -СК-, отсюда две С."},
+  {w:["матрос","кая"],o:["с","—"],a:"с",ctx:"тельняшка",why:"Основа «матрос»: -СК-, отсюда две С."},
+  {w:["немец","кий"],o:["с","—"],a:"—",ctx:"порядок",why:"От «немец» — основа на Ц: суффикс -К-, буквы С нет."},
+  {w:["рыбац","кие"],o:["с","—"],a:"—",ctx:"сети",why:"От «рыбак»: К меняется на Ц, суффикс -К-."},
+  {w:["низ","кий"],o:["с","—"],a:"—",why:"Есть краткая форма «низок»: суффикс -К-."},
+  {w:["скольз","кий"],o:["с","—"],a:"—",ctx:"пол",why:"Есть краткая форма «скользок»: суффикс -К-."},
+  {w:["соч","нские"],o:["и","е"],a:"и",ctx:"пляжи",why:"От названия на И (Сочи): -ИНСК-."},
+  {w:["во","нский"],o:["и","е"],a:"и",ctx:"долг",why:"От «воин»: И из основы, пишем -ИНСК-."},
+  {w:["колом","нский"],o:["е","и"],a:"е",why:"От «Коломна» — основа на Н с беглой гласной: -ЕНСК-."},
+  {w:["кладбищ","нский"],o:["е","и"],a:"е",why:"В слове «кладбище» нет -ИН-: -ЕНСК-."},
+  {w:["керч","нские"],o:["е","и"],a:"е",ctx:"достопримечательности",why:"От «Керчь»: -ЕНСК-."}
+];
+
+/* --- Прилагательные: -ЯН-/-ЕН-, -ИЧ-/-ЕЧ-, краткие формы --- */
+const P_YAN = [
+  {w:["масл","ная"],o:["я","е"],a:"я",ctx:"краска",why:"Краска сделана на масле: масл<u>Я</u>ный."},
+  {w:["масл","ные"],o:["я","е"],a:"е",ctx:"блинчики",why:"Блинчики смазаны маслом: масл<u>Е</u>ный."},
+  {w:["ветр","ные"],o:["я","е"],a:"я",ctx:"мельницы",why:"Мельницы работают от ветра: ветр<u>Я</u>ной."},
+  {w:["ветр","ный"],o:["я","е"],a:"е",ctx:"характер",why:"Легкомысленный характер: ветр<u>Е</u>ный."},
+  {w:["плат","ной"],o:["я","е"],a:"я",ctx:"шкаф",why:"Шкаф для одежды — значение назначения: -ЯН-."},
+  {w:["жест","ные"],o:["я","е"],a:"я",ctx:"банки",why:"Банки из жести — значение материала: -ЯН-."},
+  {w:["трав","нистый"],o:["я","е"],a:"я",ctx:"покров",why:"От «травяной»: -ЯНИСТ-."},
+  {w:["помещ","чьи"],o:["и","е"],a:"и",ctx:"владения",why:"От «помещик» (на -ИК): -ИЧ-."},
+  {w:["старуш","чьи"],o:["е","и"],a:"е",ctx:"наряды",why:"От «старушка» (на -КА): -ЕЧ-."},
+  {w:["плотн","чий"],o:["и","е"],a:"и",ctx:"топор",why:"От «плотник» (на -НИК): -ИЧ-."},
+  {w:["споко","н"],o:["е","и"],a:"е",ctx:"всегда",why:"Краткая форма: между согласными беглая Е (спокойный — спокоен)."},
+  {w:["досто","н"],o:["и","е"],a:"и",ctx:"звания Героя",why:"Исключение: краткая форма «достоин» пишется с И."}
+];
+
+/* --- Глаголы: -ОВА-/-ЕВА-, -ЫВА-/-ИВА-, -НИЧА- --- */
+const P_OVA = [
+  {w:["аплодир","вать"],o:["о","ы"],a:"о",ctx:"долго",why:"Я аплодирую — суффикс исчез: -ОВА-."},
+  {w:["бесед","вать"],o:["о","ы"],a:"о",ctx:"с коллегой",why:"Я беседую: -ОВА-."},
+  {w:["потч","вать"],o:["е","и"],a:"е",ctx:"гостя",why:"Я потчую — суффикс исчез; после Ч пишем -ЕВА-."},
+  {w:["завед","вать"],o:["о","ы"],a:"о",ctx:"библиотекой",why:"Я заведую: -ОВА-."},
+  {w:["провед","вать"],o:["о","ы"],a:"ы",ctx:"больного",why:"Я проведываю — суффикс остался: -ЫВА-."},
+  {w:["исповед","вать"],o:["о","ы"],a:"о",ctx:"христианство",why:"Я исповедую: -ОВА-."},
+  {w:["отвед","вать"],o:["о","ы"],a:"ы",ctx:"пироги",why:"Я отведываю: -ЫВА-."},
+  {w:["наста","вать"],o:["и","е"],a:"и",ctx:"на своём",why:"Я настаиваю — суффикс остался: -ИВА-."},
+  {w:["обжар","вать"],o:["и","е"],a:"и",ctx:"овощи",why:"Я обжариваю: -ИВА-."},
+  {w:["закраш","вать"],o:["и","е"],a:"и",ctx:"орнамент",why:"Я закрашиваю: -ИВА-."},
+  {w:["сплетнич","ть"],o:["а","и","е"],a:"а",ctx:"обо всех",why:"Глагол на -НИЧАТЬ: пишем А."},
+  {w:["хищнич","ть"],o:["а","и","е"],a:"а",ctx:"в лесах",why:"Глагол на -НИЧАТЬ: пишем А."}
+];
+
+/* --- Глаголы: ударный -ВА- --- */
+const P_VA = [
+  {w:["одол","вать"],o:["е","и"],a:"е",ctx:"расспросами",why:"Ударение на -ВА-: без него «одолеть» — пишем Е."},
+  {w:["устар","вать"],o:["е","и"],a:"е",ctx:"со временем",why:"Без -ВА- — «устареть»: Е."},
+  {w:["овлад","вать"],o:["е","и"],a:"е",ctx:"навыками",why:"Без -ВА- — «овладеть»: Е."},
+  {w:["затм","вать"],o:["е","и"],a:"е",ctx:"солнце",why:"Исключение: проверка «затмить» подсказывает И, а пишется Е."},
+  {w:["продл","вать"],o:["е","и"],a:"е",ctx:"абонемент",why:"Исключение: проверка «продлить» подсказывает И, а пишется Е."},
+  {w:["застр","вать"],o:["е","я"],a:"е",ctx:"в лифте",why:"Исключение: проверка «застрять» подсказывает Я, а пишется Е."},
+  {w:["сомн","ваться"],o:["е","и"],a:"е",ctx:"в себе",why:"Без -ВА- глагола не получается — пишем Е."},
+  {w:["прол","вать"],o:["и","е"],a:"и",ctx:"воду",why:"Ударение на -ВА-: без него «пролить» — пишем И."},
+  {w:["раска","ваться"],o:["и","е"],a:"и",why:"Ударение не на -ВА-: я раскаиваюсь — суффикс -ИВА-."},
+  {w:["высме","вать"],o:["и","е"],a:"и",ctx:"пороки",why:"Ударение не на -ВА-: я высмеиваю — -ИВА-."},
+  {w:["перекле","вать"],o:["и","е"],a:"и",ctx:"обои",why:"Ударение не на -ВА-: я переклеиваю — -ИВА-."},
+  {w:["обустра","вать"],o:["и","е"],a:"и",ctx:"дом",why:"Ударение не на -ВА-: я обустраиваю — -ИВА-."}
+];
+
+/* --- Глаголы: гласная перед -Л- и -ТЬ, обез-/обес- --- */
+const P_L = [
+  {w:["ненавид","ли"],o:["е","и"],a:"е",ctx:"всех",why:"Ненавидеть → ненавидели: перед -Л- та же гласная, что перед -ТЬ."},
+  {w:["се","л"],o:["я","е"],a:"я",ctx:"он … рожь",why:"Сеять → сеял."},
+  {w:["наде","лся"],o:["я","е"],a:"я",ctx:"… на успех",why:"Надеяться → надеялся."},
+  {w:["ла","ла"],o:["я","е"],a:"я",ctx:"собака громко …",why:"Лаять → лаяла."},
+  {w:["обид","лся"],o:["е","и"],a:"е",ctx:"… на всех",why:"Обидеться → обиделся."},
+  {w:["завис","ло"],o:["е","и"],a:"е",ctx:"… от обстоятельств",why:"Зависеть → зависело."},
+  {w:["кле","ла"],o:["и","е","я"],a:"и",ctx:"… аппликацию",why:"Клеить → клеила."},
+  {w:["обессил","л"],o:["е","и"],a:"е",ctx:"… от голода",why:"Сам лишился сил, дополнения нет: Е."},
+  {w:["обессил","ли"],o:["и","е"],a:"и",ctx:"тренировки … спортсмена",why:"Лишили сил кого-то (спортсмена): И."},
+  {w:["обезлюд","ла"],o:["и","е"],a:"и",ctx:"война … деревни",why:"Сделала безлюдными что-то (деревни): И."},
+  {w:["обледен","ли"],o:["е","и"],a:"е",ctx:"за ночь тротуары …",why:"Тротуары сами покрылись льдом: Е."},
+  {w:["обезвред","ть"],o:["и","е"],a:"и",ctx:"… гранату",why:"Обезвредить что-то (гранату): И."}
+];
+
+/* --- Наречия: -О/-А --- */
+const P_ADV = [
+  {w:["изредк",""],o:["а","о"],a:"а",ctx:"… видеться",why:"Приставка ИЗ-: на конце А."},
+  {w:["досыт",""],o:["а","о"],a:"а",ctx:"… наесться",why:"Приставка ДО-: на конце А."},
+  {w:["искос",""],o:["а","о"],a:"а",ctx:"… посмотреть",why:"Приставка ИС- (вариант ИЗ-): на конце А."},
+  {w:["сызнов",""],o:["а","о"],a:"а",ctx:"рассказать …",why:"Приставка СЫЗ-, как ИЗ- и С-: на конце А."},
+  {w:["слев",""],o:["а","о"],a:"а",ctx:"находиться …",why:"Приставка С-: на конце А."},
+  {w:["наглух",""],o:["о","а"],a:"о",ctx:"… закрыть",why:"Приставка НА-: на конце О."},
+  {w:["засветл",""],o:["о","а"],a:"о",ctx:"… выехать",why:"Приставка ЗА-: на конце О."},
+  {w:["запрост",""],o:["о","а"],a:"о",ctx:"… справиться",why:"Приставка ЗА-: на конце О."},
+  {w:["воедин",""],o:["о","а"],a:"о",ctx:"… собрать",why:"Приставка ВО- (вариант В-): на конце О."},
+  {w:["исправн",""],o:["о","а"],a:"о",ctx:"… платить",why:"Есть прилагательное «исправный», наречие образовано от него: О."},
+  {w:["досрочн",""],o:["о","а"],a:"о",ctx:"… погасить",why:"Есть прилагательное «досрочный»: О."},
+  {w:["дословн",""],o:["о","а"],a:"о",ctx:"… переписать",why:"Есть прилагательное «дословный»: О."}
+];
+
+/* --- После шипящих: О, Ё, Е --- */
+const P_SHIP = [
+  {w:["медвеж","нок"],o:["о","ё"],a:"о",why:"Ударение на суффиксе, слово не от глагола: О."},
+  {w:["камыш","вый"],o:["о","ё","е"],a:"о",ctx:"кот",why:"Ударение на суффиксе (камышо́вый): О."},
+  {w:["парч","вые"],o:["о","е"],a:"о",ctx:"наряды",why:"Ударение на суффиксе (парчо́вые): О."},
+  {w:["плюш","вый"],o:["е","о"],a:"е",why:"Суффикс без ударения (плю́шевый): Е."},
+  {w:["вещ","вой"],o:["е","о"],a:"е",why:"Ударение на окончании (вещево́й), суффикс безударный: Е."},
+  {w:["ноч","вка"],o:["ё","о"],a:"ё",ctx:"в лесу",why:"От глагола «ночевать», под ударением: Ё."},
+  {w:["туш","нка"],o:["ё","о"],a:"ё",why:"От глагола «тушить», под ударением: Ё."},
+  {w:["дириж","р"],o:["ё","о"],a:"ё",ctx:"оркестра",why:"Суффикс -ЁР: Ё."},
+  {w:["выкорч","вывать"],o:["ё","о"],a:"ё",ctx:"деревья",why:"От «корчевать», под ударением в -ЁВЫВА-: Ё."},
+  {w:["горяч",""],o:["о","е"],a:"о",ctx:"… благодарить",why:"Наречие, ударение на конце (горячо́): О."},
+  {w:["певуч",""],o:["е","о"],a:"е",ctx:"… говорить",why:"Без ударения (певу́че): Е."},
+  {w:["ещ",""],o:["ё","о"],a:"ё",ctx:"повторить …",why:"Исключение: наречие «ещё» пишется с Ё."}
+];
+
+/* --- После Ц: О, Е, Ы --- */
+const P_TS = [
+  {w:["образц","вая"],o:["о","е"],a:"о",ctx:"работа",why:"Ударение на суффиксе (образцо́вая): О."},
+  {w:["песц","вая"],o:["о","е"],a:"о",ctx:"шубка",why:"Ударение на суффиксе (песцо́вая): О."},
+  {w:["изразц","вая"],o:["о","е"],a:"о",ctx:"печь",why:"Ударение на суффиксе (изразцо́вая): О."},
+  {w:["отц","вский"],o:["о","е"],a:"о",ctx:"ремень",why:"Ударение на суффиксе (отцо́вский): О."},
+  {w:["танц","р"],o:["о","е"],a:"о",ctx:"талантливый",why:"Ударение на суффиксе (танцо́р): О."},
+  {w:["облиц","вочный"],o:["о","е"],a:"о",ctx:"кирпич",why:"Ударение на -ЦО- (облицо́вочный): О."},
+  {w:["ситц","вые"],o:["е","о"],a:"е",ctx:"полотенца",why:"Без ударения (си́тцевые): Е."},
+  {w:["кварц","вые"],o:["е","о"],a:"е",ctx:"часы",why:"Без ударения (ква́рцевые): Е."},
+  {w:["молодц","ватый"],o:["е","о"],a:"е",ctx:"вид",why:"Без ударения (молодцева́тый): Е."},
+  {w:["танц","вать"],o:["е","о"],a:"е",ctx:"вальс",why:"Без ударения (танцева́ть): Е. Сравните: танцо́р."},
+  {w:["куниц","ны"],o:["ы","и"],a:"ы",ctx:"припасы",why:"Притяжательное прилагательное: после Ц в суффиксе -ЫН- пишем Ы."},
+  {w:["сестриц","ны"],o:["ы","и"],a:"ы",ctx:"сказки",why:"Притяжательное прилагательное: -ЫН-, пишем Ы."}
+];
+
+/* --- Ловушки: какое правило работает --- */
+const Q_RULE = [
+  {q:"тюл..вый",o:["Суффикс -ЛИВ-: всегда И","Суффикс -ЕВ-: Л из корня «тюль»"],a:"Суффикс -ЕВ-: Л из корня «тюль»",
+   why:"Отбрасываем «-евый» — остаётся «тюль». Буква Л из корня, суффикс безударный: тюл<u>Е</u>вый."},
+  {q:"приветл..вый",o:["Суффикс -ЕВ-: Л из корня","Суффикс -ЛИВ-: всегда И"],a:"Суффикс -ЛИВ-: всегда И",
+   why:"Существительного «приветл» нет, значит перед нами -ЛИВ-: приветл<u>И</u>вый."},
+  {q:"исправн.. (платить)",o:["Наречие от прилагательного «исправный»: О","Приставка ИС-: А"],a:"Наречие от прилагательного «исправный»: О",
+   why:"Есть прилагательное «исправный», наречие образовано от него: исправн<u>О</u>."},
+  {q:"искос.. (посмотреть)",o:["Наречие от прилагательного: О","Приставка ИС-: А"],a:"Приставка ИС-: А",
+   why:"Прилагательного с таким началом нет — работает приставка: искос<u>А</u>."},
+  {q:"затм..вать",o:["Убираем -ВА-: «затмить», пишем И","Исключение: пишем Е"],a:"Исключение: пишем Е",
+   why:"Затм<u>Е</u>вать — исключение: проверка подсказывает И, а пишется Е."},
+  {q:"прол..вать (воду)",o:["Убираем -ВА-: «пролить», пишем И","Перед -ВА- пишем Е, как в «одолевать»"],a:"Убираем -ВА-: «пролить», пишем И",
+   why:"Ударение на -ВА-; без него получаем «пролить» — прол<u>И</u>вать."},
+  {q:"обессил..л (от голода)",o:["Сделал бессильным кого-то: И","Сам стал бессильным: Е"],a:"Сам стал бессильным: Е",
+   why:"Дополнения нет, человек сам лишился сил: обессил<u>Е</u>л."},
+  {q:"вяз..кий",o:["Есть краткая форма «вязок»: -К-","Основа на З: -СК-"],a:"Есть краткая форма «вязок»: -К-",
+   why:"У качественного прилагательного есть краткая форма — суффикс -К-: вязкий."},
+  {q:"досто..нство",o:["Ударение не на окончании: -ЕНСТВ-","«Достоин» + -СТВ-: И"],a:"«Достоин» + -СТВ-: И",
+   why:"Буква И есть уже в краткой форме «достоин», к ней присоединяется -СТВ-: досто<u>И</u>нство."},
+  {q:"ноч..вка",o:["От глагола «ночевать»: Ё","Не от глагола: О"],a:"От глагола «ночевать»: Ё",
+   why:"Под ударением после шипящего в слове от глагола пишется Ё: ноч<u>Ё</u>вка."},
+  {q:"танц..р",o:["После Ц пишем Е, как в «танцевать»","После Ц под ударением: О"],a:"После Ц под ударением: О",
+   why:"Ударение на суффиксе — после Ц пишем О: танц<u>О</u>р."},
+  {q:"за..нька",o:["Суффикс -ЕНЬК-: пишем Е","Исключение с И"],a:"Исключение с И",
+   why:"Заинька, паинька, баиньки — исключения: за<u>И</u>нька."}
+];
+
+/* --- Флеш-карты: исключения (в общий процент не входят) --- */
+const F_ISKL = [
+  {w:["милост","вый"],a:"и",why:"Суффикс без ударения, но пишется -ИВ-. Второе такое слово — юродивый."},
+  {w:["юрод","вый"],a:"и",why:"Суффикс без ударения, но пишется -ИВ-. Пара к «милостивый»."},
+  {w:["затм","вать"],a:"е",why:"Проверка «затмить» подсказывает И, а пишется Е."},
+  {w:["продл","вать"],a:"е",why:"Проверка «продлить» подсказывает И, а пишется Е."},
+  {w:["застр","вать"],a:"е",why:"Проверка «застрять» подсказывает Я, а пишется Е."},
+  {w:["встр","вать"],a:"е",ctx:"в разговор",why:"Проверка «встрять» подсказывает Я, а пишется Е."},
+  {w:["па","нька"],a:"и",why:"Исключение из -ЕНЬК-: паинька, заинька, баиньки."},
+  {w:["за","нька"],a:"и",why:"Исключение из -ЕНЬК-: паинька, заинька, баиньки."},
+  {w:["ба","ньки"],a:"и",ctx:"пора …",why:"Исключение из -ЕНЬК-: паинька, заинька, баиньки."},
+  {w:["досто","н"],a:"и",ctx:"большего",why:"Краткие формы пишутся с беглой Е (спокоен, скромен), а «достоин» — с И."},
+  {w:["ещ",""],a:"ё",why:"Наречия на шипящую под ударением пишутся с О (горячо), а «ещё» — с Ё."},
+  {w:["пенз","нский"],a:"е",why:"Правило -ИНСК-/-ЕНСК- это слово не объясняет: пензенский — запомнить."}
+];
+
+/* --- Итоговая практика --- */
+const P_FINAL = [
+  {w:["клубоч","к"],o:["е","и","о"],a:"е",why:"Клубочка — гласная выпадает, ударение не на суффиксе: -ЕК-."},
+  {w:["ножн","чки"],o:["и","е"],a:"и",ctx:"маникюрные",why:"От «ножницы» (на -ИЦЫ): -ИЧК-."},
+  {w:["рав","нство"],o:["е","и"],a:"е",ctx:"бороться за …",why:"Ударение не на окончании (ра́венство): -ЕНСТВ-."},
+  {w:["заказ","ик"],o:["ч","щ"],a:"ч",ctx:"довольный",why:"Перед суффиксом З: -ЧИК-."},
+  {w:["каракул","вая"],o:["е","и"],a:"е",ctx:"накидка",why:"Л из корня «каракуль», суффикс безударный: -ЕВ-."},
+  {w:["засушл","вое"],o:["и","е"],a:"и",ctx:"лето",why:"Слова «засушл» нет — суффикс -ЛИВ-: всегда И."},
+  {w:["клетч","тый"],o:["а","е"],a:"а",why:"Суффикс -ЧАТ- всегда пишется с А."},
+  {w:["тёпл","нькая"],o:["е","о"],a:"е",ctx:"водичка",why:"Перед суффиксом Л, а не Г, К, Х: -ЕНЬК-."},
+  {w:["турец","кие"],o:["с","—"],a:"—",ctx:"ковры",why:"От «турок»: К меняется на Ц, суффикс -К-, буквы С нет."},
+  {w:["пресн","нские"],o:["е","и"],a:"е",ctx:"дворики",why:"От «Пресня» — основа на Н с беглой гласной: -ЕНСК-."},
+  {w:["исслед","вать"],o:["о","ы"],a:"о",ctx:"мир",why:"Я исследую — суффикс исчез: -ОВА-."},
+  {w:["запот","вать"],o:["е","и"],a:"е",ctx:"быстро",why:"Ударение на -ВА-: без него «запотеть» — Е."},
+  {w:["та","л"],o:["я","е"],a:"я",ctx:"лёд …",why:"Таять → таял: перед -Л- та же гласная, что перед -ТЬ."},
+  {w:["набел",""],o:["о","а"],a:"о",ctx:"… переписать",why:"Приставка НА-: на конце О."},
+  {w:["грош","вый"],o:["о","е"],a:"о",why:"Ударение на суффиксе (грошо́вый): после шипящего пишем О."},
+  {w:["тигриц","н"],o:["ы","и"],a:"ы",why:"Притяжательное прилагательное: после Ц в суффиксе -ЫН- пишем Ы."}
+];
+
+/* --- Задания формата ЕГЭ ---
+   1 — демоверсия ФИПИ 2027 (ответ 34 по ключу ФИПИ).
+   2–5 — карточки формата задания 11 из «Экспресс-зачётов» (ответы 235, 134, 23, 14 по ключу). */
+const EGE_Q = "Укажите варианты ответов, в которых в обоих словах одного ряда пропущена одна и та же буква. Запишите номера ответов.";
+const EGE = [
+  {src:"Демонстрационный вариант ЕГЭ 2027 года", right:[2,3], rows:[
+    [{w:["никел","вый"],a:"е",why:"Л из корня «никель», безударный -ЕВ-"},{w:["наста","вать"],a:"и",why:"я настаиваю — -ИВА-"}],
+    [{w:["аплодир","вать"],a:"о",why:"я аплодирую — -ОВА-"},{w:["изредк",""],a:"а",why:"приставка ИЗ- — на конце А"}],
+    [{w:["затм","вать"],a:"е",why:"исключение с Е"},{w:["подароч","к"],a:"е",why:"подарочка — гласная выпадает, -ЕК-"}],
+    [{w:["солом","нка"],a:"и",why:"есть «соломина» — -ИНК-"},{w:["разборч","вый"],a:"и",why:"-ЧИВ- — всегда И"}],
+    [{w:["усидч","вый"],a:"и",why:"-ЧИВ- — всегда И"},{w:["ненавид","ли"],a:"е",why:"ненавидеть — перед -Л- та же Е"}]
+  ]},
+  {right:[1,2,4], rows:[
+    [{w:["назойл","вый"],a:"и",why:"-ЛИВ- — всегда И"},{w:["замоч","к"],a:"е",why:"замочка — гласная выпадает, -ЕК-"}],
+    [{w:["электрифицир","вать"],a:"о",why:"я электрифицирую — -ОВА-"},{w:["грош","вый"],a:"о",why:"после шипящего под ударением — О"}],
+    [{w:["выздоравл","вать"],a:"и",why:"я выздоравливаю — -ИВА-"},{w:["горл","нка"],a:"и",why:"пишется с И; правило про -ИНА/-НЯ это слово не проверяет — запомнить"}],
+    [{w:["милост","вый"],a:"и",why:"исключение с -ИВ-"},{w:["эмал","вый"],a:"е",why:"Л из корня «эмаль», безударный -ЕВ-"}],
+    [{w:["потч","вать"],a:"е",why:"я потчую — -ЕВА-"},{w:["ветр","ный"],a:"е",cx:"характер",why:"легкомысленный — ветрЕный"}]
+  ]},
+  {right:[0,2,3], rows:[
+    [{w:["непоклад","стый"],a:"и",why:"-ИСТ- — всегда И"},{w:["дяд","н"],a:"и",cx:"шарф",why:"притяжательное прилагательное с -ИН-"}],
+    [{w:["вещ","вой"],a:"е",why:"суффикс без ударения после шипящего — Е"},{w:["глин","ный"],a:"я",why:"из глины — -ЯН-"}],
+    [{w:["изюм","нка"],a:"и",why:"есть «изюмина» — -ИНК-"},{w:["больш","нство"],a:"и",why:"ударение на окончании — -ИНСТВ-"}],
+    [{w:["ноздр","ватый"],a:"е",why:"после мягкого Р — -ЕВАТ-"},{w:["начальнич","ский"],a:"е",cx:"тон",why:"после Ч в суффиксе -ЕСК- — Е"}],
+    [{w:["скольз","кий"],a:"—",why:"краткая форма «скользок» — суффикс -К-, буквы нет"},{w:["одес","кий"],a:"с",why:"Одесса + -СК- — пишем С"}]
+  ]},
+  {right:[1,2], rows:[
+    [{w:["масл","нистый"],a:"я",why:"от «масляный» — -ЯНИСТ-"},{w:["затм","вать"],a:"е",why:"исключение с Е"}],
+    [{w:["каракул","вый"],a:"е",why:"Л из корня «каракуль», безударный -ЕВ-"},{w:["бел","нький"],a:"е",why:"перед суффиксом Л — -ЕНЬК-"}],
+    [{w:["велич","ство"],a:"е",why:"после Ч в суффиксе -ЕСТВ- — Е"},{w:["завлад","вая"],a:"е",why:"ударение на -ВА-: «завладеть» — Е"}],
+    [{w:["изредк",""],a:"а",why:"приставка ИЗ- — на конце А"},{w:["проповед","вать"],a:"о",why:"я проповедую — -ОВА-"}],
+    [{w:["обрывч","тый"],a:"а",why:"-ЧАТ- — всегда А"},{w:["исправн",""],a:"о",cx:"платить",why:"от прилагательного «исправный» — О"}]
+  ]},
+  {right:[0,3], rows:[
+    [{w:["фасол","вый"],a:"е",why:"Л из корня «фасоль», безударный -ЕВ-"},{w:["коричн","ватый"],a:"е",why:"после мягкого Н — Е"}],
+    [{w:["ноч","вка"],a:"ё",why:"от глагола «ночевать» — Ё"},{w:["ож","г"],a:"о",cx:"на руке",why:"существительное: после шипящего под ударением О"}],
+    [{w:["ба","ньки"],a:"и",why:"исключение с И"},{w:["глад","нький"],a:"е",why:"перед суффиксом Д — -ЕНЬК-"}],
+    [{w:["масл","ный"],a:"е",cx:"блин",why:"смазанный маслом — масл<u>Е</u>ный"},{w:["изгнаннич","ство"],a:"е",why:"после Ч в суффиксе -ЕСТВ- — Е"}],
+    [{w:["лечебн","ца"],a:"и",why:"женский род — -ИЦ-"},{w:["буш","вать"],a:"е",why:"я бушую — -ЕВА-"}]
+  ]}
+];
+
+/* ==================== СЛАЙДЫ ==================== */
+
+const SLIDES = [
+  {k:"title", type:"title"},
+  {k:"map", type:"map"},
+
+  /* ---------- СУЩЕСТВИТЕЛЬНЫЕ ---------- */
+  {k:"r-ek", type:"rule", sec:"Существительные: -ЕК-/-ИК-, -ЕЦ-/-ИЦ-", kicker:"Блок 1 · суффиксы существительных",
+   title:"-ЕК- или -ИК-, -ЕЦ- или -ИЦ-",
+   lead:"Главный приём для этих суффиксов — изменить слово по падежам и посмотреть, что станет с гласной.",
+   blocks:[
+     {h:"-ИК- (-ЧИК-) или -ЕК-", p:"Поставьте слово в родительный падеж. Гласная <b>сохраняется</b> — пишем -ИК-. Гласная <b>выпадает</b> — пишем -ЕК-.",
+      ex:"диванч<u>И</u>к — диванчика, огород<u>И</u>к — огородика, шалаш<u>И</u>к — шалашика<br>подароч<u>Е</u>к — подарочка, горош<u>Е</u>к — горошка, человеч<u>Е</u>к — человечка"},
+     {h:"Если ударение падает на суффикс", p:"После шипящего под ударением в этом месте пишется О. Гласная при склонении тоже выпадает, так что здесь решает именно ударение.",
+      ex:"пустяч<u>О</u>к, мужич<u>О</u>к, клоч<u>О</u>к, снеж<u>О</u>к"},
+     {h:"-ЕЦ- или -ИЦ-", p:"Мужской род — -ЕЦ-, гласная при склонении выпадает. Женский род — -ИЦ-, гласная сохраняется. В среднем роде решает ударение: на окончании — -ЕЦ-, до суффикса — -ИЦ-.",
+      ex:"мороз<u>Е</u>ц, хлеб<u>Е</u>ц, молод<u>Е</u>ц — метел<u>И</u>ца, перенос<u>И</u>ца, горн<u>И</u>ца<br>письм<u>Е</u>цо́, пальт<u>Е</u>цо́, ружь<u>Е</u>цо́ — пла́ть<u>И</u>це, ма́сл<u>И</u>це"}
+   ],
+   trap:"<b>Ловушка.</b> Бывают пары вроде «вну́чек» и «внучо́к»: если ударение на корне, суффикс безударный — внуч<u>Е</u>к. Поэтому в заданиях к таким словам ставят знак ударения. Увидели знак — опирайтесь на него."},
+  {k:"p-ek", type:"practice", sec:"Существительные: -ЕК-/-ИК-, -ЕЦ-/-ИЦ-", back:"r-ek",
+   title:"Практика: -ЕК-, -ИК-, -ЕЦ-, -ИЦ-",
+   instr:"Про себя измените слово по падежам или определите род — и только потом выбирайте букву.",
+   items:P_EK},
+
+  {k:"r-ink", type:"rule", sec:"Существительные: -ИНК-/-ЕНК-, -ИЧК-/-ЕЧК-", kicker:"Блок 1 · суффиксы существительных",
+   title:"-ИНК- или -ЕНК-, -ИЧК- или -ЕЧК-",
+   lead:"Здесь склонение не поможет. Нужно найти слово, от которого образовано уменьшительное.",
+   blocks:[
+     {h:"-ИНК- или -ЕНК-", p:"-ИНК- — если есть слово женского рода с суффиксом -ИН-. -ЕНК- — во всех остальных случаях, чаще всего от слов на -НЯ и -НА.",
+      ex:"смород<u>И</u>нка (смородина), бус<u>И</u>нка (бусина), трещ<u>И</u>нка (трещина)<br>бас<u>Е</u>нка (басня), спал<u>Е</u>нка (спальня), сос<u>Е</u>нка (сосна)"},
+     {h:"-ИЧК- или -ЕЧК-", p:"-ИЧК- — если слово образовано от существительного женского рода на -ИЦА. -ЕЧК- — от всех остальных, в том числе от слов на -МЯ.",
+      ex:"пугов<u>И</u>чка (пуговица), луков<u>И</u>чка (луковица), лестн<u>И</u>чка (лестница)<br>ле<u>Е</u>чка (лейка), крош<u>Е</u>чка (крошка), сем<u>Е</u>чко (семя)"}
+   ],
+   trap:"<b>Ловушка.</b> Гвозд<u>И</u>чка образована не от слова на -ИЦА, а от «гвоздИка»: буква И была в слове ещё до суффикса. Такие слова правилом про -ИЧК- не проверяются — смотрите на исходное слово."},
+  {k:"p-ink", type:"practice", sec:"Существительные: -ИНК-/-ЕНК-, -ИЧК-/-ЕЧК-", back:"r-ink",
+   title:"Практика: -ИНК-, -ЕНК-, -ИЧК-, -ЕЧК-",
+   instr:"Подберите слово, от которого образовано уменьшительное, и выберите букву.",
+   items:P_INK},
+
+  {k:"r-chik", type:"rule", sec:"Существительные: -ЧИК-/-ЩИК-, -ИНСТВ-, -ИЗН-", kicker:"Блок 1 · суффиксы существительных",
+   title:"-ЧИК- или -ЩИК-, -ИНСТВ- или -ЕНСТВ-",
+   lead:"Названия людей по занятию и отвлечённые существительные.",
+   blocks:[
+     {h:"-ЧИК- или -ЩИК-", p:"-ЧИК- пишется после Д, Т, З, С, Ж. После остальных согласных — -ЩИК-. Мягкий знак перед -ЩИК- ставится только после Л.",
+      ex:"навод<u>Ч</u>ик, учёт<u>Ч</u>ик, извоз<u>Ч</u>ик, поднос<u>Ч</u>ик, заказ<u>Ч</u>ик<br>набор<u>Щ</u>ик, застрой<u>Щ</u>ик, чекан<u>Щ</u>ик, копиров<u>Щ</u>ик, стеколь<u>Щ</u>ик"},
+     {h:"-ИНСТВ- или -ЕНСТВ-", p:"-ИНСТВ- — если ударение падает на окончание. Если ударение не на окончании — -ЕНСТВ-. После шипящих в суффиксе -ЕСТВ- пишется Е.",
+      ex:"больш<u>И</u>нство́, меньш<u>И</u>нство́, старш<u>И</u>нство́ — пе́рв<u>Е</u>нство, ра́в<u>Е</u>нство<br>казач<u>Е</u>ство, человеч<u>Е</u>ство, юнош<u>Е</u>ство, сотруднич<u>Е</u>ство"},
+     {h:"-ИЗН-", p:"Суффикс пишется всегда с И.",
+      ex:"бел<u>И</u>зна, желт<u>И</u>зна, крив<u>И</u>зна"}
+   ],
+   trap:"<b>Ловушки.</b> Досто<u>И</u>нство и сестр<u>И</u>нство — это не суффикс -ИНСТВ-: к словам «достоин» и «сестрин» присоединяется -СТВ-, и буква И в них уже есть. Асфальт<u>Щ</u>ик, фундамент<u>Щ</u>ик, бриллиант<u>Щ</u>ик пишутся с -ЩИК-, хотя перед суффиксом Т, — эти слова нужно запомнить."},
+  {k:"p-chik", type:"practice", sec:"Существительные: -ЧИК-/-ЩИК-, -ИНСТВ-, -ИЗН-", back:"r-chik",
+   title:"Практика: -ЧИК-, -ЩИК-, -ИНСТВ-, -ИЗН-",
+   instr:"Для -ЧИК-/-ЩИК- смотрите на согласную перед суффиксом, для -ИНСТВ- — на ударение.",
+   items:P_CHIK},
+
+  {k:"r-obzor", type:"rule", sec:"Обзор: буква после -ИЩ-, -ИШК-, -УШК-", kicker:"Обзор · разберём на уроке",
+   title:"Буква на конце после -ИЩ-, -ИШК-, -УШК-, -ЫШК-",
+   lead:"Эта тема идёт обзорно, без упражнения. Примеры подобраны отдельно: в материалах интенсива их нет.",
+   blocks:[
+     {h:"После -ИЩ-", p:"В словах мужского и среднего рода на конце пишется Е, в словах женского рода — А.",
+      ex:"домищ<u>Е</u>, дружищ<u>Е</u>, болотищ<u>Е</u> — ручищ<u>А</u>, бородищ<u>А</u>"},
+     {h:"После -ИШК-, -УШК-, -ЮШК-, -ЫШК-", p:"В неодушевлённых словах мужского рода и в словах среднего рода на конце пишется О. В одушевлённых словах мужского рода и в словах женского рода — А.",
+      ex:"домишк<u>О</u>, городишк<u>О</u>, зёрнышк<u>О</u>, пёрышк<u>О</u><br>воришк<u>А</u>, зайчишк<u>А</u>, дедушк<u>А</u>, избушк<u>А</u>"}
+   ],
+   trap:"<b>Как применять.</b> Сначала определите род и одушевлённость исходного слова. Дом — мужской род, неодушевлённое: домишк<u>О</u>. Вор — мужской род, одушевлённое: воришк<u>А</u>. Изба — женский род: избушк<u>А</u>."},
+
+  /* ---------- ПРИЛАГАТЕЛЬНЫЕ ---------- */
+  {k:"r-ev", type:"rule", sec:"Прилагательные: -ИВ-/-ЕВ-, -ЧИВ-/-ЛИВ-", kicker:"Блок 2 · суффиксы прилагательных",
+   title:"-ИВ- или -ЕВ-, -ЧИВ- и -ЛИВ-",
+   lead:"Самая частая ловушка задания: соседние слова звучат одинаково, а пишутся по разным правилам.",
+   blocks:[
+     {h:"-ЧИВ- и -ЛИВ-", p:"Пишутся всегда с И: суффиксов «-чев-» и «-лев-» не бывает.",
+      ex:"усидч<u>И</u>вый, разборч<u>И</u>вый, доверч<u>И</u>вый — заботл<u>И</u>вый, приветл<u>И</u>вый, засушл<u>И</u>вый"},
+     {h:"-ИВ- или -ЕВ-", p:"Без ударения пишется -ЕВ-, -ИВ- бывает только под ударением. С И без ударения пишутся лишь два слова-исключения: милост<u>И</u>вый и юрод<u>И</u>вый.",
+      ex:"никел<u>Е</u>вый, фасол<u>Е</u>вый, эмал<u>Е</u>вый, фланел<u>Е</u>вый, со<u>Е</u>вый, дожд<u>Е</u>вой"},
+     {h:"Как отличить -ЕВ- от -ЧИВ-/-ЛИВ-", p:"Отбросьте «-евый» или «-ивый». Если осталась основа существительного на Ч или Л, эта буква из корня и суффикс здесь -ЕВ-. Если такого существительного нет, перед вами -ЧИВ- или -ЛИВ-.",
+      ex:"тюл<u>Е</u>вый (тюль), гуттаперч<u>Е</u>вый (гуттаперча), предматч<u>Е</u>вый (матч)<br>приветл<u>И</u>вый, доверч<u>И</u>вый (слов «приветл» и «доверч» нет)"}
+   ],
+   trap:"<b>Ловушка из интенсива.</b> В ряду «счастливый, гуттаперчевый, опрометчивый, податливый» лишнее слово — гуттаперчевый: Ч в нём из корня, поэтому суффикс -ЕВ-."},
+  {k:"p-ev", type:"practice", sec:"Прилагательные: -ИВ-/-ЕВ-, -ЧИВ-/-ЛИВ-", back:"r-ev",
+   title:"Практика: -ЕВ-, -ЧИВ-, -ЛИВ-",
+   instr:"Сначала решите, чья буква перед пропуском — корня или суффикса.",
+   items:P_EV},
+
+  {k:"r-ist", type:"rule", sec:"Прилагательные: -ИСТ-, -ЧАТ-, -ЕНЬК-, -ЕВАТ-", kicker:"Блок 2 · суффиксы прилагательных",
+   title:"-ИСТ-, -ЧАТ-, -ЕНЬК- и -ОНЬК-, -ЕВАТ-",
+   lead:"Одни суффиксы пишутся всегда одинаково, у других выбор зависит от согласной перед суффиксом.",
+   blocks:[
+     {h:"Всегда одинаково: -ИСТ- и -ЧАТ-", p:"-ИСТ- пишется всегда с И, -ЧАТ- — всегда с А.",
+      ex:"болот<u>И</u>стый, порыв<u>И</u>стый, извил<u>И</u>стый, морщин<u>И</u>стый<br>коленч<u>А</u>тый, веснушч<u>А</u>тые, узорч<u>А</u>тый, бревенч<u>А</u>тый"},
+     {h:"-ОНЬК- или -ЕНЬК-", p:"-ОНЬК- — после Г, К, Х. -ЕНЬК- — после остальных согласных. Исключения с -ИНЬК-: паинька, заинька, баиньки.",
+      ex:"высок<u>О</u>нький — голуб<u>Е</u>нький, дешёв<u>Е</u>нький, тёпл<u>Е</u>нький, дорож<u>Е</u>нька"},
+     {h:"-ОВАТ- или -ЕВАТ-", p:"После твёрдых согласных — -ОВАТ-, после мягких — -ЕВАТ-. После шипящих и Ц без ударения тоже -ЕВАТ-; подробнее — в блоке про шипящие и Ц.",
+      ex:"ноздр<u>Е</u>ватый, рыж<u>Е</u>ватый, свеж<u>Е</u>ватый, молодц<u>Е</u>ватый"}
+   ]},
+  {k:"p-ist", type:"practice", sec:"Прилагательные: -ИСТ-, -ЧАТ-, -ЕНЬК-, -ЕВАТ-", back:"r-ist",
+   title:"Практика: -ИСТ-, -ЧАТ-, -ЕНЬК-, -ЕВАТ-",
+   instr:"Смотрите, какая согласная стоит перед суффиксом.",
+   items:P_IST},
+
+  {k:"r-sk", type:"rule", sec:"Прилагательные: -К-/-СК-, -ИНСК-/-ЕНСК-", kicker:"Блок 2 · суффиксы прилагательных",
+   title:"-К- или -СК-, -ИНСК- или -ЕНСК-",
+   lead:"Решают два вопроса: есть ли у прилагательного краткая форма и на какую согласную оканчивается основа.",
+   blocks:[
+     {h:"Пишем -К-", p:"Если у качественного прилагательного есть краткая форма. Или если прилагательное образовано от существительного на К, Ц, Ч — при этом К и Ч меняются на Ц.",
+      ex:"вяз<u>К</u>ий (вязок), скольз<u>К</u>ий (скользок), низ<u>К</u>ий (низок), дерз<u>К</u>ий (дерзок)<br>немец<u>К</u>ий (немец), рыбац<u>К</u>ий (рыбак), ткац<u>К</u>ий (ткач), казац<u>К</u>ий (казак)"},
+     {h:"Пишем -СК-", p:"Во всех остальных случаях — даже если основа оканчивается на З или С. Тогда рядом оказываются две похожие согласные.",
+      ex:"француз<u>СК</u>ий, кавказ<u>СК</u>ое, киргиз<u>СК</u>ий, черкес<u>СК</u>ие, матрос<u>СК</u>ая"},
+     {h:"-ИНСК- или -ЕНСК-", p:"-ИНСК- — если в исходном слове есть -ИН- или название оканчивается на И. -ЕНСК- — если основа оканчивается на Н с беглой гласной, и в остальных случаях.",
+      ex:"соч<u>И</u>нский (Сочи), во<u>И</u>нский (воин), стал<u>И</u>нский (Сталин), сестр<u>И</u>нский<br>колом<u>Е</u>нский (Коломна), пресн<u>Е</u>нский (Пресня), кладбищ<u>Е</u>нский, керч<u>Е</u>нский"}
+   ],
+   trap:"<b>Запомнить.</b> Ялт<u>И</u>нский и пенз<u>Е</u>нский правилом не объясняются — эти слова учим отдельно. Узбек<u>СК</u>ий и таджик<u>СК</u>ий — исключения: основа на К, а пишется -СК-."},
+  {k:"p-sk", type:"practice", sec:"Прилагательные: -К-/-СК-, -ИНСК-/-ЕНСК-", back:"r-sk",
+   title:"Практика: -К-, -СК-, -ИНСК-, -ЕНСК-",
+   instr:"Знак «—» означает, что на месте пропуска буква не нужна.",
+   items:P_SK},
+
+  {k:"r-yan", type:"rule", sec:"Прилагательные: -ЯН-/-ЕН-, -ИЧ-/-ЕЧ-, краткие формы", kicker:"Блок 2 · суффиксы прилагательных",
+   title:"-ЯН- или -ЕН-, -ИЧ- или -ЕЧ-, краткие формы",
+   lead:"Одинаково звучащие слова различаются смыслом, поэтому пояснение в скобках читаем обязательно.",
+   blocks:[
+     {h:"-ЯН- или -ЕН-: решает значение", p:"Масляный — сделанный из масла или работающий на масле. Масленый — смазанный, пропитанный маслом. Ветряной — приводимый в движение ветром. Ветреный — легкомысленный.",
+      ex:"масл<u>Я</u>ная краска, масл<u>Я</u>ный насос — масл<u>Е</u>ные блинчики, масл<u>Е</u>ный блин<br>ветр<u>Я</u>ные мельницы — ветр<u>Е</u>ный характер"},
+     {h:"-ЯН-: из чего, для чего", p:"Суффикс -ЯН- пишется в прилагательных со значением материала или назначения. От них образованы и прилагательные на -ЯНИСТ-.",
+      ex:"глин<u>Я</u>ный, жест<u>Я</u>ные, трав<u>Я</u>ной, вод<u>Я</u>ной, плат<u>Я</u>ной шкаф<br>масл<u>Я</u>нистое, вод<u>Я</u>нистые, трав<u>Я</u>нистый"},
+     {h:"-ИЧ- или -ЕЧ-", p:"-ИЧ- — если прилагательное образовано от существительного на -ИК или -НИК. -ЕЧ- — если от существительного на -КА.",
+      ex:"помещ<u>И</u>чий (помещик), плотн<u>И</u>чий (плотник), разбойн<u>И</u>чий (разбойник)<br>старуш<u>Е</u>чий (старушка), лягуш<u>Е</u>чий (лягушка)"},
+     {h:"Краткие формы", p:"В краткой форме между согласными появляется беглая Е. Исключение — достоин.",
+      ex:"споко<u>Е</u>н, зно<u>Е</u>н, стро<u>Е</u>н, скром<u>Е</u>н — досто<u>И</u>н"}
+   ],
+   trap:"<b>Ловушка.</b> «Масл..ный» без пояснения решить нельзя, поэтому в задании ЕГЭ к таким словам всегда дают подсказку в скобках: (блин), (краска), (характер)."},
+  {k:"p-yan", type:"practice", sec:"Прилагательные: -ЯН-/-ЕН-, -ИЧ-/-ЕЧ-, краткие формы", back:"r-yan",
+   title:"Практика: значение решает букву",
+   instr:"Слово над пропуском — часть задания. Без него букву не выбрать.",
+   items:P_YAN},
+
+  /* ---------- ГЛАГОЛЫ ---------- */
+  {k:"r-ova", type:"rule", sec:"Глаголы: -ОВА-/-ЫВА-, -НИЧА-", kicker:"Блок 3 · суффиксы глаголов",
+   title:"-ОВА- и -ЕВА- или -ЫВА- и -ИВА-",
+   lead:"Проверка одна: поставить глагол в форму «я делаю».",
+   blocks:[
+     {h:"Как проверить", p:"Ставим глагол в 1-е лицо единственного числа. Суффикс исчез и появилось -УЮ или -ЮЮ — пишем -ОВА-/-ЕВА-. Суффикс остался (-ЫВАЮ, -ИВАЮ) — пишем -ЫВА-/-ИВА-.",
+      ex:"бесед<u>О</u>вать — беседую, аплодир<u>О</u>вать — аплодирую, ноч<u>Е</u>вать — ночую<br>наста<u>И</u>вать — настаиваю, обжар<u>И</u>вать — обжариваю, развед<u>Ы</u>вать — разведываю"},
+     {h:"Похожие, но разные", p:"Глаголы с частью «-вед-» кажутся родственными, а пишутся по-разному. Проверка та же.",
+      ex:"завед<u>О</u>вать — заведую, исповед<u>О</u>вать, проповед<u>О</u>вать, расслед<u>О</u>вать<br>провед<u>Ы</u>вать — проведываю, отвед<u>Ы</u>вать, вывед<u>Ы</u>вать, навед<u>Ы</u>ваться"},
+     {h:"-НИЧА-", p:"В глаголах на -НИЧАТЬ пишется А.",
+      ex:"сплетнич<u>А</u>ть, хищнич<u>А</u>ть, секретнич<u>А</u>ть, умнич<u>А</u>ть, вреднич<u>А</u>ть"}
+   ],
+   trap:"<b>Ловушка.</b> Форма «я делаю» помогает, только если ударение не на -ВА-. Как быть с «одолевать» и «затмевать» — на следующем слайде."},
+  {k:"p-ova", type:"practice", sec:"Глаголы: -ОВА-/-ЫВА-, -НИЧА-", back:"r-ova",
+   title:"Практика: форма «я делаю»",
+   instr:"Поставьте глагол в форму «я …» и посмотрите, остался ли суффикс.",
+   items:P_OVA},
+
+  {k:"r-va", type:"rule", sec:"Глаголы: ударный -ВА-", kicker:"Блок 3 · суффиксы глаголов",
+   title:"Если ударение на -ВА-",
+   lead:"При ударении на -ВА- форма «я делаю» не помогает: одолеваю, проливаю. Нужен другой способ.",
+   blocks:[
+     {h:"Сначала найдите ударение", p:"Если ударение не на -ВА-, работает проверка из прошлого блока.",
+      ex:"раска<u>И</u>ваться — я раскаиваюсь, высме<u>И</u>вать — я высмеиваю, перекле<u>И</u>вать — я переклеиваю"},
+     {h:"Ударение на -ВА-: уберите его", p:"Уберите -ВА-. Получился глагол — пишите ту же гласную, что стоит в нём перед -ТЬ. Если без -ВА- глагола не получается, пишите Е.",
+      ex:"одол<u>Е</u>вать → одолеть, устар<u>Е</u>вать → устареть, запот<u>Е</u>вать → запотеть<br>прол<u>И</u>вать → пролить<br>сомн<u>Е</u>ваться, недоум<u>Е</u>вать — глагола без -ВА- нет, пишем Е"},
+     {h:"Исключения", p:"Эти глаголы пишутся с Е, хотя проверка подсказывает другую букву или не срабатывает.",
+      ex:"затм<u>Е</u>вать (затмить), продл<u>Е</u>вать (продлить), застр<u>Е</u>вать (застрять), встр<u>Е</u>вать (встрять), намер<u>Е</u>ваться, увещ<u>Е</u>вать"}
+   ],
+   trap:"<b>Ловушка.</b> Не пишите Е перед ударным -ВА- «на автомате». Прол<u>И</u>вать — от «пролить», и пишется И."},
+  {k:"p-va", type:"practice", sec:"Глаголы: ударный -ВА-", back:"r-va",
+   title:"Практика: ударный -ВА- и исключения",
+   instr:"Найдите ударение. На -ВА- — уберите его и проверьте. Не на -ВА- — поставьте в форму «я …».",
+   items:P_VA},
+
+  {k:"r-l", type:"rule", sec:"Глаголы: перед -Л-, обез-/обес-", kicker:"Блок 3 · суффиксы глаголов",
+   title:"Гласная перед -Л- и перед -ТЬ",
+   lead:"В прошедшем времени перед -Л- пишется та же гласная, что перед -ТЬ в неопределённой форме. Так устроен пятый ряд демоверсии 2027 года: «ненавид..ли».",
+   blocks:[
+     {h:"Перед -Л-", p:"Вспоминаем неопределённую форму и переносим гласную.",
+      ex:"ненавид<u>Е</u>ть → ненавид<u>Е</u>ли, обид<u>Е</u>ться → обид<u>Е</u>лся, завис<u>Е</u>ть → завис<u>Е</u>ло<br>се<u>Я</u>ть → се<u>Я</u>л, наде<u>Я</u>ться → наде<u>Я</u>лся, кле<u>И</u>ть → кле<u>И</u>ла"},
+     {h:"Глаголы с Я перед -ТЬ", p:"В них ошибаются чаще всего — по аналогии со «смотрел». Список короткий, его стоит выучить.",
+      memo:"блеять, веять, затеять, кашлять, каяться, лаять, лелеять, маяться, надеяться, отчаяться, реять, сеять, таять, хаять, чуять"},
+     {h:"Обез-, обес-: сам или кого-то", p:"Если кто-то или что-то <b>само</b> стало каким-то, дополнения нет — пишем Е. Если сделали каким-то <b>другого</b> (кого? что?) — пишем И.",
+      ex:"сад обесплод<u>Е</u>л, пляж обезлюд<u>Е</u>л, тротуары обледен<u>Е</u>ли<br>засуха обесплод<u>И</u>т деревья, война обезлюд<u>И</u>ла деревни, метель обледен<u>И</u>ла провода"}
+   ],
+   trap:"<b>Ловушка.</b> У некоторых глаголов пары нет, и букву подсказывает смысл. Обезвред<u>И</u>ть мину, обеззараз<u>И</u>ть рану — действие над чем-то. Обезденеж<u>Е</u>ть после покупок, обезголос<u>Е</u>ть после простуды — сам."},
+  {k:"p-l", type:"practice", sec:"Глаголы: перед -Л-, обез-/обес-", back:"r-l",
+   title:"Практика: перед -Л- и «сам или кого-то»",
+   instr:"Вспомните неопределённую форму. Для глаголов на обез-/обес- ищите в пояснении дополнение.",
+   items:P_L},
+
+  /* ---------- НАРЕЧИЯ ---------- */
+  {k:"r-adv", type:"rule", sec:"Наречия: -О/-А", kicker:"Блок 4 · суффиксы наречий",
+   title:"-О или -А на конце наречий",
+   lead:"У наречий с приставками букву на конце подсказывает приставка.",
+   blocks:[
+     {h:"Правило", p:"С приставками ИЗ- (ИС-), ДО-, С- на конце пишется А. С приставками В- (ВО-), НА-, ЗА- — О.",
+      ex:"изредк<u>А</u>, досыт<u>А</u>, искос<u>А</u>, сызнов<u>А</u>, слев<u>А</u>, издавн<u>А</u><br>вправ<u>О</u>, воедин<u>О</u>, наглух<u>О</u>, набел<u>О</u>, засветл<u>О</u>, запрост<u>О</u>"},
+     {h:"Лайфхак", p:"Поставьте приставку перед словом «окно» как предлог: из окнА, до окнА, с окнА — в окнО, на окнО, за окнО. Какая буква на конце у «окна», такая и у наречия.",
+      ex:"из окн<u>А</u> → изредк<u>А</u>; за окн<u>О</u> → засветл<u>О</u>"},
+     {h:"Когда правило не работает", p:"Если наречие образовано от прилагательного, у которого «из-» или «до-» уже есть в начале, это не приставка наречия. Такие наречия оканчиваются на -О, как любые наречия от прилагательных.",
+      ex:"исправн<u>О</u> (исправный), досрочн<u>О</u> (досрочный), дословн<u>О</u> (дословный), изрядн<u>О</u> (изрядный)"}
+   ],
+   trap:"<b>Как не попасться.</b> Сначала спросите себя: есть ли прилагательное с тем же началом? Есть «исправный» — пишем исправн<u>О</u>. Прилагательного «изредкий» нет — работает приставка: изредк<u>А</u>."},
+  {k:"p-adv", type:"practice", sec:"Наречия: -О/-А", back:"r-adv",
+   title:"Практика: -О или -А",
+   instr:"Сначала проверьте, нет ли прилагательного с тем же началом. Если нет — смотрите на приставку.",
+   items:P_ADV},
+
+  /* ---------- ПОСЛЕ ШИПЯЩИХ И Ц ---------- */
+  {k:"r-ship", type:"rule", sec:"После шипящих: О, Ё, Е", kicker:"Блок 5 · после шипящих и Ц",
+   title:"О, Ё или Е после шипящих",
+   lead:"В суффиксах и окончаниях существительных, прилагательных и наречий всё решают ударение и то, от какого слова образовано слово.",
+   blocks:[
+     {h:"Под ударением — О", p:"После шипящих под ударением в суффиксах и окончаниях пишется О.",
+      ex:"медвеж<u>О</u>нок, девч<u>О</u>нка, пирож<u>О</u>к, нож<u>О</u>вка — камыш<u>О</u>вый, грош<u>О</u>вый, парч<u>О</u>вый<br>горяч<u>О</u>, свеж<u>О</u>, хорош<u>О</u> — смеш<u>О</u>н — нож<u>О</u>м, плеч<u>О</u>м"},
+     {h:"Без ударения — Е", p:"Если ударение падает на другой слог, пишем Е. Будьте внимательны со словами, где ударение на окончании: суффикс в них остаётся безударным.",
+      ex:"плюш<u>Е</u>вый, беж<u>Е</u>вые — вещ<u>Е</u>во́й, бахч<u>Е</u>во́й, гуж<u>Е</u>во́й<br>певуч<u>Е</u>, тягуч<u>Е</u>, неуклюж<u>Е</u>, зловещ<u>Е</u>"},
+     {h:"Ё — в словах от глаголов", p:"Под ударением пишется Ё, если слово образовано от глагола. Сюда же глаголы на -ЁВЫВАТЬ и слова с суффиксом -ЁР.",
+      ex:"ноч<u>Ё</u>вка (ночевать), туш<u>Ё</u>нка (тушить), сгущ<u>Ё</u>нка, копч<u>Ё</u>ный<br>выкорч<u>Ё</u>вывать, размеж<u>Ё</u>вывать — дириж<u>Ё</u>р, стаж<u>Ё</u>р, тренаж<u>Ё</u>р, ухаж<u>Ё</u>р"}
+   ],
+   trap:"<b>Ловушки.</b> Наречие ещ<u>Ё</u> — исключение: пишется с Ё. Мелоч<u>О</u>вка образована от существительного «мелочь», а не от глагола, поэтому О."},
+  {k:"p-ship", type:"practice", sec:"После шипящих: О, Ё, Е", back:"r-ship",
+   title:"Практика: О, Ё, Е после шипящих",
+   instr:"Найдите ударение. Под ударением решите, образовано ли слово от глагола.",
+   items:P_SHIP},
+
+  {k:"r-ts", type:"rule", sec:"После Ц: О, Е, Ы", kicker:"Блок 5 · после шипящих и Ц",
+   title:"О, Е и Ы после Ц",
+   lead:"После Ц тоже решает ударение, а в притяжательных прилагательных пишется Ы.",
+   blocks:[
+     {h:"Под ударением — О, без ударения — Е", p:"Правило действует в суффиксах и окончаниях. Однокоренные слова могут расходиться, поэтому ударение проверяем в каждом слове отдельно.",
+      ex:"образц<u>О</u>вый, песц<u>О</u>вый, отц<u>О</u>вский, бойц<u>О</u>вский, танц<u>О</u>р, спринц<u>О</u>вка<br>ситц<u>Е</u>вый, кварц<u>Е</u>вый, сланц<u>Е</u>вый, молодц<u>Е</u>ватый, танц<u>Е</u>вать"},
+     {h:"Ы в суффиксе -ЫН-", p:"В притяжательных прилагательных после Ц пишется Ы.",
+      ex:"сестриц<u>Ы</u>н, куниц<u>Ы</u>ны, лисиц<u>Ы</u>н, тигриц<u>Ы</u>н, ящериц<u>Ы</u>н, Цариц<u>Ы</u>но"}
+   ],
+   trap:"<b>Ловушка.</b> Танц<u>О</u>р и танц<u>Е</u>вать — корень один, а буквы разные. Проверочное слово здесь не поможет: решает ударение в самом слове."},
+  {k:"p-ts", type:"practice", sec:"После Ц: О, Е, Ы", back:"r-ts",
+   title:"Практика: О, Е, Ы после Ц",
+   instr:"Найдите ударение в каждом слове отдельно.",
+   items:P_TS},
+
+  /* ---------- ЛОВУШКИ ---------- */
+  {k:"r-lov", type:"rule", sec:"Ловушки", kicker:"Ловушки в 11 задании",
+   title:"Где правило спорит с интуицией",
+   lead:"Сводка мест, на которых теряют балл. Засомневались на экзамене — вспомните этот список.",
+   blocks:[
+     {h:"Слова-исключения", p:"Держатся только на памяти.",
+      ex:"милост<u>И</u>вый, юрод<u>И</u>вый · затм<u>Е</u>вать, продл<u>Е</u>вать, застр<u>Е</u>вать, встр<u>Е</u>вать · па<u>И</u>нька, за<u>И</u>нька, ба<u>И</u>ньки · досто<u>И</u>н · ещ<u>Ё</u> · ялт<u>И</u>нский, пенз<u>Е</u>нский"},
+     {h:"Буква из корня, а не из суффикса", p:"Ч или Л на конце корня означает суффикс -ЕВ-, а не -ЧИВ-/-ЛИВ-. З на конце корня не отменяет -К-, если есть краткая форма.",
+      ex:"тюл<u>Е</u>вый, гуттаперч<u>Е</u>вый, никел<u>Е</u>вый · вяз<u>К</u>ий (вязок), скольз<u>К</u>ий (скользок)"},
+     {h:"Похоже на приставку, а приставки нет", p:"«Из-» и «до-» в начале прилагательного — не приставки наречия.",
+      ex:"исправн<u>О</u>, досрочн<u>О</u>, дословн<u>О</u> — но изредк<u>А</u>, досыт<u>А</u>"},
+     {h:"Смысл решает букву", p:"Пояснение в скобках — часть условия.",
+      ex:"масл<u>Я</u>ная краска — масл<u>Е</u>ные блинчики · ветр<u>Я</u>ные мельницы — ветр<u>Е</u>ный характер<br>обессил<u>Е</u>л (сам) — обессил<u>И</u>ли спортсмена (кого-то)"},
+     {h:"Выглядят родственными, пишутся по-разному", p:"Проверяем каждое слово, а не переносим букву с соседнего.",
+      ex:"завед<u>О</u>вать — провед<u>Ы</u>вать · танц<u>О</u>р — танц<u>Е</u>вать · досто<u>И</u>нство — пе́рв<u>Е</u>нство"}
+   ],
+   trap:"<b>Порядок действий в ряду.</b> Часть речи → суффикс → правило → буква. Кто начинает с буквы, ошибается на словах из этого списка."},
+  {k:"q-rule", type:"choice", sec:"Ловушки", back:"r-lov",
+   title:"Практика: какое правило здесь работает?",
+   instr:"Букву вставлять не нужно — выберите, по какому признаку её определить. В задании ЕГЭ ошибаются именно на этом шаге.",
+   items:Q_RULE},
+  {k:"f-iskl", type:"flash", sec:"Исключения: карточки", back:"r-lov",
+   title:"Флеш-карты: исключения",
+   instr:"Нажмите на карточку, чтобы проверить себя. Затем честно отметьте, знали вы слово или нет. В общий процент карточки не входят.",
+   items:F_ISKL},
+
+  {k:"p-final", type:"practice", sec:"Итоговая практика", back:"map",
+   title:"Итоговая практика: всё вместе",
+   instr:"Шестнадцать слов из всех блоков вперемешку. Правило придётся определять самому. Знак «—» — буква не нужна.",
+   items:P_FINAL},
+
+  {k:"ege-intro", type:"egeIntro"},
+  ...EGE.map((q,i)=>({k:"ege"+(i+1), type:"ege", sec:"Формат ЕГЭ", back:"ege-intro",
+    title:"Задание "+(i+1)+" из "+EGE.length, data:q})),
+
+  {k:"final", type:"final"}
+];
+
+const IDX = {}; SLIDES.forEach((s,i)=>IDX[s.k]=i);
+
+/* ==================== СОСТОЯНИЕ ==================== */
+
+const STORE = "zad11_v1";
+let ST = {ans:{}, ph:{}, fr:{}, fl:{}, first:{}, cur:0, max:0, calm:false};
+
+try{
+  const raw = localStorage.getItem(STORE);
+  if(raw){
+    const saved = JSON.parse(raw);
+    if(saved && typeof saved === "object") ST = Object.assign(ST, saved);
+  }
+  ["ans","ph","fr","fl","first"].forEach(x=>{ if(!ST[x] || typeof ST[x] !== "object") ST[x] = {}; });
+  if(typeof ST.cur !== "number" || ST.cur < 0 || ST.cur >= SLIDES.length) ST.cur = 0;
+  if(typeof ST.max !== "number") ST.max = 0;
+}catch(e){}
+
+/* если память браузера недоступна, прогресс живёт в переменной ST до закрытия вкладки */
+function save(){
+  try{ localStorage.setItem(STORE, JSON.stringify(ST)); }catch(e){}
+}
+
+/* порядок карточек перемешивается при каждой загрузке страницы,
+   ответы привязаны к номеру позиции в банке, а не к месту на экране */
+const ORD = {};
+function shuffled(n){
+  const a = Array.from({length:n},(_,i)=>i);
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+SLIDES.forEach(s=>{ if(s.items) ORD[s.k] = shuffled(s.items.length); });
+
+/* варианты букв всегда в одном порядке (по алфавиту, «—» в конце),
+   чтобы положение кнопки не подсказывало ответ */
+const OPT_ORDER = "аеёиоыясчщ—";
+SLIDES.forEach(s=>{
+  if(s.type === "practice") s.items.forEach(it=>it.o.sort((x,y)=>OPT_ORDER.indexOf(x)-OPT_ORDER.indexOf(y)));
+});
+
+const A = k => (ST.ans[k] || (ST.ans[k] = {}));
+const PH = k => ST.ph[k] || 0;
+const FR = k => ST.fr[k] || [];
+const L = x => x === "—" ? "" : x;
+
+/* ==================== ПОДСЧЁТ ==================== */
+
+function egeNorm(v){ return String(v || "").replace(/[^1-5]/g,"").split("").sort().join(""); }
+function egeRight(D){ return D.right.map(r=>r+1).sort().join(""); }
+
+function scoreOf(s){
+  const k = s.k, ph = PH(k);
+  if(ph === 0) return null;
+  const ans = A(k);
+
+  if(s.type === "practice" || s.type === "choice"){
+    let r=0,w=0,e=0;
+    s.items.forEach((it,i)=>{
+      const v = ans[i];
+      if(v === undefined || v === null) e++;
+      else if(v === it.a) r++;
+      else w++;
+    });
+    return {r,w,e,t:s.items.length};
+  }
+  if(s.type === "ege"){
+    const v = egeNorm(ans.v);
+    if(!v) return {r:0,w:0,e:1,t:1};
+    const hit = v === egeRight(s.data);
+    return {r:hit?1:0, w:hit?0:1, e:0, t:1};
+  }
+  if(s.type === "flash"){
+    const st = ST.fl[k] || {rat:{}};
+    const known = Object.values(st.rat).filter(v=>v==="know").length;
+    const rated = Object.keys(st.rat).length;
+    if(!rated) return null;
+    return {r:known, w:rated-known, e:s.items.length-rated, t:s.items.length, self:true};
+  }
+  return null;
+}
+
+/* для диагностики берём результат ПЕРВОЙ проверки: после исправлений
+   счёт всегда близок к 100% и слабые темы перестают быть видны */
+function baseScore(s){
+  if(s.type === "flash") return scoreOf(s);
+  return ST.first[s.k] || null;
+}
+
+function allScores(){
+  const bySec = {};
+  SLIDES.forEach(s=>{
+    if(!s.sec) return;
+    const sc = baseScore(s);
+    if(!sc) return;
+    const b = bySec[s.sec] || (bySec[s.sec] = {r:0,w:0,e:0,t:0,self:false,back:s.back||s.k});
+    b.r+=sc.r; b.w+=sc.w; b.e+=sc.e; b.t+=sc.t;
+    if(sc.self) b.self = true;
+  });
+  return bySec;
+}
+
+/* ==================== УТИЛИТЫ ==================== */
+
+const esc = t => String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function wordHTML(pair, val, reveal){
+  const shown = reveal !== undefined ? reveal : (val || "·");
+  return esc(pair[0]) + '<span class="blank">' + esc(shown) + '</span>' + esc(pair[1]);
+}
+
+function scoreLine(sc){
+  if(!sc) return "";
+  let out = '<span class="score">Верно <b class="g">'+sc.r+'</b>';
+  if(sc.w) out += ' · неверно <b class="r">'+sc.w+'</b>';
+  if(sc.e) out += ' · не отвечено <b class="a">'+sc.e+'</b>';
+  out += ' из '+sc.t+'</span>';
+  return out;
+}
+
+function reducedMotion(){
+  try{ return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); }catch(e){ return false; }
+}
+function stillMode(){ return document.body.classList.contains("calm") || reducedMotion(); }
+
+function sparks(el){
+  if(stillMode()) return;
+  const rc = el.getBoundingClientRect();
+  const cx = rc.left+rc.width/2, cy = rc.top+rc.height/2;
+  for(let i=0;i<5;i++){
+    const ang = (i/5)*Math.PI*2 + Math.random()*.4, dist = 16+Math.random()*10;
+    const d = document.createElement("div");
+    d.className = "drop";
+    d.style.left = cx+"px"; d.style.top = cy+"px";
+    d.style.setProperty("--dx", Math.cos(ang)*dist+"px");
+    d.style.setProperty("--dy", Math.sin(ang)*dist+"px");
+    document.body.appendChild(d);
+    d.addEventListener("animationend", ()=>d.remove());
+  }
+}
+
+/* ==================== РЕНДЕР ==================== */
+
+const stage = document.getElementById("stage");
+const barFill = document.getElementById("barFill");
+const counter = document.getElementById("counter");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const calmBtn = document.getElementById("calmBtn");
+
+function head(s){
+  return (s.kicker ? '<div class="kicker">'+s.kicker+'</div>' : '') +
+         '<h1>'+s.title+'</h1>' +
+         (s.lead ? '<p class="lead">'+s.lead+'</p>' : '');
+}
+
+let RESTORE = null;
+function render(i){
+  stopWarp();
+  const s = SLIDES[i];
+  const keepScroll = stage.scrollTop;
+  const el = document.createElement("div");
+  el.className = "slide";
+  stage.innerHTML = ""; stage.appendChild(el);
+  ({title:rTitle, map:rMap, rule:rRule, practice:rPractice, choice:rPractice,
+    flash:rFlash, egeIntro:rEgeIntro, ege:rEge, final:rFinal})[s.type](el, s);
+  stage.scrollTop = keepScroll;
+  if(RESTORE){
+    const t = stage.querySelector(RESTORE);
+    if(t && t.focus){ try{ t.focus({preventScroll:true}); }catch(e){ t.focus(); } }
+    RESTORE = null;
+  }
+}
+
+/* --- титул: неоновая заставка --- */
+let WARP = null;
+function stopWarp(){
+  if(!WARP) return;
+  if(WARP.raf) cancelAnimationFrame(WARP.raf);
+  window.removeEventListener("resize", WARP.onResize);
+  WARP = null;
+}
+function startWarp(canvas){
+  const ctx = canvas.getContext && canvas.getContext("2d");
+  if(!ctx) return;
+  const still = stillMode();
+  const colors = ["0,240,230", "255,63,210"];
+  const P = [];
+  let W=0, H=0, cx=0, cy=0, maxR=1;
+
+  function size(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rc = canvas.getBoundingClientRect();
+    W = rc.width || 600; H = rc.height || 400;
+    canvas.width = Math.round(W*dpr); canvas.height = Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cx = W*.5; cy = H*.55;
+    maxR = Math.hypot(Math.max(cx, W-cx), Math.max(cy, H-cy)) * 1.05;
+  }
+  function spawn(p){
+    p.a = Math.random()*Math.PI*2;
+    p.r = Math.random()*(maxR*.14) + 4;
+    p.sp = .6 + Math.random()*1.3;
+    p.len = 8 + Math.random()*22;
+    p.c = colors[Math.random() < .5 ? 0 : 1];
+    p.w = Math.random() < .25 ? 2 : 1;
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of P){
+      const nx = Math.cos(p.a), ny = Math.sin(p.a);
+      const alpha = Math.sin(Math.min(1, p.r/maxR)*Math.PI) * (still ? .55 : .8);
+      ctx.strokeStyle = "rgba("+p.c+","+alpha.toFixed(3)+")";
+      ctx.lineWidth = p.w;
+      ctx.beginPath();
+      ctx.moveTo(cx+nx*p.r, cy+ny*p.r);
+      ctx.lineTo(cx+nx*(p.r+p.len), cy+ny*(p.r+p.len));
+      ctx.stroke();
+    }
+  }
+  size();
+  const N = Math.round(Math.min(110, Math.max(50, W/12)));
+  for(let i=0;i<N;i++){ const p = {}; spawn(p); p.r = Math.random()*maxR; P.push(p); }
+
+  WARP = {raf:0, onResize:()=>{ size(); if(still) draw(); }};
+  window.addEventListener("resize", WARP.onResize);
+
+  if(still){ draw(); return; }
+  function frame(){
+    for(const p of P){ p.r += p.sp*(1 + p.r/maxR*3); if(p.r > maxR) spawn(p); }
+    draw();
+    if(WARP) WARP.raf = requestAnimationFrame(frame);
+  }
+  WARP.raf = requestAnimationFrame(frame);
+}
+
+function rTitle(el){
+  el.innerHTML = `
+    <div class="hero">
+      <canvas id="warp" aria-hidden="true"></canvas>
+      <div class="hero-in">
+        <div class="boot" aria-hidden="true">
+          <div class="ln">&gt; загрузка модуля: суффиксы</div>
+          <div class="ln ok">&gt; существительные · прилагательные · глаголы · наречия ✓</div>
+          <div class="ln ok">&gt; формат ЕГЭ 2027 подключён ✓</div>
+        </div>
+        <div class="hero-sup">ЕГЭ по русскому языку</div>
+        <div class="hero-title">Задание 11</div>
+        <div class="hero-sub">Правописание суффиксов</div>
+        <p class="hero-note">Все типы суффиксов, ловушки задания и пять заданий в экзаменационном виде.</p>
+        <button class="start" type="button" id="startBtn">${ST.max > 1 ? "Продолжить" : "Начать"}</button>
+      </div>
+    </div>`;
+  el.querySelector("#startBtn").addEventListener("click", ()=>go(ST.max > 1 ? Math.min(ST.max, SLIDES.length-1) : 1));
+  const cv = el.querySelector("#warp");
+  requestAnimationFrame(()=>{ if(ST.cur === 0 && cv.isConnected) startWarp(cv); });
+}
+
+/* --- карта задания --- */
+function rMap(el){
+  const groups = [
+    ["Существительные", [
+      ["r-ek","-ЕК-/-ИК-, -ЕЦ-/-ИЦ-","Склоняем слово: выпадает гласная или нет"],
+      ["r-ink","-ИНК-/-ЕНК-, -ИЧК-/-ЕЧК-","Ищем исходное слово: соломина, пуговица"],
+      ["r-chik","-ЧИК-/-ЩИК-, -ИНСТВ-, -ИЗН-","Согласная перед суффиксом, ударение"],
+      ["r-obzor","-ИЩ-, -ИШК-, -УШК- (обзор)","Какая буква после суффикса"]
+    ]],
+    ["Прилагательные", [
+      ["r-ev","-ИВ-/-ЕВ-, -ЧИВ-/-ЛИВ-","Чья буква Ч или Л — корня или суффикса"],
+      ["r-ist","-ИСТ-, -ЧАТ-, -ЕНЬК-, -ЕВАТ-","Неизменяемые суффиксы и согласная перед суффиксом"],
+      ["r-sk","-К-/-СК-, -ИНСК-/-ЕНСК-","Краткая форма и конец основы"],
+      ["r-yan","-ЯН-/-ЕН-, -ИЧ-/-ЕЧ-","Масляный или масленый — решает смысл"]
+    ]],
+    ["Глаголы", [
+      ["r-ova","-ОВА-/-ЫВА-, -НИЧА-","Форма «я делаю»"],
+      ["r-va","Ударный -ВА-","Убираем -ВА- и смотрим на букву; исключения"],
+      ["r-l","Перед -Л-, обез-/обес-","Ненавидели, сеял; сам или кого-то"]
+    ]],
+    ["Наречия, шипящие и Ц", [
+      ["r-adv","-О/-А в наречиях","Приставка решает — если это приставка"],
+      ["r-ship","После шипящих","О, Ё или Е: ударение и глагол"],
+      ["r-ts","После Ц","О или Е по ударению, Ы в -ЫН-"]
+    ]],
+    ["Закрепление", [
+      ["r-lov","Ловушки","Исключения и слова-двойники"],
+      ["ege-intro","Задания формата ЕГЭ","Пять заданий, первое — из демоверсии"]
+    ]]
+  ];
+  el.innerHTML = `
+    <div class="kicker">Карта задания</div>
+    <h1>Что нужно знать для задания 11</h1>
+    <p class="lead">В каждом из пяти рядов по два слова с пропуском. Нужно найти <b class="hl">все ряды</b>, где в обоих словах пропущена <b class="hl">одна и та же буква</b>, и записать их номера. Слова в ряду почти всегда из разных частей речи и на разные правила.</p>
+    <div class="trap"><b>Как решать ряд.</b> Определите часть речи, найдите суффикс — и только потом применяйте правило. Пример из демоверсии 2027 года: «никел..вый» — прилагательное от «никель», безударный суффикс -ЕВ-, пишем Е; «наста..вать» — «я настаиваю», пишем И. Буквы разные, первый ряд не подходит.</div>
+    ${groups.map(g=>`<div class="map-group">${g[0]}</div><div class="map">${
+      g[1].map(t=>`<button class="tile" type="button" data-k="${t[0]}"><b>${t[1]}</b><span>${t[2]}</span></button>`).join("")
+    }</div>`).join("")}
+    <p class="lead" style="margin-top:16px;">Плитки ведут прямо к нужному блоку. Полный список слайдов с результатами — по кнопке со счётчиком внизу экрана.</p>`;
+  el.querySelectorAll(".tile").forEach(b=>b.addEventListener("click",()=>go(IDX[b.dataset.k])));
+}
+
+/* --- правило --- */
+function rRule(el, s){
+  const blocks = s.blocks.map(b=>{
+    let inner = '<h3>'+b.h+'</h3>';
+    if(b.p) inner += '<p>'+b.p+'</p>';
+    if(b.ol) inner += '<ol class="steps">'+b.ol.map(x=>'<li>'+x+'</li>').join("")+'</ol>';
+    if(b.ex) inner += '<p class="ex">'+b.ex+'</p>';
+    if(b.memo) inner += '<div class="memo">'+b.memo+'</div>';
+    return '<div class="rule">'+inner+'</div>';
+  }).join("");
+  el.innerHTML = head(s) + blocks + (s.trap ? '<div class="trap">'+s.trap+'</div>' : '');
+}
+
+function peekBtn(s){
+  return s.back && s.back !== "map" && SLIDES[IDX[s.back]].type === "rule"
+    ? '<button class="peek" type="button" data-peek="'+s.back+'">📝 Подсмотри правило, если забыл</button>' : '';
+}
+function bindPeek(el){
+  const p = el.querySelector("[data-peek]");
+  if(p) p.addEventListener("click", ()=>go(IDX[p.dataset.peek]));
+}
+
+/* --- упражнение со словами и выбор правила --- */
+function rPractice(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), ord = ORD[k];
+  const isChoice = s.type === "choice";
+
+  const cards = ord.map(i=>{
+    const it = s.items[i];
+    const v = ans[i];
+    let cls = "card", flag = "", why = "";
+    if(ph >= 1){
+      if(v === undefined) { cls += " na"; flag = '<div class="flag na">не отвечено</div>'; }
+      else if(v === it.a) cls += " ok";
+      else cls += " no";
+    }
+    if(ph === 2){
+      const right = isChoice ? it.a : (it.w[0] + L(it.a) + it.w[1]);
+      why = '<div class="why"><span class="fix">' + esc(right) + '</span> — ' + it.why + '</div>';
+    }
+    const live = (ph === 0) || (ph === 15 && !fr.includes(i));
+    const dis = live ? "" : " disabled";
+
+    let body;
+    if(isChoice){
+      body = '<div class="qtext">' + esc(it.q) + '</div>' +
+        '<div class="pick">' + it.o.map(o=>
+          '<button type="button" data-i="'+i+'" data-v="'+esc(o)+'" class="'+(v===o?"on":"")+'"'+dis+'>'+esc(o)+'</button>'
+        ).join("") + '</div>';
+    } else {
+      const reveal = (ph === 2) ? it.a : undefined;
+      body = (it.ctx ? '<div class="ctx">'+esc(it.ctx)+'</div>' : '') +
+        '<div class="word">' + wordHTML(it.w, v, reveal) + '</div>' +
+        '<div class="chips">' + it.o.map(o=>
+          '<button type="button" class="chip '+(v===o?"on":"")+'" data-i="'+i+'" data-v="'+esc(o)+'"'+dis+'>'+esc(o)+'</button>'
+        ).join("") + '</div>';
+    }
+    return '<div class="'+cls+'">' + body + flag + why + '</div>';
+  }).join("");
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' + peekBtn(s) +
+    '<div class="grid'+(isChoice?" wide":"")+'">'+cards+'</div>' +
+    '<div class="foot" id="foot"></div>';
+
+  el.querySelectorAll("[data-v]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const i = +b.dataset.i, val = b.dataset.v;
+      if(ans[i] === val) delete ans[i]; else ans[i] = val;
+      RESTORE = '[data-i="'+i+'"][data-v="'+CSS_esc(val)+'"]';
+      save(); sparks(b); render(ST.cur);
+    });
+  });
+  bindPeek(el);
+  footer(el, s);
+}
+function CSS_esc(v){ return String(v).replace(/(["\\])/g,"\\$1"); }
+
+/* --- футер с двухшаговой проверкой --- */
+function footer(el, s){
+  const k = s.k, ph = PH(k), foot = el.querySelector("#foot");
+  const sc = scoreOf(s);
+  let html = "";
+  if(ph === 0){
+    html = '<button class="btn main" type="button" id="chk">Проверить</button>';
+  } else if(ph === 1){
+    html = '<button class="btn main" type="button" id="again">Ещё попытка</button>' + scoreLine(sc) +
+      '<div class="hint2">' + (s.type === "ege"
+        ? 'Правильный ответ пока не показываем. Проверьте ряды ещё раз и исправьте номера.'
+        : 'Верные ответы закреплены, неверные и пропущенные откроются для правки. Правильные буквы пока не показываем — вспоминайте.') + '</div>';
+  } else if(ph === 15){
+    html = '<button class="btn main" type="button" id="chk">Проверить</button>' +
+      '<span class="score">' + (s.type === "ege" ? 'Ответ снова открыт для правки' : 'Открыты только неверные и пропущенные позиции') + '</span>';
+  } else {
+    html = scoreLine(sc) + '<button class="btn ghost" type="button" id="rst">Пройти заново</button>';
+  }
+  foot.innerHTML = html;
+  const chk = foot.querySelector("#chk"), ag = foot.querySelector("#again"), rst = foot.querySelector("#rst");
+  if(chk) chk.addEventListener("click", ()=>doCheck(s));
+  if(ag) ag.addEventListener("click", ()=>{ ST.ph[k] = 15; save(); render(ST.cur); });
+  if(rst) rst.addEventListener("click", ()=>{
+    ST.ans[k] = {}; ST.ph[k] = 0; ST.fr[k] = [];
+    delete ST.first[k];
+    save(); render(ST.cur);
+  });
+}
+
+function doCheck(s){
+  const k = s.k, ph = PH(k);
+  if(ph === 15){ ST.ph[k] = 2; save(); render(ST.cur); return; }
+
+  const ans = A(k);
+  const frozen = [];
+  let pending = 0;
+
+  if(s.type === "practice" || s.type === "choice"){
+    s.items.forEach((it,i)=>{ (ans[i] === it.a) ? frozen.push(i) : pending++; });
+  } else if(s.type === "ege"){
+    pending = egeNorm(ans.v) === egeRight(s.data) ? 0 : 1;
+  }
+
+  ST.fr[k] = frozen;
+  ST.ph[k] = pending === 0 ? 2 : 1;
+  if(!ST.first[k]){
+    const sc = scoreOf(s);
+    if(sc) ST.first[k] = {r:sc.r, w:sc.w, e:sc.e, t:sc.t};
+  }
+  save(); render(ST.cur);
+}
+
+/* --- флеш-карты --- */
+function rFlash(el, s){
+  const k = s.k;
+  const st = ST.fl[k] || (ST.fl[k] = {pos:0, rat:{}, flip:false});
+  const ord = ORD[k];
+  if(st.pos >= s.items.length) st.pos = 0;
+  const i = ord[st.pos];
+  const it = s.items[i];
+  const rated = Object.keys(st.rat).length;
+  const known = Object.values(st.rat).filter(v=>v==="know").length;
+
+  const face = st.flip
+    ? '<span class="fw">'+esc(it.w[0]+it.a+it.w[1])+'</span>' +
+      (it.ctx ? '<span class="fc">'+esc(it.ctx)+'</span>' : '') +
+      '<span class="fh">'+it.why+'</span>'
+    : '<span class="fw">'+wordHTML(it.w, null)+'</span>' +
+      (it.ctx ? '<span class="fc">'+esc(it.ctx)+'</span>' : '') +
+      '<span class="tap">нажмите, чтобы проверить себя</span>';
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' + peekBtn(s) +
+    '<button class="flash" type="button" id="fcard">'+face+'</button>' +
+    '<div class="flash-btns">' +
+      '<button class="btn main" type="button" id="know">Знаю</button>' +
+      '<button class="btn ghost" type="button" id="rev">Повторю</button>' +
+    '</div>' +
+    '<div class="flash-nav">' +
+      '<button class="btn ghost" type="button" id="fp">← Назад</button>' +
+      '<span class="score">Карточка '+(st.pos+1)+' из '+s.items.length+' · отмечено '+rated+' · знаю '+known+'</span>' +
+      '<button class="btn ghost" type="button" id="fn">Вперёд →</button>' +
+    '</div>' +
+    (rated === s.items.length ? '<div class="foot" style="margin-top:14px;"><button class="btn ghost" type="button" id="frst">Пройти заново</button></div>' : '');
+
+  el.querySelector("#fcard").addEventListener("click", ()=>{ st.flip = !st.flip; RESTORE = "#fcard"; save(); render(ST.cur); });
+  const rate = v => { st.rat[i] = v; st.flip = false; if(st.pos < s.items.length-1) st.pos++; save(); render(ST.cur); };
+  el.querySelector("#know").addEventListener("click", ()=>rate("know"));
+  el.querySelector("#rev").addEventListener("click", ()=>rate("review"));
+  el.querySelector("#fp").addEventListener("click", ()=>{ st.pos = Math.max(0, st.pos-1); st.flip=false; save(); render(ST.cur); });
+  el.querySelector("#fn").addEventListener("click", ()=>{ st.pos = Math.min(s.items.length-1, st.pos+1); st.flip=false; save(); render(ST.cur); });
+  const fr2 = el.querySelector("#frst");
+  if(fr2) fr2.addEventListener("click", ()=>{ delete ST.fl[k]; save(); render(ST.cur); });
+  bindPeek(el);
+}
+
+/* --- задания формата ЕГЭ --- */
+function rEgeIntro(el){
+  el.innerHTML = `
+    <div class="kicker">Закрепим · 11 задание ЕГЭ</div>
+    <h1>Пять заданий в экзаменационном виде</h1>
+    <p class="lead">Первое задание — из демонстрационного варианта ЕГЭ 2027 года. Остальные четыре собраны из материалов интенсива в том же формате: пять рядов по два слова.</p>
+    <div class="rule"><h3>Как записать ответ</h3>
+      <p>Номера рядов пишутся цифрами подряд, без пробелов и запятых. Порядок цифр не важен: «34» и «43» засчитываются одинаково. Лишняя или пропущенная цифра — ноль баллов: частичного балла за это задание нет.</p>
+      <p>Номер ряда можно вписать в поле или нажать на сам ряд — цифра добавится в ответ.</p>
+    </div>
+    <div class="rule"><h3>Чем задание отличается от упражнений</h3>
+      <ol class="steps">
+        <li><b>Верных рядов может быть несколько.</b> Нашли один — продолжайте проверять остальные.</li>
+        <li><b>Два слова в ряду почти всегда на разные правила.</b> Суффикс прилагательного может стоять рядом с суффиксом глагола.</li>
+        <li><b>Пояснение в скобках — часть условия.</b> «Масл..ный (блин)» и «масл..ная (краска)» пишутся по-разному.</li>
+      </ol>
+    </div>
+    <div class="trap"><b>Как решать.</b> Вычёркивайте ряд, как только нашли в нём букву, которая не совпадает. И помните: Ё и О — разные буквы, ноч<u>Ё</u>вка и камыш<u>О</u>вый в один верный ряд не попадут.</div>`;
+}
+
+function rEge(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), D = s.data;
+  const live = (ph === 0 || ph === 15);
+  const cur = egeNorm(ans.v);
+  const right = egeRight(D);
+
+  const rows = D.rows.map((row, ri)=>{
+    const d = String(ri+1);
+    const on = cur.includes(d);
+    let cls = "erow" + (live && on ? " on" : "");
+    if(ph === 2){
+      if(D.right.includes(ri)) cls = "erow " + (on ? "ok" : "miss");
+      else cls = "erow" + (on ? " no" : "");
+    }
+    const words = row.map(w=>{
+      const shown = (ph === 2) ? L(w.a) : "..";
+      const blank = (ph === 2) ? '<span class="blank">'+esc(shown)+'</span>' : esc("..");
+      return esc(w.w[0]) + blank + esc(w.w[1]) + (w.cx ? ' <span class="cx">('+esc(w.cx)+')</span>' : '');
+    }).join(", ");
+    let key = "";
+    if(ph === 2){
+      const letters = row.map(w=>w.a);
+      const same = letters.every(x=>x === letters[0]);
+      const nm = x => x === "—" ? "без буквы" : "«"+x+"»";
+      key = '<div class="ekey">' + (same ? 'В обоих словах '+nm(letters[0])+' — ряд подходит.' : 'Буквы разные: '+letters.map(nm).join(" и ")+' — ряд не подходит.') +
+        '<br><i>' + row.map(w=>esc(w.w[0]+L(w.a)+w.w[1])+' — '+w.why).join("; ") + '.</i></div>';
+    }
+    return '<button type="button" class="'+cls+'" data-r="'+d+'"'+(live?"":" disabled")+'>' +
+      '<span class="enum">'+d+')</span><span class="ewords">'+words+key+'</span></button>';
+  }).join("");
+
+  let ansCls = "ans";
+  if(ph === 1){ ansCls += cur ? " no" : " na"; }
+  if(ph === 2){ ansCls += cur === right ? " ok" : " no"; }
+
+  let verdict = "";
+  if(ph === 1){
+    verdict = '<div class="trap" style="margin-bottom:14px;"><b>' + (cur ? 'Неверно.' : 'Ответ не записан.') + '</b> ' +
+      (cur ? 'Где-то есть лишний или пропущенный ряд.' : 'Пустой ответ не считается ошибкой, но и балла не приносит.') + '</div>';
+  }
+  if(ph === 2){
+    verdict = '<div class="trap" style="margin-bottom:14px;"><b>Правильный ответ: '+right+'.</b> ' +
+      (cur === right ? 'Ваш ответ совпал.' : (cur ? 'Ваш ответ: '+cur+'.' : 'Ответ не был записан.')) + '</div>';
+  }
+
+  el.innerHTML =
+    '<div class="kicker">Формат ЕГЭ · '+s.title+'</div>' +
+    '<h1>Задание 11</h1>' +
+    '<div class="ege-q">'+EGE_Q+(D.src ? '<div class="src">Источник: '+D.src+'.</div>' : '')+'</div>' +
+    '<div class="rows">'+rows+'</div>' +
+    '<div class="ans-line"><label for="egeAns">Ответ:</label>' +
+      '<input class="'+ansCls+'" id="egeAns" type="text" inputmode="numeric" autocomplete="off" maxlength="5" value="'+esc(ans.v || "")+'"'+(live?"":" disabled")+'>' +
+    '</div>' + verdict +
+    '<div class="foot" id="foot"></div>';
+
+  if(live){
+    const inp = el.querySelector("#egeAns");
+    inp.addEventListener("input", ()=>{
+      const clean = inp.value.replace(/[^1-5]/g,"").slice(0,5);
+      if(clean !== inp.value) inp.value = clean;
+      ans.v = clean;
+      if(!clean) delete ans.v;
+      save();
+      const set = egeNorm(clean);
+      el.querySelectorAll("[data-r]").forEach(b=>b.classList.toggle("on", set.includes(b.dataset.r)));
+    });
+    el.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>{
+      const d = b.dataset.r;
+      let v = egeNorm(ans.v);
+      v = v.includes(d) ? v.replace(d,"") : egeNorm(v + d);
+      if(v) ans.v = v; else delete ans.v;
+      RESTORE = '[data-r="'+d+'"]';
+      save(); render(ST.cur);
+    }));
+  }
+  footer(el, s);
+}
+
+/* --- итоги --- */
+function gauge(pct, color, label, text){
+  const id = "g"+Math.random().toString(36).slice(2,8);
+  const r = 62, c = 72, dash = 2*Math.PI*r, off = dash*(1-pct/100);
+  return '<div class="gauge"><svg viewBox="0 0 144 144" role="img" aria-label="'+label+': '+text+'">' +
+    '<circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.14)" stroke-width="9"/>' +
+    '<circle id="'+id+'" cx="'+c+'" cy="'+c+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="9" stroke-linecap="round" ' +
+      'stroke-dasharray="'+dash.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 72 72)"/>' +
+    '<text x="72" y="81" text-anchor="middle" font-family="PT Serif, serif" font-size="26" fill="#EEF0FB">'+text+'</text>' +
+    '</svg><div class="lab">'+label+'</div></div>';
+}
+
+function rFinal(el){
+  const bySec = allScores();
+  const keys = Object.keys(bySec);
+
+  let R=0, W=0;
+  keys.forEach(x=>{ if(!bySec[x].self){ R += bySec[x].r; W += bySec[x].w; } });
+  const und = (R+W) ? Math.round(R/(R+W)*100) : null;
+  const done = Math.round(((ST.max+1)/SLIDES.length)*100);
+
+  const list = keys.map(x=>{
+    const v = bySec[x];
+    const pct = (v.r+v.w) ? Math.round(v.r/(v.r+v.w)*100) : null;
+    return {name:x, v, pct};
+  }).sort((a,b)=>{
+    if(a.pct === null) return 1; if(b.pct === null) return -1;
+    return a.pct - b.pct;
+  });
+
+  const topics = list.length ? list.map(o=>{
+    const cls = o.pct === null ? "" : (o.pct < 55 ? " bad" : o.pct < 80 ? " mid" : " good");
+    const val = (o.pct === null ? "нет ответов" : o.pct + "%") +
+      (o.v.e ? " · пропущено " + o.v.e : "") + (o.v.self ? " · самооценка" : "");
+    return '<div class="topic'+cls+'"><span class="tn">'+esc(o.name)+'</span>' +
+      '<span class="tv">'+val+'</span>' +
+      '<button type="button" data-b="'+esc(o.v.back)+'">К теории</button></div>';
+  }).join("") : '<div class="topic"><span class="tn">Практика ещё не пройдена — вернитесь к упражнениям.</span></div>';
+
+  el.innerHTML =
+    '<div class="kicker">Рефлексируем</div>' +
+    '<h1>Итог: успехи и точки роста</h1>' +
+    '<p class="lead">Слева — сколько тренажёра пройдено. Справа — доля верных ответов <b class="hl">с первой попытки</b>: исправления после «Ещё попытки» в этот процент не идут, иначе слабые темы перестали бы быть видны. Флеш-карты в общий счёт не входят — там оценка ставится самостоятельно.</p>' +
+    '<div class="gauges">' +
+      gauge(done, "#6FDCE3", "Пройдено", done+"%") +
+      (und === null ? gauge(0, "#3A3E66", "Верных с первой попытки", "—")
+                    : gauge(und, und >= 80 ? "#5BE0A4" : (und >= 55 ? "#FFD27A" : "#FF8B8B"), "Верных с первой попытки", und+"%")) +
+    '</div>' +
+    '<h2>Темы на повторение</h2>' +
+    '<p class="lead">Сверху — то, что проседает сильнее всего. Кнопка «К теории» возвращает к правилу этой темы.</p>' +
+    '<div class="topics">'+topics+'</div>' +
+    '<div class="foot" style="margin-bottom:16px;">' +
+      '<button class="btn main" type="button" id="cp">Скопировать итог</button>' +
+      '<button class="btn ghost" type="button" id="clr">Очистить прогресс</button>' +
+      '<span id="cpmsg"></span>' +
+    '</div>' +
+    '<div id="cpbox"></div>' +
+    '<div class="note"><b>Что делать дальше.</b> Скопируйте итог и пришлите преподавателю. Начинайте повторение с верхних тем списка — по одному блоку в день, а не все сразу. Флеш-карты с исключениями пройдите ещё раз, начиная с тех, что отмечены «Повторю».</div>';
+
+  el.querySelectorAll("[data-b]").forEach(b=>b.addEventListener("click",()=>go(IDX[b.dataset.b])));
+  el.querySelector("#cp").addEventListener("click", ()=>copySummary(list, und, done));
+  el.querySelector("#clr").addEventListener("click", ()=>{
+    let ok = true;
+    try{ ok = window.confirm("Стереть все ответы и начать тренажёр заново?"); }catch(e){ ok = true; }
+    if(!ok) return;
+    ST.ans = {}; ST.ph = {}; ST.fr = {}; ST.fl = {}; ST.first = {}; ST.max = ST.cur;
+    save(); render(ST.cur);
+  });
+}
+
+function copySummary(list, und, done){
+  const lines = ["Задание 11. Правописание суффиксов — итог тренажёра",
+    "Пройдено: "+done+"%   Верных с первой попытки: "+(und === null ? "—" : und+"%"), ""];
+  if(!list.length) lines.push("Упражнения не пройдены.");
+  list.forEach(o=>{
+    const pct = o.pct === null ? "нет ответов" : o.pct+"%";
+    lines.push("• "+o.name+" — "+pct+" (верно "+o.v.r+", неверно "+o.v.w+
+      (o.v.e ? ", пропущено "+o.v.e : "")+")"+(o.v.self ? " [самооценка]" : ""));
+  });
+  const text = lines.join("\n");
+  const ok = ()=>{
+    const m = document.getElementById("cpmsg");
+    if(m){ m.className = "copied"; m.textContent = "Скопировано"; setTimeout(()=>{ m.textContent=""; }, 2500); }
+  };
+  const manual = ()=>{
+    const box = document.getElementById("cpbox");
+    if(!box) return;
+    box.innerHTML = '<p class="instr">Скопировать автоматически не получилось. Выделите текст ниже и скопируйте его вручную.</p><textarea class="copybox" readonly></textarea>';
+    const ta = box.querySelector("textarea");
+    ta.value = text;
+    try{ ta.focus(); ta.select(); }catch(e){}
+  };
+  const fallback = ()=>{ if(!legacyCopy(text)) manual(); else ok(); };
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok, fallback);
+      return;
+    }
+  }catch(e){}
+  fallback();
+}
+
+function legacyCopy(text){
+  let done = false;
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.setAttribute("readonly",""); ta.style.position = "fixed"; ta.style.opacity = "0"; ta.style.top = "0";
+  document.body.appendChild(ta);
+  try{ ta.select(); done = document.execCommand("copy"); }catch(e){ done = false; }
+  ta.remove();
+  return done;
+}
+
+/* ==================== НАВИГАЦИЯ ==================== */
+
+function go(i){
+  ST.cur = Math.max(0, Math.min(SLIDES.length-1, i));
+  ST.max = Math.max(ST.max, ST.cur);
+  save(); stage.scrollTop = 0; render(ST.cur); updateNav();
+  stage.scrollTop = 0;
+}
+
+function updateNav(){
+  prevBtn.disabled = ST.cur === 0;
+  nextBtn.disabled = ST.cur === SLIDES.length-1;
+  counter.textContent = "слайд " + (ST.cur+1) + " из " + SLIDES.length + " \u25BE";
+  counter.setAttribute("aria-label", "Оглавление. Слайд " + (ST.cur+1) + " из " + SLIDES.length);
+  barFill.style.width = Math.round(((ST.cur+1)/SLIDES.length)*100) + "%";
+}
+
+/* ---------- оглавление ---------- */
+const tocOverlay = document.getElementById("tocOverlay");
+const tocBody = document.getElementById("tocBody");
+const TAGS = {title:"Начало", map:"Карта", rule:"Теория", practice:"Практика",
+  choice:"Практика", flash:"Карточки", egeIntro:"ЕГЭ", ege:"ЕГЭ", final:"Итог"};
+
+function slideName(s, i){
+  if(s.type === "title") return "Титульный слайд";
+  if(s.type === "map") return "Карта задания 11";
+  if(s.type === "egeIntro") return "Как устроено задание ЕГЭ";
+  if(s.type === "final") return "Итог и темы на повторение";
+  if(s.type === "ege") return "Задание ЕГЭ: " + s.title.toLowerCase();
+  if(s.type === "rule") return "Теория: " + s.title;
+  return s.title || ("Слайд " + (i+1));
+}
+
+function buildTOC(){
+  let html = "", lastSec = null;
+  SLIDES.forEach((s,i)=>{
+    const sec = s.sec || null;
+    if(sec && sec !== lastSec){ html += '<div class="toc-group">'+esc(sec)+'</div>'; }
+    lastSec = sec;
+
+    const f = baseScore(s);
+    let score;
+    if(f){
+      const a = f.r + f.w;
+      const pct = a ? Math.round(f.r/a*100) : null;
+      const col = pct === null ? "var(--dim)" : (pct >= 80 ? "var(--green)" : (pct >= 55 ? "var(--amber)" : "var(--red)"));
+      score = '<span class="toc-score" style="color:'+col+'">'+(pct === null ? "—" : pct+"%")+'</span>';
+    } else {
+      score = '<span class="toc-score" style="color:var(--dim)">·</span>';
+    }
+    html += '<button type="button" class="toc-item'+(i === ST.cur ? " current" : "")+'" data-i="'+i+'">' +
+      '<span class="toc-num">'+(i+1)+'</span>' +
+      '<span class="toc-name">'+esc(slideName(s,i))+'</span>' +
+      '<span class="toc-tag">'+esc(TAGS[s.type] || "")+'</span>' + score + '</button>';
+  });
+  tocBody.innerHTML = html;
+  tocBody.querySelectorAll(".toc-item").forEach(b=>{
+    b.addEventListener("click", ()=>{ closeTOC(true); go(+b.dataset.i); });
+  });
+}
+
+function openTOC(){
+  buildTOC();
+  tocOverlay.classList.add("open");
+  const c = tocBody.querySelector(".toc-item.current");
+  if(c){
+    try{ c.scrollIntoView({block:"center"}); }catch(e){}
+    try{ c.focus({preventScroll:true}); }catch(e){}
+  }
+}
+function closeTOC(silent){
+  if(!tocOverlay.classList.contains("open")) return;
+  tocOverlay.classList.remove("open");
+  if(!silent){ try{ counter.focus({preventScroll:true}); }catch(e){} }
+}
+counter.addEventListener("click", openTOC);
+document.getElementById("tocClose").addEventListener("click", ()=>closeTOC());
+tocOverlay.addEventListener("click", e=>{ if(e.target === tocOverlay) closeTOC(); });
+
+prevBtn.addEventListener("click", ()=>go(ST.cur-1));
+nextBtn.addEventListener("click", ()=>go(ST.cur+1));
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){ closeTOC(); return; }
+  if(tocOverlay.classList.contains("open")) return;
+  const t = e.target;
+  if(t && t.closest && t.closest("input, textarea")) return;
+  if(e.key === "ArrowRight") go(ST.cur+1);
+  if(e.key === "ArrowLeft") go(ST.cur-1);
+});
+
+function setCalm(on, rerender){
+  ST.calm = on;
+  document.body.classList.toggle("calm", on);
+  calmBtn.setAttribute("aria-pressed", on ? "true" : "false");
+  calmBtn.textContent = on ? "Движение выключено" : "Спокойный режим";
+  save();
+  if(rerender && ST.cur === 0) render(0);
+}
+calmBtn.addEventListener("click", ()=>setCalm(!ST.calm, true));
+setCalm(!!ST.calm, false);
+
+go(ST.cur || 0);
+</script>
+</body>
+</html>
