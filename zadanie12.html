@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Задание 12 ЕГЭ. Личные окончания глаголов и суффиксы причастий</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#04160D; --bg2:#0A2C1B; --bg3:#0F4227;
+    --panel:rgba(255,255,255,.06);
+    --panel-2:rgba(255,255,255,.09);
+    --panel-solid:#092518;
+    --line:rgba(255,255,255,.16);
+    --text:#EEF7EC;
+    --dim:#AACCB3;
+    --acc:#5FD98A;
+    --sand:#FFC75A;
+    --green:#4BE3A2; --green-bg:rgba(75,227,162,.15);
+    --red:#FF7C6E;   --red-bg:rgba(255,124,110,.16);
+    --amber:#FFD166;  --amber-bg:rgba(255,209,102,.14);
+
+    --f-head:'PT Serif', Georgia, serif;
+    --f-body:'PT Sans', 'Segoe UI', system-ui, sans-serif;
+    --f-mono:'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+
+    --step: clamp(1rem, .96rem + .18vw, 1.08rem);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0; min-height:100dvh; height:100dvh;
+    background:
+      radial-gradient(ellipse 70% 45% at 14% 0%, rgba(255,199,90,.10) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 48% at 88% 10%, rgba(95,217,138,.13) 0%, transparent 60%),
+      linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:var(--f-body);
+    font-size:var(--step);
+    line-height:1.6;
+    display:flex; flex-direction:column;
+    overflow:hidden; position:relative;
+  }
+
+  /* ---------- фон: полог, лианы, светлячки ---------- */
+  .fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .canopy{position:fixed;top:0;left:0;right:0;height:110px;z-index:0;pointer-events:none;}
+  .canopy svg{width:100%;height:100%;display:block;}
+  .rays span{
+    position:absolute;top:-15%;width:120px;height:130%;
+    background:linear-gradient(180deg, rgba(255,229,160,.09), transparent 70%);
+    transform:skewX(-13deg);filter:blur(6px);
+    animation:rayGlow 11s ease-in-out infinite;
+  }
+  .rays span:nth-child(1){left:13%;animation-delay:0s;}
+  .rays span:nth-child(2){left:41%;width:80px;animation-delay:3.4s;}
+  .rays span:nth-child(3){left:72%;width:140px;animation-delay:1.7s;}
+  @keyframes rayGlow{0%,100%{opacity:.2;}50%{opacity:.45;}}
+
+  .vines .v{position:absolute;top:-10px;transform-origin:top center;
+    animation:sway 11s ease-in-out infinite;}
+  .vines .v:nth-child(1){left:5%;animation-delay:0s;}
+  .vines .v:nth-child(2){left:47%;animation-delay:4s;}
+  .vines .v:nth-child(3){left:92%;animation-delay:2s;}
+  @keyframes sway{0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);}}
+
+  .flies i{
+    position:absolute;bottom:-20px;width:4px;height:4px;border-radius:50%;
+    background:var(--sand);box-shadow:0 0 7px var(--sand), 0 0 15px rgba(255,199,90,.45);
+    animation:rise linear infinite;
+  }
+  @keyframes rise{
+    0%{transform:translateY(0);opacity:0;}
+    14%{opacity:.7;}
+    86%{opacity:.35;}
+    100%{transform:translateY(-105dvh) translateX(22px);opacity:0;}
+  }
+  .mist{position:fixed;left:0;right:0;bottom:0;height:130px;z-index:0;pointer-events:none;
+    background:linear-gradient(180deg, transparent, rgba(120,200,150,.07) 60%, rgba(150,225,175,.12));}
+
+  /* спокойный режим: гасим всё фоновое движение */
+  body.calm .rays span,
+  body.calm .flies i,
+  body.calm .vines .v{animation:none !important;}
+  body.calm .flies{display:none;}
+  body.calm .slide{animation:none !important;}
+  body.calm .spark{display:none !important;}
+  body.calm .boot path,
+  body.calm .boot .vleaf,
+  body.calm .boot .bloom{animation:none !important;stroke-dashoffset:0 !important;opacity:1 !important;transform:none !important;}
+  @media (prefers-reduced-motion: reduce){
+    .rays span,.flies i,.vines .v,.slide{animation:none !important;}
+    .flies{display:none;}
+    .boot path,.boot .vleaf,.boot .bloom{animation:none !important;stroke-dashoffset:0 !important;opacity:1 !important;transform:none !important;}
+    *{transition-duration:.01ms !important;}
+  }
+
+  /* ---------- каркас ---------- */
+  .bar{height:5px;background:rgba(255,255,255,.08);flex:0 0 auto;position:relative;z-index:3;}
+  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--sand),var(--acc));transition:width .35s ease;
+    box-shadow:0 0 12px rgba(95,217,138,.5);}
+
+  .stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    display:flex;align-items:flex-start;justify-content:center;
+    padding:34px 22px 28px;position:relative;z-index:1;}
+  .slide{width:100%;max-width:880px;animation:grow .45s cubic-bezier(.22,1,.36,1);}
+  @keyframes grow{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);background:rgba(4,22,13,.74);
+    backdrop-filter:blur(10px);position:relative;z-index:3;}
+  .nav button{
+    font-family:var(--f-body);font-size:.95rem;color:var(--text);
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;
+    min-height:44px;padding:0 16px;cursor:pointer;}
+  .nav button:hover:not(:disabled){border-color:var(--acc);}
+  .nav button:disabled{opacity:.35;cursor:default;}
+  .calm-btn{font-size:.8rem;padding:0 12px;min-height:34px;}
+  .calm-btn[aria-pressed="true"]{border-color:var(--acc);color:var(--acc);}
+
+  :where(button,[tabindex]):focus-visible{outline:2px solid var(--acc);outline-offset:2px;}
+
+  /* ---------- типографика ---------- */
+  h1{font-family:var(--f-head);font-weight:700;line-height:1.15;margin:0 0 14px;
+    font-size:clamp(1.6rem, 1.25rem + 1.7vw, 2.4rem);}
+  h2{font-family:var(--f-head);font-weight:700;line-height:1.2;margin:0 0 12px;
+    font-size:clamp(1.35rem, 1.1rem + 1.2vw, 1.85rem);}
+  h3{font-family:var(--f-head);font-weight:700;font-size:1.1rem;color:var(--acc);margin:0 0 8px;}
+  p{margin:0 0 10px;}
+  .kicker{font-family:var(--f-mono);font-size:.82rem;color:var(--acc);
+    letter-spacing:.06em;margin-bottom:8px;}
+  .lead{color:var(--dim);max-width:66ch;margin-bottom:18px;}
+  b.hl{color:var(--sand);}
+
+  /* ---------- титул с заставкой ---------- */
+  .hero{min-height:min(74dvh,660px);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;gap:4px;}
+  .boot{width:min(420px,86vw);height:auto;margin-bottom:10px;}
+  .boot .stem{fill:none;stroke:#2E8A54;stroke-width:5;stroke-linecap:round;
+    stroke-dasharray:100;stroke-dashoffset:100;animation:draw 2.2s ease-out forwards;}
+  @keyframes draw{to{stroke-dashoffset:0;}}
+  .boot .vleaf{opacity:0;transform-box:fill-box;transform-origin:center;
+    animation:pop .45s cubic-bezier(.2,1.4,.4,1) forwards;}
+  .boot .vleaf:nth-of-type(1){animation-delay:.5s;}
+  .boot .vleaf:nth-of-type(2){animation-delay:.95s;}
+  .boot .vleaf:nth-of-type(3){animation-delay:1.4s;}
+  .boot .vleaf:nth-of-type(4){animation-delay:1.8s;}
+  @keyframes pop{from{opacity:0;transform:scale(.2);}to{opacity:1;transform:scale(1);}}
+  .boot .bloom{opacity:0;transform-box:fill-box;transform-origin:center;
+    animation:pop .5s cubic-bezier(.2,1.4,.4,1) 2.2s forwards;}
+  .hero-sup{font-family:var(--f-mono);font-size:clamp(.76rem,2vw,.92rem);
+    letter-spacing:.3em;color:var(--dim);}
+  .hero-title{font-family:var(--f-head);font-weight:700;letter-spacing:.02em;
+    font-size:clamp(2.6rem,10vw,5.2rem);line-height:1;margin:6px 0 10px;}
+  .hero-sub{font-family:var(--f-body);color:var(--sand);max-width:32ch;
+    font-size:clamp(1rem,3vw,1.2rem);margin-bottom:26px;}
+  .start{font-family:var(--f-body);font-size:1.05rem;font-weight:700;
+    background:var(--acc);color:#04160D;border:0;border-radius:13px;
+    min-height:52px;padding:0 34px;cursor:pointer;
+    box-shadow:0 8px 26px rgba(95,217,138,.26);}
+  .start:hover{filter:brightness(1.08);}
+
+  /* ---------- карта ---------- */
+  .map{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:11px;margin:16px 0 18px;}
+  .tile{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--acc);
+    border-radius:12px;padding:13px 15px;text-align:left;cursor:pointer;
+    font-family:var(--f-body);color:var(--text);font-size:1rem;min-height:44px;
+    transition:border-color .15s, background .15s;}
+  .tile:hover{background:var(--panel-2);border-left-color:var(--sand);}
+  .tile b{display:block;font-family:var(--f-head);font-size:1.05rem;margin-bottom:3px;}
+  .tile span{color:var(--dim);font-size:.88rem;line-height:1.45;display:block;}
+
+  /* ---------- блоки правил ---------- */
+  .rule{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:15px 17px;margin-bottom:12px;}
+  .rule .ex{font-family:var(--f-mono);font-size:.92rem;color:var(--acc);
+    line-height:1.75;margin:8px 0 0;word-spacing:.05em;}
+  u{text-decoration:none;color:var(--sand);font-weight:700;}
+  .rule .ex u{color:var(--sand);}
+  .steps .ex{display:block;margin-top:5px;}
+  .steps{margin:0;padding-left:1.25em;}
+  .steps li{margin-bottom:9px;}
+  .trap{background:var(--amber-bg);border:1px solid rgba(255,209,102,.32);
+    border-left:3px solid var(--amber);border-radius:11px;padding:14px 16px;margin-top:12px;
+    font-size:.98rem;}
+  .trap b{color:var(--amber);}
+  .memo{background:rgba(95,217,138,.1);border:1px dashed rgba(95,217,138,.4);
+    border-radius:10px;padding:11px 14px;margin-top:10px;
+    font-family:var(--f-mono);font-size:.95rem;color:var(--text);line-height:1.7;}
+  .memo .cue{font-size:1.25em;font-weight:700;letter-spacing:.04em;}
+  .memo .cue u{font-size:1.1em;}
+
+  /* ---------- упражнения ---------- */
+  .instr{color:var(--dim);margin-bottom:14px;max-width:64ch;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;margin-bottom:14px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 12px;}
+  .card .ctx{font-size:.86rem;color:var(--dim);margin-bottom:3px;line-height:1.35;}
+  .word{font-family:var(--f-mono);font-size:1.05rem;font-weight:700;
+    letter-spacing:.01em;margin-bottom:9px;word-break:keep-all;}
+  .blank{display:inline-block;min-width:1.5em;text-align:center;
+    border-bottom:2px solid var(--dim);color:var(--sand);font-size:1.18em;font-weight:700;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{font-family:var(--f-mono);font-size:1rem;font-weight:700;color:var(--text);
+    background:transparent;border:1.5px solid var(--dim);border-radius:10px;
+    min-height:44px;min-width:52px;padding:0 14px;cursor:pointer;}
+  .chip:hover:not(:disabled){border-color:var(--acc);}
+  .chip.on{background:var(--acc);color:#04160D;border-color:var(--acc);}
+  .chip:disabled{cursor:default;opacity:.5;}
+  .chip.on:disabled{opacity:1;}
+  .card.ok{border-color:var(--green);background:var(--green-bg);}
+  .card.no{border-color:var(--red);background:var(--red-bg);}
+  .card.na{border-color:var(--amber);background:var(--amber-bg);}
+  .why{font-size:.95rem;line-height:1.55;margin-top:9px;padding-top:9px;
+    border-top:1px solid var(--line);color:var(--text);}
+  .why .fix{font-family:var(--f-mono);color:var(--green);font-weight:700;}
+  .flag{font-size:.85rem;font-family:var(--f-mono);margin-top:7px;}
+  .flag.na{color:var(--amber);}
+
+  /* выбор из вариантов-фраз */
+  .pick{display:flex;flex-direction:column;gap:8px;}
+  .pick button{font-family:var(--f-body);font-size:.98rem;color:var(--text);text-align:left;
+    background:transparent;border:1.5px solid var(--dim);border-radius:10px;
+    min-height:44px;padding:9px 13px;cursor:pointer;line-height:1.45;}
+  .pick button:hover:not(:disabled){border-color:var(--acc);}
+  .pick button.on{background:rgba(95,217,138,.2);border-color:var(--acc);}
+  .pick button:disabled{cursor:default;opacity:.55;}
+  .pick button.on:disabled{opacity:1;}
+  .qtext{font-size:1rem;color:var(--text);margin-bottom:10px;line-height:1.5;}
+
+  /* ---------- футер упражнения ---------- */
+  .foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;}
+  .btn{font-family:var(--f-body);font-size:1rem;font-weight:700;border-radius:11px;
+    min-height:46px;padding:0 20px;cursor:pointer;border:1px solid transparent;}
+  .btn.main{background:var(--acc);color:#04160D;}
+  .btn.main:hover{filter:brightness(1.08);}
+  .btn.ghost{background:transparent;color:var(--text);border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--acc);}
+  .score{font-family:var(--f-mono);font-size:.95rem;color:var(--dim);}
+  .score b.g{color:var(--green);} .score b.r{color:var(--red);} .score b.a{color:var(--amber);}
+  .hintline{flex-basis:100%;color:var(--dim);font-size:.92rem;}
+
+  /* ---------- сортировка ---------- */
+  .pool{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;margin-bottom:14px;
+    padding:10px;border:1px dashed var(--line);border-radius:12px;}
+  .buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;margin-bottom:14px;}
+  .bucket{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 12px;
+    cursor:pointer;min-height:88px;}
+  .bucket:hover{border-color:var(--acc);}
+  .bucket h4{font-family:var(--f-head);font-size:.98rem;margin:0 0 8px;color:var(--acc);}
+  .bucket .row{display:flex;flex-wrap:wrap;gap:6px;}
+  .tok{font-family:var(--f-mono);font-size:.94rem;color:var(--text);
+    background:rgba(255,255,255,.07);border:1.5px solid var(--line);border-radius:9px;
+    min-height:44px;padding:0 12px;cursor:pointer;}
+  .tok:hover:not(:disabled){border-color:var(--acc);}
+  .tok.sel{border-color:var(--sand);background:rgba(255,199,90,.18);}
+  .tok.ok{border-color:var(--green);background:var(--green-bg);}
+  .tok.no{border-color:var(--red);background:var(--red-bg);}
+  .tok:disabled{cursor:default;}
+  .fixlist{margin-top:10px;font-size:.95rem;line-height:1.6;}
+  .fixlist span{font-family:var(--f-mono);color:var(--green);}
+
+  /* ---------- карточки с проверкой ---------- */
+  .flash{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:10px;padding:24px 18px;text-align:center;margin-bottom:12px;}
+  .flash.ok{border-color:var(--green);background:var(--green-bg);}
+  .flash.no{border-color:var(--red);background:var(--red-bg);}
+  .flash .fw{font-family:var(--f-mono);font-size:clamp(1.3rem,5vw,1.8rem);font-weight:700;}
+  .flash .fc{color:var(--dim);font-size:.92rem;}
+  .flash .fh{font-size:.98rem;line-height:1.55;max-width:46ch;}
+  .flash .verdict{font-family:var(--f-mono);font-size:.95rem;font-weight:700;}
+  .flash .verdict.g{color:var(--green);} .flash .verdict.r{color:var(--red);}
+  .flash .chips{justify-content:center;}
+  .flash-nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+  /* ---------- ЕГЭ ---------- */
+  .ege-q{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;margin-bottom:14px;font-size:.98rem;}
+  .rows{display:flex;flex-direction:column;gap:9px;margin-bottom:14px;}
+  .erow{display:flex;gap:12px;align-items:flex-start;text-align:left;
+    background:var(--panel);border:1.5px solid var(--line);border-radius:12px;
+    padding:12px 14px;cursor:pointer;min-height:48px;color:var(--text);}
+  .erow:hover:not(:disabled){border-color:var(--acc);}
+  .erow.on{border-color:var(--acc);background:rgba(95,217,138,.14);}
+  .erow.ok{border-color:var(--green);background:var(--green-bg);}
+  .erow.no{border-color:var(--red);background:var(--red-bg);}
+  .erow.miss{border-color:var(--amber);background:var(--amber-bg);}
+  .erow:disabled{cursor:default;}
+  .enum{font-family:var(--f-mono);font-weight:700;color:var(--acc);flex:0 0 auto;}
+  .ewords{font-family:var(--f-mono);font-size:.96rem;line-height:1.75;}
+  .ewords .cx{font-family:var(--f-body);color:var(--dim);font-size:.88rem;}
+  .ekey{font-family:var(--f-body);font-size:.92rem;color:var(--dim);margin-top:5px;line-height:1.5;}
+
+  /* ---------- финал ---------- */
+  .gauges{display:flex;gap:26px;flex-wrap:wrap;justify-content:flex-start;margin:6px 0 20px;}
+  .gauge{text-align:center;}
+  .gauge svg{width:clamp(122px,32vw,152px);height:auto;}
+  .gauge .lab{font-size:.9rem;color:var(--dim);margin-top:5px;}
+  .topics{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+  .topic{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 14px;
+    border-left:3px solid var(--dim);}
+  .topic.bad{border-left-color:var(--red);}
+  .topic.mid{border-left-color:var(--amber);}
+  .topic.good{border-left-color:var(--green);}
+  .topic .tn{flex:1 1 auto;min-width:150px;}
+  .topic .tv{font-family:var(--f-mono);font-size:.95rem;color:var(--dim);}
+  .topic button{font-family:var(--f-body);font-size:.9rem;color:var(--text);
+    background:transparent;border:1px solid var(--line);border-radius:9px;
+    min-height:40px;padding:0 13px;cursor:pointer;}
+  .topic button:hover{border-color:var(--acc);}
+  .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--sand);
+    border-radius:11px;padding:15px 17px;font-size:.97rem;}
+  .copied{color:var(--green);font-size:.92rem;font-family:var(--f-mono);}
+  .cpbox{width:100%;margin-top:10px;font-family:var(--f-mono);font-size:.88rem;
+    background:var(--panel-solid);color:var(--text);border:1px solid var(--line);
+    border-radius:10px;padding:10px;min-height:140px;}
+
+  /* ---------- оглавление ---------- */
+  .nav-mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;}
+  .toc-btn{background:transparent;border:1px solid var(--line);border-radius:9px;
+    color:var(--dim);font-family:var(--f-mono);font-size:.84rem;
+    padding:0 14px;min-height:40px;cursor:pointer;white-space:nowrap;}
+  .toc-btn:hover{border-color:var(--acc);color:var(--acc);}
+  .toc-overlay{position:fixed;inset:0;z-index:40;background:rgba(3,18,10,.9);display:none;
+    align-items:center;justify-content:center;padding:20px;}
+  .toc-overlay.open{display:flex;}
+  .toc-panel{background:var(--panel-solid);border:1px solid var(--line);border-radius:14px;
+    width:min(760px,100%);max-height:86dvh;display:flex;flex-direction:column;
+    box-shadow:0 24px 70px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.07);}
+  .toc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 18px;border-bottom:1px solid var(--line);}
+  .toc-head h2{margin:0;font-size:1.2rem;color:var(--acc);}
+  .toc-close{background:transparent;border:1px solid var(--line);color:var(--text);border-radius:9px;
+    min-height:40px;padding:0 15px;cursor:pointer;font-family:var(--f-body);font-weight:700;font-size:.92rem;}
+  .toc-close:hover{border-color:var(--acc);color:var(--acc);}
+  .toc-body{overflow-y:auto;padding:10px 12px 16px;-webkit-overflow-scrolling:touch;}
+  .toc-group{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.1em;color:var(--acc);
+    font-weight:700;margin:14px 6px 6px;}
+  .toc-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:transparent;
+    border:1px solid transparent;border-radius:10px;color:var(--text);font-family:var(--f-body);
+    font-size:.95rem;padding:9px 10px;min-height:44px;cursor:pointer;}
+  .toc-item:hover{border-color:var(--line);background:var(--panel);}
+  .toc-item.current{border-color:var(--acc);background:rgba(95,217,138,.12);}
+  .toc-num{font-family:var(--f-mono);font-size:.82rem;color:var(--dim);min-width:26px;}
+  .toc-name{flex:1;line-height:1.4;}
+  .toc-tag{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.05em;color:var(--dim);
+    border:1px solid var(--line);border-radius:7px;padding:2px 8px;white-space:nowrap;}
+  .toc-score{font-family:var(--f-mono);font-size:.82rem;min-width:48px;text-align:right;}
+  @media (max-width:620px){ .toc-tag{display:none;} .toc-panel{max-height:90dvh;} }
+
+  .spark{position:fixed;width:5px;height:5px;border-radius:50%;background:var(--sand);
+    box-shadow:0 0 8px var(--sand);transform:translate(-50%,-50%);
+    pointer-events:none;z-index:60;animation:sparkFly .5s ease-out forwards;}
+  @keyframes sparkFly{to{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.2);opacity:0;}}
+
+  /* ---------- телефон ---------- */
+  @media (max-width:620px){
+    .stage{padding:22px 15px 20px;}
+    .grid{grid-template-columns:1fr;}
+    .map{grid-template-columns:1fr;}
+    .buckets{grid-template-columns:1fr 1fr;}
+    .gauges{gap:16px;justify-content:center;}
+    .canopy{height:78px;}
+  }
+  @media (max-width:400px){
+    .stage{padding:18px 12px 18px;}
+    .buckets{grid-template-columns:1fr;}
+    .nav{padding-left:10px;padding-right:10px;gap:7px;}
+    .nav button{padding:0 12px;font-size:.9rem;}
+    .rule,.card,.erow{padding-left:12px;padding-right:12px;}
+  }
+</style>
+</head>
+<body>
+  <div class="canopy" aria-hidden="true">
+    <svg viewBox="0 0 1200 110" preserveAspectRatio="none">
+      <path d="M0,0 L1200,0 L1200,34 Q1150,66 1095,40 Q1050,78 990,47 Q940,82 880,45 Q830,76 770,42 Q715,84 655,49 Q600,80 545,44 Q495,76 435,45 Q380,84 320,47 Q265,78 205,42 Q150,72 95,40 Q50,64 0,36 Z" fill="#05200F" opacity=".95"></path>
+      <path d="M0,0 L1200,0 L1200,19 Q1130,48 1060,25 Q1000,56 930,29 Q865,60 795,27 Q730,54 660,25 Q595,56 525,27 Q460,54 390,23 Q325,52 255,25 Q190,50 120,23 Q60,45 0,21 Z" fill="#0A3019" opacity=".9"></path>
+    </svg>
+  </div>
+  <div class="fx rays" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="fx vines" aria-hidden="true">
+    <div class="v"><svg width="34" height="180" viewBox="0 0 40 200"><path d="M20,0 Q13,50 22,100 Q29,150 17,200" stroke="#1E6B3C" stroke-width="3" fill="none"></path><ellipse cx="13" cy="58" rx="9" ry="4.5" fill="#2E8A54" transform="rotate(-36 13 58)"></ellipse><ellipse cx="27" cy="118" rx="9" ry="4.5" fill="#2E8A54" transform="rotate(32 27 118)"></ellipse></svg></div>
+    <div class="v"><svg width="28" height="130" viewBox="0 0 40 200"><path d="M20,0 Q27,55 16,110 Q11,160 21,200" stroke="#1E6B3C" stroke-width="3" fill="none"></path><ellipse cx="27" cy="66" rx="8" ry="4" fill="#2E8A54" transform="rotate(34 27 66)"></ellipse></svg></div>
+    <div class="v"><svg width="36" height="210" viewBox="0 0 40 200"><path d="M20,0 Q26,52 15,106 Q10,158 23,200" stroke="#1E6B3C" stroke-width="3" fill="none"></path><ellipse cx="26" cy="62" rx="9" ry="4.5" fill="#2E8A54" transform="rotate(33 26 62)"></ellipse><ellipse cx="13" cy="124" rx="9" ry="4.5" fill="#2E8A54" transform="rotate(-30 13 124)"></ellipse></svg></div>
+  </div>
+  <div class="fx flies" id="flies" aria-hidden="true"></div>
+  <div class="mist" aria-hidden="true"></div>
+
+  <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+  <div class="toc-overlay" id="tocOverlay" role="dialog" aria-modal="true" aria-label="Оглавление">
+    <div class="toc-panel">
+      <div class="toc-head"><h2>Оглавление</h2><button class="toc-close" id="tocClose" type="button">Закрыть</button></div>
+      <div class="toc-body" id="tocBody"></div>
+    </div>
+  </div>
+  <main class="stage" id="stage"></main>
+  <nav class="nav">
+    <button id="prevBtn" type="button">← Назад</button>
+    <div class="nav-mid">
+      <button class="toc-btn" id="counter" type="button" aria-haspopup="dialog"></button>
+      <button class="calm-btn" id="calmBtn" type="button" aria-pressed="false">Спокойный режим</button>
+    </div>
+    <button id="nextBtn" type="button">Далее →</button>
+  </nav>
+<script>
+/* ==================== БАНКИ СЛОВ ==================== */
+
+/* --- Спряжение: сортировка --- */
+const SORT_SPR = {
+  buckets:["1 спряжение","2 спряжение"],
+  items:[
+    {t:"бороться", b:"1 спряжение"},
+    {t:"сеять", b:"1 спряжение"},
+    {t:"колоть", b:"1 спряжение"},
+    {t:"брить", b:"1 спряжение"},
+    {t:"стелить", b:"1 спряжение"},
+    {t:"зиждиться", b:"1 спряжение"},
+    {t:"клеить", b:"2 спряжение"},
+    {t:"строить", b:"2 спряжение"},
+    {t:"гнать", b:"2 спряжение"},
+    {t:"дышать", b:"2 спряжение"},
+    {t:"видеть", b:"2 спряжение"},
+    {t:"ненавидеть", b:"2 спряжение"}
+  ]
+};
+
+/* --- Личные окончания --- */
+const P_END = [
+  {w:["(они) кле","т"], o:["я","ю"], a:"я", why:"клеИть — на -ИТЬ, значит 2 спряжение: буквы И, А, Я."},
+  {w:["(он) бор","тся"], o:["е","и"], a:"е", why:"бороться — не на -ИТЬ, 1 спряжение: буквы Е, У, Ю."},
+  {w:["(он) стел","т"], o:["е","и"], a:"е", why:"стелить — исключение: на -ИТЬ, но 1 спряжение."},
+  {w:["(он) дыш","т"], o:["е","и"], a:"и", why:"дышать — исключение: на -АТЬ, но 2 спряжение."},
+  {w:["(они) гон","т"], o:["я","ю"], a:"я", why:"гнать — исключение 2 спряжения, отсюда и гонЯт."},
+  {w:["(они) се","т"], o:["я","ю"], a:"ю", why:"сеЯть — не на -ИТЬ, 1 спряжение: сеЮт."},
+  {w:["(они) мел","т"], ctx:"кофе", o:["я","ю"], a:"ю", why:"начальная форма — молоть, а не «мелить»: 1 спряжение, мелЮт."},
+  {w:["(они) вял","т"], ctx:"рыбу", o:["я","ю"], a:"я", why:"вялИть — на -ИТЬ, 2 спряжение: вялЯт."},
+  {w:["(они) мер","т"], ctx:"расстояние", o:["я","ю"], a:"я", why:"мерИть, а не «мерять»: 2 спряжение, мерЯт."},
+  {w:["(они) осил","т"], o:["я","ю"], a:"я", why:"осилИть — на -ИТЬ, 2 спряжение: осилЯт."},
+  {w:["(он) тян","т"], o:["е","и"], a:"е", why:"тянуть — не на -ИТЬ, 1 спряжение: тянЕт."},
+  {w:["(они) ненавид","т"], o:["я","ю"], a:"я", why:"ненавидеть — исключение: на -ЕТЬ, но 2 спряжение."}
+];
+
+/* --- Приставка ВЫ- и повелительное наклонение --- */
+const P_VY = [
+  {w:["выгляд","т"], ctx:"он", o:["е","и"], a:"и", why:"отбрасываем ВЫ-: глядИт, буква под ударением — выглядИт."},
+  {w:["высп","шься"], o:["е","и"], a:"и", why:"отбрасываем ВЫ-: спИшь — выспИшься."},
+  {w:["выбеж","т"], ctx:"он", o:["е","и"], a:"и", why:"отбрасываем ВЫ-: бежИт. Бежать разноспрягаемый, спряжением его не проверить."},
+  {w:["вышл","т"], ctx:"он завтра", o:["е","и"], a:"е", why:"отбрасываем ВЫ-: шлЁт — вышлЕт. Это сообщение о будущем, а не приказ."},
+  {w:["вышл","те"], ctx:"немедленно!", o:["е","и"], a:"и", why:"это приказ, повелительное наклонение: в нём всегда -ИТЕ."},
+  {w:["выдад","м"], o:["е","и"], a:"и", why:"отбрасываем ВЫ-: дадИм. Дать разноспрягаемый."},
+  {w:["выро","шь"], o:["е","и"], a:"е", why:"отбрасываем ВЫ-: рОешь. Рыть — 1 спряжение."},
+  {w:["выреж","шь"], o:["е","и"], a:"е", why:"начальная форма — резать, 1 спряжение: вырежЕшь."},
+  {w:["выстел","м"], o:["е","и"], a:"е", why:"стелить — исключение 1 спряжения: выстелЕм."},
+  {w:["выбер","те"], ctx:"только полезное!", o:["е","и"], a:"и", why:"это просьба-приказ, повелительное наклонение: выберИте."},
+  {w:["выйд","те"], ctx:"из класса и зайдите нормально!", o:["е","и"], a:"и", why:"приказ рядом с «зайдите» — повелительное наклонение: выйдИте."},
+  {w:["когда вы выйд","те, позвоните"], o:["е","и"], a:"е", why:"здесь не приказ, а будущее время: выйти — 1 спряжение, выйдЕте."}
+];
+
+/* --- Начальная форма глагола --- */
+const P_INF = [
+  {w:["ре","ть в облаках"], o:["я","и"], a:"я", why:"перед пропуском Е, значит глагол на -ЯТЬ: реЯть."},
+  {w:["лёд начал та","ть"], o:["я","и"], a:"я", why:"перед пропуском А, значит -ЯТЬ: таЯть."},
+  {w:["се","ть панику"], o:["я","и"], a:"я", why:"перед пропуском Е, значит -ЯТЬ: сеЯть."},
+  {w:["сильно кашл","ть"], o:["я","и"], a:"я", why:"кашлЯть — из списка глаголов на -ЯТЬ."},
+  {w:["бле","ть как овца"], o:["я","и"], a:"я", why:"блеЯть — из списка глаголов на -ЯТЬ."},
+  {w:["ча","ть гостей"], o:["я","и"], a:"я", why:"чаЯть — из списка глаголов на -ЯТЬ."},
+  {w:["муч","ть совесть"], o:["я","и"], a:"и", why:"литературная норма — мучИть, формы «мучать» в задании нет."},
+  {w:["переинач","ть слова"], o:["я","и"], a:"и", why:"переиначИть — на -ИТЬ, запоминаем отдельно."},
+  {w:["любить сплетнич","ть"], o:["а","и"], a:"а", why:"глаголы на -ИЧАТЬ: сплетничАть, умничАть, вредничАть."},
+  {w:["деревне пришлось обезлюд","ть"], o:["е","и"], a:"е", why:"деревня обезлюдела сама: глагол непереходный, пишем -ЕТЬ."},
+  {w:["обезвред","ть противника"], o:["е","и"], a:"и", why:"обезвредить кого? — глагол переходный, пишем -ИТЬ."},
+  {w:["обезголос","ть после простуды"], o:["е","и"], a:"е", why:"певец обезголосел сам: непереходный глагол, -ЕТЬ."}
+];
+
+/* --- Действительные причастия настоящего времени --- */
+const P_ACT = [
+  {w:["кле","щий"], o:["ю","я"], a:"я", why:"клеИть — 2 спряжение, значит суффикс -ЯЩ-."},
+  {w:["бор","щийся"], o:["ю","я"], a:"ю", why:"бороться — 1 спряжение, значит суффикс -ЮЩ-."},
+  {w:["колебл","щий"], o:["ю","я"], a:"ю", why:"начальная форма — колебать, 1 спряжение: колеблЮщий."},
+  {w:["трепещ","щий"], o:["у","а"], a:"у", why:"начальная форма — трепетать, 1 спряжение: трепещУщий."},
+  {w:["мел","щий"], ctx:"кофе", o:["ю","я"], a:"ю", why:"начальная форма — молоть, 1 спряжение: мелЮщий."},
+  {w:["дыш","щий"], o:["у","а"], a:"а", why:"дышать — исключение 2 спряжения: дышАщий."},
+  {w:["держ","щий"], o:["у","а"], a:"а", why:"держать — исключение 2 спряжения: держАщий."},
+  {w:["стел","щийся"], o:["ю","я"], a:"ю", why:"стелить — исключение 1 спряжения: стелЮщийся."},
+  {w:["пыш","щий"], ctx:"жаром", o:["у","а"], a:"у", why:"начальная форма — пыхать, 1 спряжение: пышУщий."},
+  {w:["зыбл","щийся"], ctx:"песок", o:["ю","я"], a:"ю", why:"зыбиться — исключение 1 спряжения: зыблЮщийся."},
+  {w:["брезж","щий"], o:["у","а"], a:"у", why:"брезжУщий — причастие-исключение, проверке спряжением не поддаётся."},
+  {w:["внемл","щий"], o:["ю","я"], a:"ю", why:"внемлЮщий — причастие-исключение, запоминаем вместе с брезжУщим."}
+];
+
+/* --- Страдательные причастия настоящего времени --- */
+const P_PASS = [
+  {w:["чита","мый"], o:["е","и"], a:"е", why:"читать — 1 спряжение, значит суффикс -ЕМ-."},
+  {w:["колебл","мый"], ctx:"ветром", o:["е","и"], a:"е", why:"колебать — 1 спряжение: колеблЕмый."},
+  {w:["омыва","мый"], ctx:"морем", o:["е","и"], a:"е", why:"омывать — 1 спряжение: омываЕмый."},
+  {w:["ненавид","мый"], o:["е","и"], a:"и", why:"ненавидеть — исключение 2 спряжения: ненавидИмый."},
+  {w:["независ","мый"], o:["е","и"], a:"и", why:"зависеть — исключение 2 спряжения: независИмый."},
+  {w:["предвид","мый"], o:["е","и"], a:"и", why:"видеть — исключение 2 спряжения, приставка не меняет спряжения."},
+  {w:["муч","мый"], ctx:"сомнениями", o:["е","и"], a:"и", why:"мучИть — 2 спряжение: мучИмый."},
+  {w:["выслушива","мый"], o:["е","и"], a:"е", why:"выслушивать — 1 спряжение: выслушиваЕмый."},
+  {w:["движ","мый"], o:["е","и"], a:"и", why:"движИмый — исключение: образовано от устаревшего движить (2 спряжение)."},
+  {w:["немысл","мый"], o:["е","и"], a:"и", why:"немыслИмый — слово-исключение, запоминаем."},
+  {w:["приемл","мый"], o:["е","и"], a:"е", why:"приемлЕмый — от устаревшего приемлЕть (1 спряжение)."},
+  {w:["неотъемл","мый"], o:["е","и"], a:"е", why:"неотъемлЕмый — от устаревшего отъемлЕть (1 спряжение)."}
+];
+
+/* --- Гласная перед -Л-, -В-, -ВШ- --- */
+const P_VSH = [
+  {w:["зала","вший"], ctx:"пёс", o:["я","и"], a:"я", why:"лаЯть → суффикс Я переносим перед -ВШ-: залаЯвший."},
+  {w:["наде","вшийся"], o:["я","и"], a:"я", why:"надеЯться → надеЯвшийся."},
+  {w:["раска","вшийся"], o:["я","и"], a:"я", why:"каЯться → раскаЯвшийся."},
+  {w:["кашл","вший"], o:["я","и"], a:"я", why:"кашлЯть → кашлЯвший."},
+  {w:["завис","вший"], o:["е","и"], a:"е", why:"зависЕть → зависЕвший. Спряжение здесь не нужно."},
+  {w:["предвид","вший"], o:["е","и"], a:"е", why:"предвидЕть → предвидЕвший."},
+  {w:["обессил","вший"], ctx:"от долгого бега", o:["е","и"], a:"е", why:"обессилЕть (сам) → обессилЕвший: глагол непереходный."},
+  {w:["выздоров","л"], o:["е","и"], a:"е", why:"выздоровЕть → выздоровЕл, а не «выздоровил»."},
+  {w:["обессил","л"], ctx:"пленного", o:["и","е"], a:"и", why:"обессилИть кого-то → обессилИл: глагол переходный."},
+  {w:["удосто","вшийся"], o:["и","е"], a:"и", why:"удостоИть → удостоИвшийся: перед -ВШ- буква И сохраняется."},
+  {w:["накле","л"], o:["и","е"], a:"и", why:"клеИть → наклеИл: перед -Л- буква И сохраняется."},
+  {w:["почу","в"], o:["я","и"], a:"я", why:"чуЯть → почуЯв: в деепричастии суффикс тот же."}
+];
+
+/* --- Гласная перед -НН- и -Н- --- */
+const P_NN = [
+  {w:["стрел","ный воробей"], o:["я","е"], a:"я", why:"от стрелЯть: глагол на -ЯТЬ даёт -ЯН-."},
+  {w:["застрел","нный волк"], o:["е","я"], a:"е", why:"от застрелИть: глагол на -ИТЬ даёт только -ЕНН-."},
+  {w:["замеш","нный в измене"], o:["а","е"], a:"а", why:"от замешАть — впутать: глагол на -АТЬ даёт -АНН-."},
+  {w:["замеш","нное на пирожки тесто"], o:["е","а"], a:"е", why:"от замесИть — приготовить тесто: -ИТЬ даёт -ЕНН-."},
+  {w:["выкач","нная из скважины нефть"], o:["а","е"], a:"а", why:"от выкачАть насосом: -АТЬ даёт -АНН-."},
+  {w:["выкач","нная из гаража бочка"], o:["е","а"], a:"е", why:"от выкатИть: -ИТЬ даёт -ЕНН-."},
+  {w:["развеш","нные по стенам картины"], o:["а","е"], a:"а", why:"от развешАть — повесить в разных местах: -АНН-."},
+  {w:["развеш","нная на весах крупа"], o:["е","а"], a:"е", why:"от развесИть — разделить по весу: -ЕНН-."},
+  {w:["потер","нный ключ"], o:["я","е"], a:"я", why:"от потерЯть: -ЯТЬ даёт -ЯНН-."},
+  {w:["настро","нный рояль"], o:["е","я"], a:"е", why:"от настроИть: И перед -НН- меняется на Е."},
+  {w:["засе","нное поле"], o:["я","е"], a:"я", why:"от засеЯть: -ЯТЬ даёт -ЯНН-."},
+  {w:["обгрыз","нный карандаш"], o:["е","а"], a:"е", why:"от обгрызть: инфинитив не на -АТЬ и не на -ЯТЬ, значит -ЕНН-."}
+];
+
+/* --- Карточки на исключения: буква выбирается до показа ответа --- */
+const P_ISKL = [
+  {w:["(он) бре","т"], o:["е","и"], a:"е", why:"Брить — исключение: инфинитив на -ИТЬ, а спряжение 1-е."},
+  {w:["зижд","тся на доверии"], o:["е","и"], a:"е", why:"Зиждиться — исключение: на -ИТЬ, но 1 спряжение."},
+  {w:["пески зыбл","тся"], o:["е","и"], a:"е", why:"Зыбиться — исключение: на -ИТЬ, но 1 спряжение."},
+  {w:["(они) гон","т"], o:["я","ю"], a:"я", why:"Гнать — исключение: на -АТЬ, но 2 спряжение."},
+  {w:["(он) ненавид","т"], o:["и","е"], a:"и", why:"Ненавидеть — исключение: на -ЕТЬ, но 2 спряжение."},
+  {w:["движ","мый"], o:["и","е"], a:"и", why:"ДвижИмый и недвижИмый — от устаревшего движить (2 спряжение)."},
+  {w:["немысл","мый"], o:["и","е"], a:"и", why:"НемыслИмый — слово-исключение, проверить нечем."},
+  {w:["приемл","мый"], o:["е","и"], a:"е", why:"ПриемлЕмый — от устаревшего приемлЕть (1 спряжение)."},
+  {w:["неотъемл","мый"], o:["е","и"], a:"е", why:"НеотъемлЕмый — от устаревшего отъемлЕть (1 спряжение)."},
+  {w:["незыбл","мый"], o:["е","и"], a:"е", why:"НезыблЕмый — с Е, хотя зыбиться похоже на 2 спряжение."},
+  {w:["брезж","щий"], o:["у","а"], a:"у", why:"БрезжУщий — причастие-исключение."},
+  {w:["внемл","щий"], o:["ю","я"], a:"ю", why:"ВнемлЮщий — причастие-исключение, пара к брезжУщему."}
+];
+
+/* --- Логика правил: выбор объяснения --- */
+const Q_WHY = [
+  {q:"Почему в слове «борЕтся» пишется Е?",
+   o:["Инфинитив «бороться» не на -ИТЬ, значит 1 спряжение: Е, У, Ю",
+      "Ударение падает на окончание, пишем что слышим",
+      "Это глагол-исключение"],
+   a:"Инфинитив «бороться» не на -ИТЬ, значит 1 спряжение: Е, У, Ю",
+   why:"Спряжение определяется только по начальной форме, а не по звучанию личной формы."},
+  {q:"Почему «дышИт» пишется с И, хотя «дышать» не оканчивается на -ИТЬ?",
+   o:["Дышать входит в 11 исключений и относится ко 2 спряжению",
+      "Перед Ш всегда пишется И",
+      "Форма «дышит» ударная, букву слышно"],
+   a:"Дышать входит в 11 исключений и относится ко 2 спряжению",
+   why:"Гнать, держать, дышать, слышать — на -АТЬ, но 2 спряжение."},
+  {q:"Почему в причастии «клеЯщий» пишется Я?",
+   o:["КлеИть — 2 спряжение, значит суффикс -АЩ-/-ЯЩ-",
+      "После Е у глаголов всегда идёт Я",
+      "Проверяем существительным «клей»"],
+   a:"КлеИть — 2 спряжение, значит суффикс -АЩ-/-ЯЩ-",
+   why:"Суффиксы причастий настоящего времени выбираются по тому же спряжению, что и личные окончания."},
+  {q:"Зачем в слове «выгор..шь» отбрасывать приставку ВЫ-?",
+   o:["ВЫ- перетягивает ударение на себя; без неё буква слышна: горИшь",
+      "ВЫ- меняет спряжение глагола на первое",
+      "С приставкой ВЫ- всегда пишется И"],
+   a:"ВЫ- перетягивает ударение на себя; без неё буква слышна: горИшь",
+   why:"Ударная приставка прячет орфограмму. Уберёшь её — окончание встанет под ударение."},
+  {q:"Чем различаются «вы вышлЕте» и «вышлИте немедленно»?",
+   o:["Первое — будущее время, буква по спряжению; второе — приказ, в повелительном всегда -ИТЕ",
+      "Первое — разговорная форма, второе — книжная",
+      "Различие только в ударении, буква в обоих одна"],
+   a:"Первое — будущее время, буква по спряжению; второе — приказ, в повелительном всегда -ИТЕ",
+   why:"Наклонение определяется по смыслу предложения: сообщение или требование."},
+  {q:"Почему «настроЕнный» пишется с Е, хотя инфинитив «настроИть»?",
+   o:["Перед -НН- буква И меняется на Е: получается -ЕНН-, а не -ИНН-",
+      "Настроить — глагол 1 спряжения",
+      "Это слово-исключение"],
+   a:"Перед -НН- буква И меняется на Е: получается -ЕНН-, а не -ИНН-",
+   why:"Сочетания -ИНН- в причастиях не бывает: от глаголов на -ИТЬ всегда -ЕНН-."},
+  {q:"Почему «удостоИвшийся» сохраняет И, а «настроЕнный» — нет?",
+   o:["Перед -ВШ- и -Л- суффикс инфинитива сохраняется, меняется он только перед -НН-",
+      "Удостоиться — глагол 2 спряжения, а настроить — первого",
+      "«Удостоившийся» — исключение"],
+   a:"Перед -ВШ- и -Л- суффикс инфинитива сохраняется, меняется он только перед -НН-",
+   why:"Это два соседних правила: удостоИть → удостоИвшийся, но настроИть → настроЕнный."},
+  {q:"Почему «замешАнный в измене», но «замешЕнное тесто»?",
+   o:["Причастия образованы от разных глаголов: замешАть и замесИть",
+      "Буква зависит от рода существительного",
+      "Первое слово — исключение из правила"],
+   a:"Причастия образованы от разных глаголов: замешАть и замесИть",
+   why:"Слова в скобках — часть условия: по смыслу восстанавливается начальная форма."},
+  {q:"Почему «обессилЕл от бега», но «обессилИл пленного»?",
+   o:["Обессилеть — сам лишился сил (непереходный, -ЕТЬ); обессилить кого-то (переходный, -ИТЬ)",
+      "Различие в приставке ОБЕС- и ОБЕЗ-",
+      "Это одно и то же слово, написание свободное"],
+   a:"Обессилеть — сам лишился сил (непереходный, -ЕТЬ); обессилить кого-то (переходный, -ИТЬ)",
+   why:"У глаголов с ОБЕЗ-/ОБЕС- букву выбирает переходность: есть при глаголе дополнение или нет."}
+];
+
+/* --- Повторение: чем проверяется форма --- */
+const SORT_RECAP = {
+  buckets:["Проверяем спряжением","Проверяем суффиксом инфинитива"],
+  items:[
+    {t:"(он) борется", b:"Проверяем спряжением"},
+    {t:"(они) клеят", b:"Проверяем спряжением"},
+    {t:"дышащий", b:"Проверяем спряжением"},
+    {t:"стелющийся", b:"Проверяем спряжением"},
+    {t:"видимый", b:"Проверяем спряжением"},
+    {t:"читаемый", b:"Проверяем спряжением"},
+    {t:"растаявший", b:"Проверяем суффиксом инфинитива"},
+    {t:"засеянный", b:"Проверяем суффиксом инфинитива"},
+    {t:"увидев", b:"Проверяем суффиксом инфинитива"},
+    {t:"наклеил", b:"Проверяем суффиксом инфинитива"},
+    {t:"обессилевший", b:"Проверяем суффиксом инфинитива"},
+    {t:"потерянный", b:"Проверяем суффиксом инфинитива"}
+  ]
+};
+
+/* --- Итоговая практика: 16 позиций из всех блоков --- */
+const P_FINAL = [
+  {w:["(они) кле","т"], o:["я","ю"], a:"я", why:"клеИть — 2 спряжение: клеЯт."},
+  {w:["(он) бор","тся"], o:["е","и"], a:"е", why:"бороться — 1 спряжение: борЕтся."},
+  {w:["(они) мел","т"], ctx:"кофе", o:["я","ю"], a:"ю", why:"начальная форма молоть — 1 спряжение: мелЮт."},
+  {w:["высп","шься"], o:["е","и"], a:"и", why:"отбрасываем ВЫ-: спИшь — выспИшься."},
+  {w:["вышл","те"], ctx:"немедленно!", o:["е","и"], a:"и", why:"приказ: повелительное наклонение, -ИТЕ."},
+  {w:["муч","ть совесть"], o:["я","и"], a:"и", why:"норма — мучИть."},
+  {w:["деревне пришлось обезлюд","ть"], o:["е","и"], a:"е", why:"непереходный глагол: обезлюдЕть."},
+  {w:["трепещ","щий"], o:["у","а"], a:"у", why:"трепетать — 1 спряжение: трепещУщий."},
+  {w:["стел","щийся"], o:["ю","я"], a:"ю", why:"стелить — исключение 1 спряжения: стелЮщийся."},
+  {w:["независ","мый"], o:["е","и"], a:"и", why:"зависеть — исключение 2 спряжения: независИмый."},
+  {w:["неотъемл","мый"], o:["е","и"], a:"е", why:"неотъемлЕмый — слово-исключение."},
+  {w:["раска","вшийся"], o:["я","и"], a:"я", why:"каЯться → раскаЯвшийся."},
+  {w:["удосто","вшийся"], o:["и","е"], a:"и", why:"удостоИть → удостоИвшийся: перед -ВШ- И сохраняется."},
+  {w:["обессил","л"], ctx:"пленного", o:["и","е"], a:"и", why:"обессилИть кого-то — переходный глагол."},
+  {w:["выкач","нная из гаража бочка"], o:["е","а"], a:"е", why:"от выкатИть: -ИТЬ даёт -ЕНН-."},
+  {w:["засе","нное поле"], o:["я","е"], a:"я", why:"от засеЯть: -ЯТЬ даёт -ЯНН-."}
+];
+
+/* --- Задания формата ЕГЭ --- */
+const EGE = [
+  {right:[1,3,4], rows:[
+    [{w:["относ","шься"], a:"и"}, {w:["распущ","нный"], a:"е"}],
+    [{w:["выглян","шь"], a:"е"}, {w:["покаж","шь"], a:"е"}],
+    [{w:["увлека","мый"], a:"е"}, {w:["невид","мый"], a:"и"}],
+    [{w:["отуч","шься"], a:"и"}, {w:["услыш","шь"], a:"и"}],
+    [{w:["животрепещ","щий"], cx:"вопрос", a:"у"}, {w:["паш","т"], cx:"тракторы", a:"у"}]
+  ]},
+  {right:[0,2,3], rows:[
+    [{w:["бор","щийся"], a:"ю"}, {w:["мел","щий"], cx:"кофе", a:"ю"}],
+    [{w:["дыш","щий"], a:"а"}, {w:["колебл","мый"], cx:"ветром", a:"е"}],
+    [{w:["ненавид","щий"], cx:"предательство", a:"я"}, {w:["корм","тся"], cx:"птицы", a:"я"}],
+    [{w:["движ","мый"], a:"и"}, {w:["верт","тся"], cx:"он", a:"и"}],
+    [{w:["приемл","мый"], a:"е"}, {w:["завис","мый"], a:"и"}]
+  ]},
+  {right:[1,4], rows:[
+    [{w:["зала","вший"], cx:"пёс", a:"я"}, {w:["обид","лся"], a:"е"}],
+    [{w:["раска","вшийся"], a:"я"}, {w:["потер","нный"], a:"я"}],
+    [{w:["удосто","вшийся"], a:"и"}, {w:["настро","нный"], a:"е"}],
+    [{w:["выкач","нная"], cx:"из скважины нефть", a:"а"}, {w:["замеш","нное"], cx:"на пирожки тесто", a:"е"}],
+    [{w:["обессил","вший"], cx:"от долгого бега", a:"е"}, {w:["предвид","вший"], a:"е"}]
+  ]},
+  {right:[0,2,4], rows:[
+    [{w:["вышл","те"], cx:"немедленно", a:"и"}, {w:["выгляд","т"], cx:"он", a:"и"}],
+    [{w:["выро","шь"], a:"е"}, {w:["высп","шься"], a:"и"}],
+    [{w:["выйд","те"], cx:"из класса и зайдите нормально", a:"и"}, {w:["обезвред","вший"], cx:"врага", a:"и"}],
+    [{w:["выстел","м"], a:"е"}, {w:["кашл","вший"], a:"я"}],
+    [{w:["выреж","шь"], a:"е"}, {w:["тян","т"], cx:"он", a:"е"}]
+  ]}
+];
+
+/* ==================== СЛАЙДЫ ==================== */
+
+const SLIDES = [
+  {k:"t", type:"title"},
+  {k:"map", type:"map"},
+
+  {k:"r-spr", type:"rule", sec:"Спряжение", kicker:"Спряжение", title:"Как определить спряжение глагола",
+   lead:"Спряжение — единственный ключ к безударным окончаниям в настоящем и будущем времени. Определяется оно только по начальной форме.",
+   blocks:[
+     {h:"Шаг первый: найти начальную форму", p:"Смотреть на само слово бесполезно — окончание безударное, его не слышно. Восстанавливаем инфинитив и смотрим на его конец. <b>Приставка и -СЯ на спряжение не влияют:</b> если гнать → гонИшь, то и перегнать → перегонИшь, и гнаться → гонИшься.",
+      ex:"он бор..тся → <u>бороться</u> · он выгляд..т → <u>выглядеть</u> · они перегон..т → <u>перегнать</u>"},
+     {h:"1 спряжение: буквы Е, У, Ю", p:"Все глаголы, у которых инфинитив <b>не</b> оканчивается на -ИТЬ: читать, бороться, сеять, тянуть, колоть, молоть. <b>Плюс четыре исключения на -ИТЬ:</b> брить, стелить, зиждиться, зыбиться — и всё, что от них образовано (постелить, расстелить).",
+      ex:"борЕтся · сеЮт · тянЕт · мелЮт · брЕет · стелЕт"},
+     {h:"2 спряжение: буквы И, А, Я", p:"Все глаголы на <b>-ИТЬ</b>: клеить, строить, пилить, точить, мерить. <b>Плюс одиннадцать исключений:</b> гнать, держать, дышать, слышать (на -АТЬ) и видеть, обидеть, зависеть, терпеть, вертеть, ненавидеть, смотреть (на -ЕТЬ).",
+      ex:"клеЯт · строИт · мерЯт · гонЯт · дышИт · ненавидЯт"}
+   ],
+   trap:"<b>Ловушка.</b> Четыре глагола не подчиняются ни одному спряжению: <b>хотеть, бежать, есть, дать</b>. Они разноспрягаемые и берут окончания из обоих наборов: хочЕшь, но хотИте; бежИт, но бегУт. Спряжением их не проверить — формы надо помнить."},
+  {k:"p-spr", type:"sort", sec:"Спряжение", back:"r-spr", kicker:"Спряжение", title:"Разложите глаголы по спряжениям",
+   instr:"Нажмите на глагол, затем на нужную корзину. Исключения стоят вперемешку с обычными глаголами — смотрите не только на конец инфинитива.",
+   data:SORT_SPR},
+
+  {k:"r-end", type:"rule", sec:"Личные окончания", kicker:"Личные окончания", title:"Личные окончания: Е, У, Ю или И, А, Я",
+   blocks:[
+     {h:"Алгоритм", ol:[
+       "Проверьте, безударное ли окончание. Под ударением правило не нужно: кричИт, поЁт, несЁшь — пишем что слышим.",
+       "Восстановите инфинитив.",
+       "Определите спряжение по инфинитиву.",
+       "<b>1 спряжение → Е, У, Ю. 2 спряжение → И, А, Я.</b>"
+     ], ex:"он борЕтся (бороться, 1 спр.) · он пилИт (пилить, 2 спр.) · они сеЮт · они клеЯт"},
+     {h:"Как запомнить, какие гласные к какому спряжению", p:"Две гласные пары спрятаны в короткой фразе. В первом слове — набор 1 спряжения, во втором — 2-го.",
+      memo:"<span class=\"cue\">ц<u>Е</u>л<u>УЮ</u> м<u>И</u>л<u>АЯ</u></span><br>ц<b>Е</b>л<b>У</b><b>Ю</b> — Е, У, Ю, это 1 спряжение.<br>м<b>И</b>л<b>А</b><b>Я</b> — И, А, Я, это 2 спряжение."}
+   ],
+   trap:"<b>Ловушка.</b> Начальную форму надо восстанавливать честно, а не по созвучию. «Они мел..т кофе» — от <b>молоть</b>, а не от несуществующего «мелить»: 1 спряжение, мелЮт. «Они мер..т расстояние» — от <b>мерить</b>: 2 спряжение, мерЯт."},
+  {k:"p-end", type:"practice", sec:"Личные окончания", back:"r-end", kicker:"Личные окончания", title:"Практика: личные окончания глаголов",
+   instr:"Восстановите инфинитив, определите спряжение и выберите букву. Объяснение откроется после второй проверки.",
+   items:P_END},
+
+  {k:"r-vy", type:"rule", sec:"Приставка ВЫ- и наклонение", kicker:"Приставка ВЫ- и наклонение", title:"Ударная приставка ВЫ- и повелительное наклонение",
+   blocks:[
+     {h:"Приставку ВЫ- отбрасываем", p:"ВЫ- почти всегда ударная: она перетягивает ударение на себя и прячет орфограмму. Мысленно уберите её. Если без приставки буква встала под ударение — пишем то, что слышим. Если нет — определяем спряжение обычным способом.",
+      ex:"выгор..шь → гор<u>И</u>шь → выгорИшь · выбер..шь → бер<u>Ё</u>шь → выберЕшь · выбеж..т → беж<u>И</u>т → выбежИт"},
+     {h:"Повелительное наклонение: всегда -ИТЕ", p:"В приказе, просьбе, требовании пишется <b>-ИТЕ</b> независимо от спряжения. В изъявительном наклонении (сообщение о том, что произойдёт) буква выбирается по спряжению. По буквам эти формы не отличить — отличает только смысл предложения.",
+      ex:"вышлИте немедленно! — вы вышлЕте документы завтра<br>выйдИте из класса! — когда вы выйдЕте, позвоните<br>выберИте лучшее! — вы выберЕте сами"},
+     {h:"Как поймать наклонение", p:"Ищите в предложении сигналы приказа: восклицательный знак, слова «немедленно», «обязательно», «пожалуйста», соседний глагол в той же форме («зайдите», «позвоните»). Сигналы будущего: «завтра», «когда», «если», «потом».",
+      ex:"обязательно всё выплатИте! · лезьте, а не лезете · если вы напишЕте — сообщите"}
+   ],
+   trap:"<b>Ловушка.</b> Разноспрягаемые глаголы под приставкой ВЫ- встречаются особенно часто: <b>выбежИт</b> (бежать), <b>выдадИм</b> (дать), <b>вышлЕт</b> (слать). Пытаться определить у них спряжение бессмысленно — работает только отбрасывание приставки."},
+  {k:"p-vy", type:"practice", sec:"Приставка ВЫ- и наклонение", back:"r-vy", kicker:"Приставка ВЫ- и наклонение", title:"Практика: приставка ВЫ- и наклонение",
+   instr:"Сначала уберите ВЫ- и послушайте букву. Там, где в скобках или рядом стоит приказ, решает наклонение, а не спряжение.",
+   items:P_VY},
+
+  {k:"r-inf", type:"rule", sec:"Начальная форма глагола", kicker:"Начальная форма глагола", title:"Гласная в начальной форме: -ЯТЬ, -ЕТЬ, -ИТЬ",
+   lead:"Задание 12 спрашивает не только личные формы. Пропуск часто стоит в самом инфинитиве — и тогда его надо просто знать.",
+   blocks:[
+     {h:"Глаголы на -ЯТЬ", p:"Если перед пропуском стоит гласная <b>А, Е</b> или <b>У</b> — почти всегда -ЯТЬ. Эта буква Я потом сохранится во всех формах: сеЯть → сеЯл, сеЯвший, посеЯнный, посеЯв.",
+      ex:"блеЯть, веЯть, затеЯть, кашлЯть, каЯться, лаЯть, лелеЯть, маЯться, надеЯться, отчаЯться, реЯть, сеЯть, таЯть, хаЯть, чуЯть"},
+     {h:"ОБЕЗ- и ОБЕС-: смотрим на переходность", p:"Если при глаголе есть дополнение (обезвредить <b>кого?</b>) — глагол переходный, пишем <b>-ИТЬ</b>. Если действие происходит с самим подлежащим (улицы обезлюдели <b>сами</b>) — непереходный, пишем <b>-ЕТЬ</b>.",
+      ex:"обезлюдЕть, обессилЕть, обезголосЕть, обезуметь — сам<br>обезвредИть, обездвижИть, обессилИть, обезглавИть — кого-то"},
+     {h:"Глаголы на -ИЧАТЬ", p:"В этой группе всегда <b>А</b>, никаких вариантов.",
+      ex:"сплетничАть, умничАть, вредничАть, шкодничАть, откровенничАть"}
+   ],
+   trap:"<b>Ловушка.</b> Правило «А, Е, У → -ЯТЬ» ломают <b>клеИть</b> и <b>драИть</b>: форм «клеять» и «драять» не существует. Отдельно помним <b>мучИть</b>, <b>мерИть</b>, <b>переиначИть</b>. А после гласной <b>О</b> правило не работает вообще — там всегда -ИТЬ: строИть, успокоИть, присвоИть, удостоИть."},
+  {k:"p-inf", type:"practice", sec:"Начальная форма глагола", back:"r-inf", kicker:"Начальная форма глагола", title:"Практика: гласная в начальной форме",
+   instr:"Смотрите на гласную перед пропуском и на то, есть ли при глаголе дополнение. Слова в скобках и рядом — часть условия.",
+   items:P_INF},
+
+  {k:"r-act", type:"rule", sec:"Причастия настоящего времени", kicker:"Причастия настоящего времени", title:"Действительные причастия: -УЩ-/-ЮЩ- или -АЩ-/-ЯЩ-",
+   blocks:[
+     {h:"Тот же алгоритм, что и в окончаниях", p:"Находим глагол, от которого образовано причастие, определяем его спряжение. <b>1 спряжение → -УЩ-/-ЮЩ-.</b> <b>2 спряжение → -АЩ-/-ЯЩ-.</b> Гласные ровно те же, что в личных окончаниях, поэтому работает та же запоминалка.",
+      ex:"бороться (1 спр.) → борЮЩийся · клеить (2 спр.) → клеЯЩий · дышать (искл. 2 спр.) → дышАЩий",
+      memo:"<span class=\"cue\">ц<u>Е</u>л<u>УЮ</u> м<u>И</u>л<u>АЯ</u></span><br>1 спряжение — <b>У, Ю</b>: борЮщийся, трепещУщий.<br>2 спряжение — <b>А, Я</b>: дышАщий, клеЯщий."}
+   ],
+   trap:"<b>Ловушка.</b> Целая группа причастий 1 спряжения «звучит» как второе, потому что инфинитив у них непохожий: <b>мелЮщий</b> (молоть), <b>трепещУщий</b> (трепетать), <b>пышУщий</b> (пыхать), <b>колеблЮщий</b> (колебать), <b>зыблЮщийся</b> (зыбиться), <b>мурлычУщий</b> (мурлыкать), <b>рокочУщий</b> (рокотать). Отдельно стоят два причастия-исключения: <b>брезжУщий</b> и <b>внемлЮщий</b>."},
+  {k:"p-act", type:"practice", sec:"Причастия настоящего времени", back:"r-act", kicker:"Причастия настоящего времени", title:"Практика: -УЩ-/-ЮЩ- или -АЩ-/-ЯЩ-",
+   instr:"Восстановите инфинитив — именно он решает дело. Два слова в этом наборе проверке не поддаются: их надо помнить.",
+   items:P_ACT},
+
+  {k:"r-pass", type:"rule", sec:"Страдательные причастия и исключения", kicker:"Страдательные причастия", title:"Страдательные причастия: -ЕМ-/-ОМ- или -ИМ-",
+   blocks:[
+     {h:"Правило", p:"Принцип не меняется: <b>1 спряжение → -ЕМ-/-ОМ-</b> (читаЕМый, ведОМый), <b>2 спряжение → -ИМ-</b> (видИМый, слышИМый). Приставка и НЕ- на выбор буквы не влияют: зависеть → зависИмый → независИмый.",
+      ex:"читать (1 спр.) → читаЕМый · колебать (1 спр.) → колеблЕМый · видеть (искл. 2 спр.) → видИМый · мучить (2 спр.) → мучИМый"},
+     {h:"Шесть слов, которые правилом не проверяются", p:"Они образованы от устаревших глаголов, которых в современном языке уже нет. Поэтому их просто заучивают — по три в каждой группе.",
+      ex:"с <u>И</u>: движИмый, недвижИмый, немыслИмый<br>с <u>Е</u>: приемлЕмый, неотъемлЕмый, незыблЕмый"}
+   ],
+   trap:"<b>Ловушка.</b> Пара движИмый / незыблЕмый выглядит одинаково, а буквы разные. Объяснение — в исходных глаголах: <b>движить</b> было 2 спряжения, отсюда И, а <b>приемлеть</b> и <b>отъемлеть</b> — первого, отсюда Е. Проверять эти слова через «двигать» и «зыбиться» нельзя: получится неверно."},
+  {k:"p-pass", type:"practice", sec:"Страдательные причастия и исключения", back:"r-pass", kicker:"Страдательные причастия", title:"Практика: -ЕМ- или -ИМ-",
+   instr:"Четыре слова из двенадцати — из списка исключений. Остальные проверяются спряжением.",
+   items:P_PASS},
+
+  {k:"r-vsh", type:"rule", sec:"Гласная перед -Л-, -В-, -ВШ-", kicker:"Прошедшее время", title:"Гласная перед -Л-, -В- и -ВШ-",
+   lead:"В прошедшем времени спряжение не нужно совсем. Работает другой механизм — перенос суффикса из начальной формы.",
+   blocks:[
+     {h:"Правило переноса", p:"Берём инфинитив, отрезаем -ТЬ и ставим оставшийся суффикс на место пропуска: перед <b>-Л-</b> у глагола, перед <b>-ВШ-</b> у причастия, перед <b>-В-</b> у деепричастия. Четыре варианта: -АТЬ даёт А, -ЕТЬ даёт Е, -ИТЬ даёт И, -ЯТЬ даёт Я.",
+      ex:"лаЯть → лаЯл, залаЯвший · зависЕть → зависЕл, зависЕвший · клеИть → наклеИл, наклеИвший · услышАть → услышАл, услышАв"},
+     {h:"Перед -ВШ- и -Л- буква И сохраняется", p:"Это главное отличие от следующего правила. Перед <b>-НН-</b> буква И превращается в Е, а перед <b>-ВШ-</b> и <b>-Л-</b> остаётся на месте. Два соседних слова от одного глагола пишутся по-разному.",
+      ex:"настроИть → настроИвший, но настроЕнный<br>удостоИть → удостоИвшийся · замаячИть → замаячИвший · выбрИть → выбрИвший"}
+   ],
+   trap:"<b>Ловушка.</b> Пара обессилЕл / обессилИл различается только смыслом: <b>обессилЕл</b> — сам лишился сил (от обессилЕть), <b>обессилИл</b> пленного — лишил сил другого (от обессилИть). Так же ведут себя обезлюдЕл / обезлюдИл, обезвредИл, обездвижИл."},
+  {k:"p-vsh", type:"practice", sec:"Гласная перед -Л-, -В-, -ВШ-", back:"r-vsh", kicker:"Прошедшее время", title:"Практика: гласная перед -Л-, -В-, -ВШ-",
+   instr:"Восстановите инфинитив и перенесите его суффикс. Спряжение здесь не понадобится ни разу.",
+   items:P_VSH},
+
+  {k:"r-nn", type:"rule", sec:"Гласная перед -НН- и -Н-", kicker:"Прошедшее время", title:"Гласная перед -НН- и -Н-",
+   blocks:[
+     {h:"Правило", p:"От глаголов на <b>-АТЬ</b> и <b>-ЯТЬ</b> получается <b>-АНН-</b> и <b>-ЯНН-</b>: суффикс сохраняется. От глаголов на <b>-ИТЬ</b> получается только <b>-ЕНН-</b>: сочетания -ИНН- в причастиях не бывает.",
+      ex:"засеЯть → засеЯнный · потерЯть → потерЯнный · увешАть → увешАнный<br>настроИть → настроЕнный · застрелИть → застрелЕнный · выкатИть → выкачЕнный"},
+     {h:"-ЕНН- бывает не только от -ИТЬ", p:"Если инфинитив оканчивается на <b>-ТИ</b>, <b>-ЧЬ</b>, <b>-ЗТЬ</b>, <b>-СТЬ</b>, то есть не подходит ни под -АТЬ, ни под -ЯТЬ, — тоже пишем <b>-ЕНН-</b>.",
+      ex:"принести → принесённый · испечь → испечённый · обгрызть → обгрызенный · поколебать → поколебленный"},
+     {h:"Пары от разных глаголов", p:"Самый частый вид ловушки: два причастия звучат одинаково, но образованы от разных глаголов. Выбирает букву <b>смысл</b>, и подсказка всегда стоит рядом — в скобках или в зависимом слове.",
+      ex:"замешАнный в измене (замешАть) — замешЕнное тесто (замесИть)<br>выкачАнная нефть (выкачАть) — выкачЕнная бочка (выкатИть)<br>развешАнные картины (развешАть) — развешЕнная крупа (развесИть)<br>обвешАнный медалями (обвешАть) — обвешЕнный покупатель (обвесИть)<br>вывалЯнный в муке (вывалЯть) — вывалЕнный на улицу (вывалИть)<br>стрелЯный воробей (стрелЯть) — застрелЕнный волк (застрелИть)"}
+   ],
+   trap:"<b>Ловушка.</b> Не путайте это правило с предыдущим. Перед -НН- буква И меняется на Е (настроИть → настроЕнный), а перед -ВШ- и -Л- остаётся (настроИть → настроИвший). В одном ряду ЕГЭ такие формы ставят рядом специально."},
+  {k:"p-nn", type:"practice", sec:"Гласная перед -НН- и -Н-", back:"r-nn", kicker:"Прошедшее время", title:"Практика: гласная перед -НН- и -Н-",
+   instr:"Шесть позиций здесь — пары по смыслу. Прочитайте слово целиком вместе с зависимыми словами, прежде чем выбирать букву.",
+   items:P_NN},
+
+  {k:"r-trap", type:"rule", sec:"Ловушки и исключения", kicker:"Ловушки и исключения", title:"Пять ловушек задания 12",
+   lead:"Всё, что не выводится из правил и требует памяти, собрано здесь в одном месте.",
+   blocks:[
+     {h:"1. Список глаголов на -ЯТЬ", p:"Пятнадцать слов, которые надо знать наизусть: их буква Я потом расходится по всем формам.",
+      ex:"блеЯть, веЯть, затеЯть, кашлЯть, каЯться, лаЯть, лелеЯть, маЯться, надеЯться, отчаЯться, реЯть, сеЯть, таЯть, хаЯть, чуЯть"},
+     {h:"2. Причастия от исчезнувших глаголов", p:"Проверять их современными глаголами нельзя — получится ошибка.",
+      ex:"движИмый, недвижИмый, немыслИмый · приемлЕмый, неотъемлЕмый, незыблЕмый · брезжУщий, внемлЮщий"},
+     {h:"3. Глаголы-исключения", p:"Четыре в 1 спряжении и одиннадцать во втором, плюс четыре разноспрягаемых.",
+      ex:"1 спр.: брить, стелить, зиждиться, зыбиться<br>2 спр.: гнать, держать, дышать, слышать, видеть, обидеть, зависеть, терпеть, вертеть, ненавидеть, смотреть<br>разноспрягаемые: хотеть, бежать, есть, дать"},
+     {h:"4. Начальная форма против запоминалки", p:"Слова, которые выглядят как глаголы на -ЯТЬ, но ими не являются.",
+      ex:"клеИть, драИть, мучИть, мерИть, переиначИть, удостоИть, строИть, успокоИть"},
+     {h:"5. Приставка ВЫ- и повелительное наклонение", p:"Две причины, по которым букву нельзя выбрать «по спряжению».",
+      ex:"выгорИшь (горИшь) · выберЕшь (берЁшь) · вышлИте! — вы вышлЕте · выйдИте! — вы выйдЕте"}
+   ]},
+  {k:"p-iskl", type:"blind", sec:"Ловушки и исключения", back:"r-trap", kicker:"Ловушки и исключения", title:"Карточки: проверка исключений",
+   instr:"На каждой карточке сначала выберите букву — и только потом откроется ответ с объяснением. Подсмотреть заранее нельзя, порядок карточек меняется при каждом открытии страницы.",
+   items:P_ISKL},
+
+  {k:"p-why", type:"choice", sec:"Логика правил", back:"map", kicker:"Логика правил", title:"Почему пишется именно так",
+   instr:"К каждому слову выберите верное объяснение. Проверка в два шага, как в остальных упражнениях: сначала счёт, потом разбор.",
+   items:Q_WHY},
+
+  {k:"p-recap", type:"sort", sec:"Чем проверяется форма", back:"map", kicker:"Повторение", title:"Чем проверяется эта форма",
+   instr:"Главное решение в задании 12 — выбрать способ проверки. Разложите формы по тому, что нужно определять: спряжение или суффикс начальной формы.",
+   data:SORT_RECAP},
+
+  {k:"p-final", type:"practice", sec:"Итоговая практика", back:"map", kicker:"Итоговая практика", title:"Итоговая практика: все блоки вперемешку",
+   instr:"Шестнадцать позиций из всех восьми блоков, без подсказки, какое правило работает. Это последняя проверка перед заданиями формата ЕГЭ.",
+   items:P_FINAL},
+
+  {k:"ege0", type:"egeIntro"},
+  {k:"ege1", type:"ege", sec:"Задания формата ЕГЭ", back:"ege0", title:"Задание 1 из 4", data:EGE[0]},
+  {k:"ege2", type:"ege", sec:"Задания формата ЕГЭ", back:"ege0", title:"Задание 2 из 4", data:EGE[1]},
+  {k:"ege3", type:"ege", sec:"Задания формата ЕГЭ", back:"ege0", title:"Задание 3 из 4", data:EGE[2]},
+  {k:"ege4", type:"ege", sec:"Задания формата ЕГЭ", back:"ege0", title:"Задание 4 из 4", data:EGE[3]},
+
+  {k:"fin", type:"final"}
+];
+
+const IDX = {}; SLIDES.forEach((s,i)=>IDX[s.k]=i);
+
+/* ==================== СОСТОЯНИЕ ==================== */
+
+const STORE = "zad12_v1";
+let ST = {ans:{}, ph:{}, fr:{}, bl:{}, first:{}, cur:0, max:0, calm:false};
+
+try{
+  const raw = localStorage.getItem(STORE);
+  if(raw) ST = Object.assign(ST, JSON.parse(raw));
+  if(!ST.first) ST.first = {};
+  if(!ST.bl) ST.bl = {};
+}catch(e){}
+
+function save(){
+  try{ localStorage.setItem(STORE, JSON.stringify(ST)); }catch(e){}
+}
+
+/* порядок карточек перемешивается при каждой загрузке страницы */
+const ORD = {};
+function shuffled(n){
+  const a = Array.from({length:n},(_,i)=>i);
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+SLIDES.forEach(s=>{
+  if(s.items) ORD[s.k] = shuffled(s.items.length);
+  else if(s.data && s.data.items) ORD[s.k] = shuffled(s.data.items.length);
+});
+
+const A = k => (ST.ans[k] || (ST.ans[k] = {}));
+const PH = k => ST.ph[k] || 0;
+const FR = k => ST.fr[k] || [];
+
+/* ==================== ПОДСЧЁТ ==================== */
+
+function scoreOf(s){
+  const k = s.k;
+
+  if(s.type === "blind"){
+    const st = ST.bl[k];
+    if(!st || !Object.keys(st.ans || {}).length) return null;
+    let r=0,w=0;
+    s.items.forEach((it,i)=>{
+      const v = st.ans[i];
+      if(v === undefined) return;
+      (v === it.a) ? r++ : w++;
+    });
+    return {r,w,e:s.items.length-r-w,t:s.items.length};
+  }
+
+  const ph = PH(k);
+  if(ph === 0) return null;
+  const ans = A(k);
+
+  if(s.type === "practice" || s.type === "choice"){
+    let r=0,w=0,e=0;
+    s.items.forEach((it,i)=>{
+      const v = ans[i];
+      if(v === undefined || v === null) e++;
+      else if(v === it.a) r++;
+      else w++;
+    });
+    return {r,w,e,t:s.items.length};
+  }
+  if(s.type === "sort"){
+    let r=0,w=0,e=0;
+    s.data.items.forEach((it,i)=>{
+      const v = ans[i];
+      if(!v) e++; else if(v === it.b) r++; else w++;
+    });
+    return {r,w,e,t:s.data.items.length};
+  }
+  if(s.type === "ege"){
+    const sel = (ans.sel || []).slice().sort((x,y)=>x-y);
+    if(!sel.length) return {r:0,w:0,e:1,t:1};
+    const right = s.data.right.slice().sort((x,y)=>x-y);
+    const hit = sel.length === right.length && sel.every((v,i)=>v === right[i]);
+    return {r:hit?1:0, w:hit?0:1, e:0, t:1};
+  }
+  return null;
+}
+
+/* для диагностики берём результат ПЕРВОЙ проверки: после исправлений
+   счёт всегда близок к 100% и слабые темы перестают быть видны */
+function baseScore(s){
+  if(s.type === "blind") return scoreOf(s);
+  return ST.first[s.k] || null;
+}
+
+function allScores(){
+  const bySec = {};
+  SLIDES.forEach(s=>{
+    if(!s.sec) return;
+    const sc = baseScore(s);
+    if(!sc) return;
+    const b = bySec[s.sec] || (bySec[s.sec] = {r:0,w:0,e:0,t:0,back:s.back||s.k});
+    b.r+=sc.r; b.w+=sc.w; b.e+=sc.e; b.t+=sc.t;
+  });
+  return bySec;
+}
+
+/* ==================== УТИЛИТЫ ==================== */
+
+const esc = t => String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function wordHTML(pair, val, reveal){
+  const shown = reveal !== undefined ? reveal : (val || "·");
+  return esc(pair[0]) + '<span class="blank">' + esc(shown) + '</span>' + esc(pair[1]);
+}
+
+function scoreLine(sc){
+  if(!sc) return "";
+  let out = '<span class="score">Верно <b class="g">'+sc.r+'</b>';
+  if(sc.w) out += ' · неверно <b class="r">'+sc.w+'</b>';
+  if(sc.e) out += ' · не отвечено <b class="a">'+sc.e+'</b>';
+  out += ' из '+sc.t+'</span>';
+  return out;
+}
+
+function sparks(el){
+  if(document.body.classList.contains("calm")) return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const rc = el.getBoundingClientRect();
+  const cx = rc.left+rc.width/2, cy = rc.top+rc.height/2;
+  for(let i=0;i<5;i++){
+    const ang = (i/5)*Math.PI*2 + Math.random()*.4, dist = 18+Math.random()*12;
+    const d = document.createElement("div");
+    d.className = "spark";
+    d.style.left = cx+"px"; d.style.top = cy+"px";
+    d.style.setProperty("--dx", Math.cos(ang)*dist+"px");
+    d.style.setProperty("--dy", Math.sin(ang)*dist+"px");
+    document.body.appendChild(d);
+    d.addEventListener("animationend", ()=>d.remove());
+  }
+}
+
+/* ==================== РЕНДЕР ==================== */
+
+const stage = document.getElementById("stage");
+const barFill = document.getElementById("barFill");
+const counter = document.getElementById("counter");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const calmBtn = document.getElementById("calmBtn");
+
+function head(s){
+  return (s.kicker ? '<div class="kicker">'+s.kicker+'</div>' : '') +
+         '<h1>'+s.title+'</h1>' +
+         (s.lead ? '<p class="lead">'+s.lead+'</p>' : '');
+}
+
+let RESTORE = null;
+function render(i){
+  const s = SLIDES[i];
+  const keepScroll = stage.scrollTop;
+  const el = document.createElement("div");
+  el.className = "slide";
+  stage.innerHTML = ""; stage.appendChild(el);
+  ({title:rTitle, map:rMap, rule:rRule, practice:rPractice, choice:rPractice,
+    sort:rSort, blind:rBlind, egeIntro:rEgeIntro, ege:rEge, final:rFinal})[s.type](el, s);
+  stage.scrollTop = keepScroll;
+  if(RESTORE){
+    const t = stage.querySelector(RESTORE);
+    if(t && t.focus) t.focus({preventScroll:true});
+    RESTORE = null;
+  }
+}
+
+/* --- титул с заставкой --- */
+function rTitle(el){
+  el.innerHTML = `
+    <div class="hero">
+      <svg class="boot" viewBox="0 0 420 140" aria-hidden="true">
+        <path class="stem" pathLength="100" d="M10,120 C70,50 120,126 186,74 C246,28 292,116 352,60 C382,34 400,48 412,40"></path>
+        <g class="vleaf"><ellipse cx="76" cy="64" rx="15" ry="6.5" fill="#5FD98A" transform="rotate(-32 76 64)"></ellipse></g>
+        <g class="vleaf"><ellipse cx="150" cy="102" rx="14" ry="6" fill="#2E8A54" transform="rotate(26 150 102)"></ellipse></g>
+        <g class="vleaf"><ellipse cx="228" cy="58" rx="15" ry="6.5" fill="#5FD98A" transform="rotate(-22 228 58)"></ellipse></g>
+        <g class="vleaf"><ellipse cx="304" cy="96" rx="14" ry="6" fill="#2E8A54" transform="rotate(30 304 96)"></ellipse></g>
+        <g class="bloom">
+          <circle cx="412" cy="32" r="5.5" fill="#FFC75A"></circle>
+          <circle cx="404" cy="38" r="5.5" fill="#FFC75A"></circle>
+          <circle cx="420" cy="38" r="5.5" fill="#FFC75A"></circle>
+          <circle cx="407" cy="46" r="5.5" fill="#FFC75A"></circle>
+          <circle cx="417" cy="46" r="5.5" fill="#FFC75A"></circle>
+          <circle cx="412" cy="40" r="4" fill="#FFE6A8"></circle>
+        </g>
+      </svg>
+      <div class="hero-sup">ЕГЭ по русскому языку</div>
+      <div class="hero-title">Задание 12</div>
+      <div class="hero-sub">Личные окончания глаголов и суффиксы причастий</div>
+      <button class="start" type="button" id="startBtn">Начать</button>
+    </div>`;
+  el.querySelector("#startBtn").addEventListener("click", ()=>go(1));
+}
+
+/* --- карта задания --- */
+function rMap(el){
+  const tiles = [
+    ["r-spr","Спряжение","Ключ ко всему заданию: 1 или 2, и пятнадцать исключений"],
+    ["r-end","Личные окончания","Е, У, Ю против И, А, Я — «цЕлУЮ мИлАЯ»"],
+    ["r-vy","Приставка ВЫ- и наклонение","Отбрасываем ВЫ-; вышлИте против вы вышлЕте"],
+    ["r-inf","Начальная форма","Глаголы на -ЯТЬ, ОБЕЗ-/ОБЕС-, -ИЧАТЬ"],
+    ["r-act","Причастия наст. времени","-УЩ-/-ЮЩ- и -АЩ-/-ЯЩ-, -ЕМ- и -ИМ-"],
+    ["r-vsh","Перед -Л-, -В-, -ВШ-","Переносим суффикс инфинитива, спряжение не нужно"],
+    ["r-nn","Перед -НН- и -Н-","И меняется на Е; пары по смыслу"],
+    ["r-trap","Ловушки и исключения","Всё, что надо просто знать, в одном списке"]
+  ];
+  el.innerHTML = `
+    <div class="kicker">Карта задания</div>
+    <h1>Что проверяет задание 12</h1>
+    <p class="lead">В задании пять рядов, в каждом <b class="hl">два слова</b> с пропуском. Нужно указать все ряды, где в обоих словах пропущена одна и та же буква, и записать их номера. Верных рядов обычно два или три.</p>
+    <div class="rule">
+      <h3>Главный выбор — способ проверки</h3>
+      <ol class="steps">
+        <li><b>Определите время и форму.</b> Настоящее или будущее — работаем спряжением. Прошедшее время, причастие на -ВШ- или -НН-, деепричастие на -В- — работаем суффиксом начальной формы.</li>
+        <li><b>Проверьте ударение.</b> Под ударением правило не нужно вообще.</li>
+        <li><b>Восстановите инфинитив честно.</b> Половина ошибок в задании — это «мелить» вместо молоть и «мучать» вместо мучить.</li>
+        <li><b>Прочитайте слова в скобках.</b> Они не украшение: замешАнный в измене и замешЕнное тесто — разные слова.</li>
+      </ol>
+    </div>
+    <div class="map">${tiles.map(t=>`<button class="tile" type="button" data-k="${t[0]}"><b>${t[1]}</b><span>${t[2]}</span></button>`).join("")}</div>
+    <div class="trap"><b>Стратегия.</b> Идите по рядам сверху вниз и вычёркивайте ряд сразу, как только нашли в нём слово с другой буквой. Типы форм внутри ряда специально перемешаны: личное окончание могут поставить рядом с причастием, и ряд разваливается на том слове, о котором вы не подумали.</div>
+    <p class="lead" style="margin-top:16px;">Плитки выше работают оглавлением: нажмите на любую, чтобы перейти к нужному блоку.</p>`;
+  el.querySelectorAll(".tile").forEach(b=>b.addEventListener("click",()=>go(IDX[b.dataset.k])));
+}
+
+/* --- правило --- */
+function rRule(el, s){
+  const blocks = s.blocks.map(b=>{
+    let inner = '<h3>'+b.h+'</h3>';
+    if(b.p) inner += '<p>'+b.p+'</p>';
+    if(b.ol) inner += '<ol class="steps">'+b.ol.map(x=>'<li>'+x+'</li>').join("")+'</ol>';
+    if(b.ex) inner += '<p class="ex">'+b.ex+'</p>';
+    if(b.memo) inner += '<div class="memo">'+b.memo+'</div>';
+    return '<div class="rule">'+inner+'</div>';
+  }).join("");
+  el.innerHTML = head(s) + blocks + (s.trap ? '<div class="trap">'+s.trap+'</div>' : '');
+}
+
+/* --- упражнение со словами / выбор объяснения --- */
+function rPractice(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), ord = ORD[k];
+  const isChoice = s.type === "choice";
+
+  const cards = ord.map(i=>{
+    const it = s.items[i];
+    const v = ans[i];
+    let cls = "card", flag = "", why = "";
+    if(ph >= 1 && ph !== 15){
+      if(v === undefined) { cls += " na"; flag = '<div class="flag na">не отвечено</div>'; }
+      else if(v === it.a) cls += " ok";
+      else cls += " no";
+    }
+    if(ph === 2){
+      const right = isChoice ? it.a : (it.w[0] + it.a + it.w[1]);
+      why = '<div class="why"><span class="fix">' + esc(right) + '</span> — ' + it.why + '</div>';
+    }
+    const live = (ph === 0) || (ph === 15 && !fr.includes(i));
+    const dis = live ? "" : " disabled";
+
+    let body;
+    if(isChoice){
+      body = '<p class="qtext">' + esc(it.q) + '</p>' +
+        '<div class="pick">' + it.o.map(o=>
+          '<button type="button" data-i="'+i+'" data-v="'+esc(o)+'" class="'+(v===o?"on":"")+'"'+dis+'>'+esc(o)+'</button>'
+        ).join("") + '</div>';
+    } else {
+      const reveal = (ph === 2) ? it.a : undefined;
+      body = (it.ctx ? '<div class="ctx">('+esc(it.ctx)+')</div>' : '') +
+        '<div class="word">' + wordHTML(it.w, v, reveal) + '</div>' +
+        '<div class="chips">' + it.o.map(o=>
+          '<button type="button" class="chip '+(v===o?"on":"")+'" data-i="'+i+'" data-v="'+esc(o)+'"'+dis+'>'+esc(o)+'</button>'
+        ).join("") + '</div>';
+    }
+    return '<div class="'+cls+'">' + body + flag + why + '</div>';
+  }).join("");
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="grid">'+cards+'</div>' +
+    '<div class="foot" id="foot"></div>';
+
+  el.querySelectorAll("[data-v]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const i = +b.dataset.i;
+      ans[i] = (ans[i] === b.dataset.v) ? undefined : b.dataset.v;
+      if(ans[i] === undefined) delete ans[i];
+      RESTORE = '[data-i="'+i+'"][data-v="'+b.dataset.v+'"]';
+      save(); sparks(b); render(ST.cur);
+    });
+  });
+  footer(el, s);
+}
+
+/* --- футер с двухшаговой проверкой --- */
+function footer(el, s){
+  const k = s.k, ph = PH(k), foot = el.querySelector("#foot");
+  const sc = scoreOf(s);
+  let html = "";
+  if(ph === 0){
+    html = '<button class="btn main" type="button" id="chk">Проверить</button>';
+  } else if(ph === 1){
+    html = '<button class="btn main" type="button" id="again">Ещё попытка</button>' + scoreLine(sc) +
+      '<div class="hintline">Верные ответы закреплены, неверные и пропущенные откроются для правки. Правильные буквы пока не показываем — вспоминайте.</div>';
+  } else if(ph === 15){
+    html = '<button class="btn main" type="button" id="chk">Проверить</button>' +
+      '<span class="score">Открыты только неверные и пропущенные позиции</span>';
+  } else {
+    html = scoreLine(sc) + '<button class="btn ghost" type="button" id="rst">Пройти заново</button>';
+  }
+  foot.innerHTML = html;
+  const chk = foot.querySelector("#chk"), ag = foot.querySelector("#again"), rst = foot.querySelector("#rst");
+  if(chk) chk.addEventListener("click", ()=>doCheck(s));
+  if(ag) ag.addEventListener("click", ()=>{ ST.ph[k] = 15; save(); render(ST.cur); });
+  if(rst) rst.addEventListener("click", ()=>{
+    ST.ans[k] = {}; ST.ph[k] = 0; ST.fr[k] = [];
+    delete ST.first[k];
+    save(); render(ST.cur);
+  });
+}
+
+function doCheck(s){
+  const k = s.k, ph = PH(k);
+  if(ph === 15){ ST.ph[k] = 2; save(); render(ST.cur); return; }
+
+  const ans = A(k);
+  const frozen = [];
+  let pending = 0;
+
+  if(s.type === "practice" || s.type === "choice"){
+    s.items.forEach((it,i)=>{ (ans[i] === it.a) ? frozen.push(i) : pending++; });
+  } else if(s.type === "sort"){
+    s.data.items.forEach((it,i)=>{ (ans[i] === it.b) ? frozen.push(i) : pending++; });
+  } else if(s.type === "ege"){
+    const sel = ans.sel || [];
+    sel.forEach(r=>{ if(s.data.right.includes(r)) frozen.push(r); });
+    const done = sel.length === s.data.right.length && s.data.right.every(r=>sel.includes(r));
+    pending = done ? 0 : 1;
+  }
+
+  ST.fr[k] = frozen;
+  ST.ph[k] = pending === 0 ? 2 : 1;
+  if(!ST.first[k]){
+    const sc = scoreOf(s);
+    if(sc) ST.first[k] = {r:sc.r, w:sc.w, e:sc.e, t:sc.t};
+  }
+  save(); render(ST.cur);
+}
+
+/* --- сортировка --- */
+let SEL = null;
+function rSort(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), ord = ORD[k], D = s.data;
+  const live = (ph === 0 || ph === 15);
+
+  const tok = (i)=>{
+    const it = D.items[i];
+    let cls = "tok";
+    if(ph >= 1 && ph !== 15 && ans[i]) cls += (ans[i] === it.b) ? " ok" : " no";
+    if(SEL === i) cls += " sel";
+    const movable = live && !fr.includes(i);
+    return '<button type="button" class="'+cls+'" data-t="'+i+'"'+(movable?"":" disabled")+'>'+esc(it.t)+'</button>';
+  };
+
+  const pool = ord.filter(i=>!ans[i]).map(i=>tok(i)).join("") ||
+               '<span style="color:var(--dim);font-size:.92rem;">Все слова разложены</span>';
+
+  const buckets = D.buckets.map(b=>{
+    const inside = ord.filter(i=>ans[i] === b).map(i=>tok(i)).join("");
+    return '<div class="bucket" data-b="'+esc(b)+'"><h4>'+esc(b)+'</h4><div class="row">'+inside+'</div></div>';
+  }).join("");
+
+  let fix = "";
+  if(ph === 2){
+    const wrong = D.items.map((it,i)=>({it,i})).filter(x=>ans[x.i] !== x.it.b);
+    fix = wrong.length
+      ? '<div class="fixlist"><b>Верное распределение:</b><br>' +
+        wrong.map(x=>esc(x.it.t)+' → <span>'+esc(x.it.b)+'</span>').join("<br>") + '</div>'
+      : '<div class="fixlist">Все слова разложены верно.</div>';
+  }
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="pool">'+pool+'</div>' +
+    '<div class="buckets">'+buckets+'</div>' +
+    fix + '<div class="foot" id="foot"></div>';
+
+  if(live){
+    el.querySelectorAll("[data-t]").forEach(b=>b.addEventListener("click",()=>{
+      SEL = (SEL === +b.dataset.t) ? null : +b.dataset.t;
+      render(ST.cur);
+    }));
+    el.querySelectorAll(".bucket").forEach(b=>b.addEventListener("click",(ev)=>{
+      if(ev.target.closest("[data-t]")) return;
+      if(SEL === null) return;
+      ans[SEL] = b.dataset.b; SEL = null; save(); render(ST.cur);
+    }));
+  }
+  footer(el, s);
+  const foot = el.querySelector("#foot");
+  const ag = foot.querySelector("#again");
+  if(ag){
+    ag.addEventListener("click", ()=>{
+      D.items.forEach((it,i)=>{ if(!FR(k).includes(i)) delete ans[i]; });
+      save();
+    }, true);
+  }
+}
+
+/* --- карточки с обязательным ответом --- */
+function rBlind(el, s){
+  const k = s.k;
+  const st = ST.bl[k] || (ST.bl[k] = {pos:0, ans:{}});
+  const ord = ORD[k];
+  if(st.pos > s.items.length) st.pos = s.items.length;
+
+  const done = Object.keys(st.ans).length;
+
+  if(st.pos >= s.items.length && done >= s.items.length){
+    const sc = scoreOf(s);
+    const wrong = s.items.map((it,i)=>({it,i})).filter(x=>st.ans[x.i] !== x.it.a);
+    el.innerHTML = head(s) +
+      '<p class="instr">'+s.instr+'</p>' +
+      '<div class="flash"><div class="fw">Карточки пройдены</div>' +
+      '<div class="fh">'+(wrong.length
+        ? 'Не узнали '+wrong.length+'. Эти слова стоит выписать и повторить отдельно.'
+        : 'Все исключения узнаны верно.')+'</div></div>' +
+      (wrong.length ? '<div class="fixlist"><b>На повторение:</b><br>' +
+        wrong.map(x=>'<span>'+esc(x.it.w[0]+x.it.a+x.it.w[1])+'</span>').join("<br>") + '</div>' : "") +
+      '<div class="foot">' + scoreLine(sc) +
+      '<button class="btn ghost" type="button" id="brst">Пройти заново</button></div>';
+    el.querySelector("#brst").addEventListener("click", ()=>{ delete ST.bl[k]; save(); render(ST.cur); });
+    return;
+  }
+
+  const i = ord[st.pos];
+  const it = s.items[i];
+  const v = st.ans[i];
+  const answered = v !== undefined;
+  const right = answered && v === it.a;
+
+  let face;
+  if(answered){
+    face = '<div class="fw">'+esc(it.w[0]+it.a.toUpperCase()+it.w[1])+'</div>' +
+      '<div class="verdict '+(right?"g":"r")+'">'+(right?"Верно":"Неверно: вы выбрали «"+esc(v)+"»")+'</div>' +
+      '<div class="fh">'+it.why+'</div>';
+  } else {
+    face = '<div class="fw">'+wordHTML(it.w, null)+'</div>' +
+      '<div class="fc">выберите букву — ответ откроется сразу</div>' +
+      '<div class="chips">' + it.o.map(o=>
+        '<button type="button" class="chip" data-b="'+esc(o)+'">'+esc(o)+'</button>'
+      ).join("") + '</div>';
+  }
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="flash'+(answered ? (right?" ok":" no") : "")+'">'+face+'</div>' +
+    '<div class="flash-nav">' +
+      '<button class="btn ghost" type="button" id="bp"'+(st.pos===0?" disabled":"")+'>← Назад</button>' +
+      '<span class="score">Карточка '+(st.pos+1)+' из '+s.items.length+' · отвечено '+done+'</span>' +
+      (answered ? '<button class="btn main" type="button" id="bn">'+(st.pos===s.items.length-1?"Завершить":"Дальше →")+'</button>' : '') +
+    '</div>';
+
+  el.querySelectorAll("[data-b]").forEach(b=>b.addEventListener("click",()=>{
+    st.ans[i] = b.dataset.b;
+    save(); sparks(b); render(ST.cur);
+  }));
+  const bp = el.querySelector("#bp");
+  if(bp) bp.addEventListener("click", ()=>{ st.pos = Math.max(0, st.pos-1); save(); render(ST.cur); });
+  const bn = el.querySelector("#bn");
+  if(bn) bn.addEventListener("click", ()=>{ st.pos = st.pos+1; save(); render(ST.cur); });
+}
+
+/* --- задания формата ЕГЭ --- */
+function rEgeIntro(el){
+  el.innerHTML = `
+    <div class="kicker">Формат ЕГЭ</div>
+    <h1>Четыре задания так, как они стоят в варианте</h1>
+    <p class="lead">Дальше — задания в точной формулировке экзамена. Устроены они не так, как школьные упражнения, и баллы теряются именно на устройстве, а не на правилах.</p>
+    <div class="rule"><h3>Три отличия от того, что вы решали до сих пор</h3>
+      <ol class="steps">
+        <li><b>Верных рядов несколько.</b> Обычно два или три. Найти один и перейти к следующему заданию — значит потерять балл целиком: неполный ответ не оценивается.</li>
+        <li><b>Формы в ряду перемешаны.</b> Личное окончание могут поставить рядом с причастием, причастие настоящего времени — рядом с причастием прошедшего. Ряд разваливается на том слове, о котором вы не подумали.</li>
+        <li><b>Пояснение в скобках — часть условия.</b> «Выкач..нная (из скважины нефть)» и «выкач..нная (из гаража бочка)» — разные слова с разными буквами.</li>
+      </ol>
+    </div>
+    <div class="trap"><b>Как считается здесь.</b> Ряд отмечается нажатием. Задание засчитывается только целиком: все верные ряды отмечены и ни одного лишнего. Так же, как на экзамене.</div>`;
+}
+
+function rEge(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), D = s.data;
+  const sel = ans.sel || (ans.sel = []);
+  const live = (ph === 0 || ph === 15);
+
+  const rows = D.rows.map((row, ri)=>{
+    const on = sel.includes(ri);
+    let cls = "erow" + (on ? " on" : "");
+    if(ph === 1 && on) cls = "erow " + (D.right.includes(ri) ? "ok" : "no");
+    if(ph === 2){
+      if(D.right.includes(ri)) cls = "erow " + (on ? "ok" : "miss");
+      else cls = "erow" + (on ? " no" : "");
+    }
+    const words = row.map(w=>{
+      const rev = (ph === 2) ? w.a : undefined;
+      return wordHTML(w.w, null, rev === undefined ? "…" : rev) +
+             (w.cx ? ' <span class="cx">('+esc(w.cx)+')</span>' : '');
+    }).join(", ");
+    let key = "";
+    if(ph === 2){
+      const letters = row.map(w=>w.a);
+      const same = letters.every(x=>x === letters[0]);
+      key = '<div class="ekey">' + (same
+        ? 'В обоих словах «'+esc(letters[0])+'» — ряд подходит.'
+        : 'Буквы разные: ' + letters.map(x=>'«'+esc(x)+'»').join(", ") + ' — ряд не подходит.') + '</div>';
+    }
+    const movable = live && !fr.includes(ri);
+    return '<button type="button" class="'+cls+'" data-r="'+ri+'"'+(movable?"":" disabled")+'>' +
+      '<span class="enum">'+(ri+1)+'</span><span class="ewords">'+words+key+'</span></button>';
+  }).join("");
+
+  let verdict = "";
+  if(ph === 2){
+    const nums = D.right.slice().sort((a,b)=>a-b).map(r=>r+1).join("");
+    verdict = '<div class="trap" style="margin-bottom:14px;"><b>Ответ: '+nums+'</b> — цифры записываются подряд, без пробелов и запятых. Порядок цифр в задании 12 значения не имеет.</div>';
+  }
+
+  el.innerHTML =
+    '<div class="kicker">Формат ЕГЭ · '+s.title+'</div>' +
+    '<h1>Задание 12</h1>' +
+    '<div class="ege-q">Укажите варианты ответов, в которых в обоих словах одного ряда пропущена одна и та же буква. Запишите номера ответов.</div>' +
+    '<div class="rows">'+rows+'</div>' + verdict +
+    '<div class="foot" id="foot"></div>';
+
+  if(live){
+    el.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>{
+      const ri = +b.dataset.r, p = sel.indexOf(ri);
+      (p === -1) ? sel.push(ri) : sel.splice(p,1);
+      RESTORE = '[data-r="'+ri+'"]';
+      save(); render(ST.cur);
+    }));
+  }
+  footer(el, s);
+  const ag = el.querySelector("#again");
+  if(ag) ag.addEventListener("click", ()=>{
+    ans.sel = sel.filter(r=>FR(k).includes(r));
+    save();
+  }, true);
+}
+
+/* --- итоги --- */
+function gauge(pct, color, label, text){
+  const id = "g"+Math.random().toString(36).slice(2,8);
+  const r = 62, c = 72, top = c + r - (pct/100)*(2*r);
+  return '<div class="gauge"><svg viewBox="0 0 144 144">' +
+    '<defs><clipPath id="'+id+'"><circle cx="'+c+'" cy="'+c+'" r="'+r+'"/></clipPath></defs>' +
+    '<circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>' +
+    '<g clip-path="url(#'+id+')"><rect x="-20" y="'+top+'" width="190" height="170" fill="'+color+'" opacity=".8"/>' +
+    '<path d="M-20,'+top+' Q 16,'+(top-6)+' 52,'+top+' T 124,'+top+' T 196,'+top+' V170 H-20 Z" fill="'+color+'" opacity=".45"/></g>' +
+    '<circle cx="'+c+'" cy="'+c+'" r="'+r+'" fill="none" stroke="rgba(255,255,255,.32)" stroke-width="2"/>' +
+    '<text x="72" y="80" text-anchor="middle" font-family="PT Serif, serif" font-size="25" fill="#EEF7EC">'+text+'</text>' +
+    '</svg><div class="lab">'+label+'</div></div>';
+}
+
+function rFinal(el){
+  const bySec = allScores();
+  const keys = Object.keys(bySec);
+
+  let R=0, W=0;
+  keys.forEach(x=>{ R += bySec[x].r; W += bySec[x].w; });
+  const und = (R+W) ? Math.round(R/(R+W)*100) : null;
+  const done = Math.round(((ST.max+1)/SLIDES.length)*100);
+
+  const list = keys.map(x=>{
+    const v = bySec[x];
+    const pct = (v.r+v.w) ? Math.round(v.r/(v.r+v.w)*100) : null;
+    return {name:x, v, pct};
+  }).sort((a,b)=>{
+    if(a.pct === null) return 1; if(b.pct === null) return -1;
+    return a.pct - b.pct;
+  });
+
+  const topics = list.length ? list.map(o=>{
+    const cls = o.pct === null ? "" : (o.pct < 60 ? " bad" : o.pct < 85 ? " mid" : " good");
+    const val = (o.pct === null ? "нет ответов" : o.pct + "%") +
+      (o.v.e ? " · пропущено " + o.v.e : "");
+    return '<div class="topic'+cls+'"><span class="tn">'+esc(o.name)+'</span>' +
+      '<span class="tv">'+val+'</span>' +
+      '<button type="button" data-b="'+esc(o.v.back)+'">К теории</button></div>';
+  }).join("") : '<div class="topic"><span class="tn">Практика ещё не пройдена — вернитесь к упражнениям.</span></div>';
+
+  el.innerHTML =
+    '<div class="kicker">Итоги</div>' +
+    '<h1>Что получилось с заданием 12</h1>' +
+    '<p class="lead">Слева — сколько тренажёра пройдено. Справа — доля верных ответов <b class="hl">с первой попытки</b>: исправления после «Ещё попытки» в этот процент не идут, иначе слабые темы перестали бы быть видны.</p>' +
+    '<div class="gauges">' +
+      gauge(done, "#5FD98A", "Пройдено", done+"%") +
+      (und === null ? gauge(0, "#3d5c46", "Верных ответов", "—")
+                    : gauge(und, und >= 70 ? "#4BE3A2" : "#FF7C6E", "Верных ответов", und+"%")) +
+    '</div>' +
+    '<h2>Темы на повторение</h2>' +
+    '<p class="lead">Сверху — то, что проседает сильнее всего. Тот же список с процентами доступен в оглавлении: кнопка со счётчиком слайдов внизу экрана.</p>' +
+    '<div class="topics">'+topics+'</div>' +
+    '<div class="foot" style="margin-bottom:16px;">' +
+      '<button class="btn main" type="button" id="cp">Скопировать итог</button>' +
+      '<button class="btn ghost" type="button" id="clr">Очистить прогресс</button>' +
+      '<span id="cpmsg"></span>' +
+    '</div>' +
+    '<div class="note"><b>Что делать дальше.</b> Выпишите слова, которые не узнались на карточках исключений, — это тот минимум, который в задании 12 не выводится ни из какого правила. Проседающие темы повторяйте по одному блоку в день: порядок карточек меняется при каждом открытии страницы, поэтому запомнить расположение ответов не выйдет.</div>';
+
+  el.querySelectorAll("[data-b]").forEach(b=>b.addEventListener("click",()=>go(IDX[b.dataset.b])));
+  el.querySelector("#cp").addEventListener("click", ()=>copySummary(list, und, done));
+  el.querySelector("#clr").addEventListener("click", ()=>{
+    let ok = true;
+    try{ ok = confirm("Стереть все ответы и начать тренажёр заново?"); }catch(e){}
+    if(!ok) return;
+    ST.ans = {}; ST.ph = {}; ST.fr = {}; ST.bl = {}; ST.first = {}; ST.max = 0;
+    save(); render(ST.cur);
+  });
+}
+
+function copySummary(list, und, done){
+  const lines = ["Задание 12. Личные окончания глаголов и суффиксы причастий — итог тренажёра",
+    "Пройдено: "+done+"%   Верных с первой попытки: "+(und === null ? "—" : und+"%"), ""];
+  if(!list.length) lines.push("Упражнения не пройдены.");
+  list.forEach(o=>{
+    const pct = o.pct === null ? "нет ответов" : o.pct+"%";
+    lines.push("• "+o.name+" — "+pct+" (верно "+o.v.r+", неверно "+o.v.w+
+      (o.v.e ? ", пропущено "+o.v.e : "")+")");
+  });
+  const text = lines.join("\n");
+  const ok = ()=>{
+    const m = document.getElementById("cpmsg");
+    if(m){ m.className = "copied"; m.textContent = "Скопировано"; setTimeout(()=>{ m.textContent=""; }, 2500); }
+  };
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok, ()=>fallbackCopy(text, ok));
+      return;
+    }
+  }catch(e){}
+  fallbackCopy(text, ok);
+}
+
+function fallbackCopy(text, cb){
+  let copied = false;
+  try{
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    copied = document.execCommand("copy");
+    ta.remove();
+  }catch(e){ copied = false; }
+  if(copied){ cb(); return; }
+  const foot = document.querySelector(".slide .foot");
+  if(!foot || document.getElementById("cpbox")) return;
+  const box = document.createElement("textarea");
+  box.id = "cpbox"; box.className = "cpbox"; box.readOnly = true; box.value = text;
+  foot.parentNode.insertBefore(box, foot.nextSibling);
+  const m = document.getElementById("cpmsg");
+  if(m){ m.className = "copied"; m.textContent = "Скопируйте текст вручную"; }
+}
+
+/* ==================== НАВИГАЦИЯ ==================== */
+
+function go(i){
+  SEL = null;
+  ST.cur = Math.max(0, Math.min(SLIDES.length-1, i));
+  ST.max = Math.max(ST.max, ST.cur);
+  save(); render(ST.cur); updateNav();
+  stage.scrollTop = 0;
+}
+
+function updateNav(){
+  prevBtn.disabled = ST.cur === 0;
+  nextBtn.disabled = ST.cur === SLIDES.length-1;
+  counter.textContent = "слайд " + (ST.cur+1) + " из " + SLIDES.length + "  \u25BE";
+  barFill.style.width = Math.round(((ST.cur+1)/SLIDES.length)*100) + "%";
+}
+
+/* ---------- оглавление ---------- */
+const tocOverlay = document.getElementById("tocOverlay");
+const tocBody = document.getElementById("tocBody");
+const TAGS = {title:"Начало", map:"Карта", rule:"Правило", practice:"Практика",
+  choice:"Практика", sort:"Практика", blind:"Карточки",
+  egeIntro:"Формат ЕГЭ", ege:"Задание ЕГЭ", final:"Итог"};
+
+function slideName(s, i){
+  if(s.type === "title") return "Титульный слайд";
+  if(s.type === "map") return "Карта задания 12";
+  if(s.type === "egeIntro") return "Как устроены задания ЕГЭ";
+  if(s.type === "final") return "Итог и темы на повторение";
+  return s.title || TAGS[s.type] || ("Слайд " + (i+1));
+}
+
+function buildTOC(){
+  let html = "", lastSec = null;
+  SLIDES.forEach((s,i)=>{
+    const sec = s.sec || null;
+    if(sec && sec !== lastSec){ html += '<div class="toc-group">'+esc(sec)+'</div>'; lastSec = sec; }
+    if(!sec) lastSec = null;
+
+    const f = baseScore(s);
+    let score;
+    if(f){
+      const a = f.r + f.w;
+      const pct = a ? Math.round(f.r/a*100) : null;
+      const col = pct === null ? "var(--dim)" : (pct >= 80 ? "var(--green)" : (pct >= 55 ? "var(--amber)" : "var(--red)"));
+      score = '<span class="toc-score" style="color:'+col+'">'+(pct === null ? "—" : pct+"%")+'</span>';
+    } else {
+      score = '<span class="toc-score" style="color:var(--dim)">·</span>';
+    }
+    html += '<button type="button" class="toc-item'+(i === ST.cur ? " current" : "")+'" data-i="'+i+'">' +
+      '<span class="toc-num">'+(i+1)+'</span>' +
+      '<span class="toc-name">'+esc(slideName(s,i))+'</span>' +
+      '<span class="toc-tag">'+esc(TAGS[s.type] || "")+'</span>' + score + '</button>';
+  });
+  tocBody.innerHTML = html;
+  tocBody.querySelectorAll(".toc-item").forEach(b=>{
+    b.addEventListener("click", ()=>{ closeTOC(); go(+b.dataset.i); });
+  });
+  const cur = tocBody.querySelector(".toc-item.current");
+  if(cur && cur.scrollIntoView) setTimeout(()=>cur.scrollIntoView({block:"center"}), 0);
+}
+
+function openTOC(){ buildTOC(); tocOverlay.classList.add("open"); const c = tocBody.querySelector(".toc-item.current"); if(c && c.focus) c.focus({preventScroll:true}); }
+function closeTOC(){ tocOverlay.classList.remove("open"); if(counter.focus) counter.focus({preventScroll:true}); }
+counter.addEventListener("click", openTOC);
+document.getElementById("tocClose").addEventListener("click", closeTOC);
+tocOverlay.addEventListener("click", e=>{ if(e.target === tocOverlay) closeTOC(); });
+
+prevBtn.addEventListener("click", ()=>go(ST.cur-1));
+nextBtn.addEventListener("click", ()=>go(ST.cur+1));
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){ closeTOC(); return; }
+  if(tocOverlay.classList.contains("open")) return;
+  if(e.target && e.target.closest && e.target.closest("button")) return;
+  if(e.key === "ArrowRight") go(ST.cur+1);
+  if(e.key === "ArrowLeft") go(ST.cur-1);
+});
+
+function setCalm(on){
+  ST.calm = on;
+  document.body.classList.toggle("calm", on);
+  calmBtn.setAttribute("aria-pressed", on ? "true" : "false");
+  calmBtn.textContent = on ? "Движение выключено" : "Спокойный режим";
+  save();
+}
+calmBtn.addEventListener("click", ()=>setCalm(!ST.calm));
+setCalm(!!ST.calm);
+
+(function flies(){
+  const wrap = document.getElementById("flies");
+  if(!wrap) return;
+  for(let i=0;i<12;i++){
+    const b = document.createElement("i");
+    b.style.left = (Math.random()*100)+"%";
+    b.style.animationDuration = (11 + Math.random()*14)+"s";
+    b.style.animationDelay = (Math.random()*14)+"s";
+    wrap.appendChild(b);
+  }
+})();
+
+go(ST.cur || 0);
+
+</script>
+</body>
+</html>
