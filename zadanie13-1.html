@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Задание 13 ЕГЭ. Правописание НЕ и НИ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#0B0716; --bg2:#150D2B; --bg3:#221547;
+    --panel:rgba(255,255,255,.06);
+    --panel-2:rgba(255,255,255,.10);
+    --panel-solid:#1B1136;
+    --line:rgba(160,130,255,.28);
+    --text:#EFEAFF;
+    --dim:#A79BCF;
+    --gold:#FFCC33;
+    --violet:#A78BFF;
+    --green:#4ADE80; --green-bg:rgba(74,222,128,.15);
+    --red:#FF7C8F;   --red-bg:rgba(255,124,143,.16);
+    --amber:#FFD166; --amber-bg:rgba(255,209,102,.14);
+
+    --f-head:'PT Serif', Georgia, serif;
+    --f-body:'PT Sans', 'Segoe UI', system-ui, sans-serif;
+    --f-mono:'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+
+    --step: clamp(1rem, .96rem + .18vw, 1.08rem);
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0; min-height:100dvh; height:100dvh;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -8%, rgba(139,107,255,.20) 0%, transparent 58%),
+      radial-gradient(ellipse 55% 40% at 88% 10%, rgba(255,204,51,.08) 0%, transparent 60%),
+      linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);
+    background-attachment:fixed;
+    color:var(--text);
+    font-family:var(--f-body);
+    font-size:var(--step);
+    line-height:1.6;
+    display:flex; flex-direction:column;
+    overflow:hidden; position:relative;
+  }
+
+  /* ---------- фон: статичные пиксельные звёзды и сетка арены ---------- */
+  .fx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .stars i{position:absolute;width:3px;height:3px;background:var(--gold);opacity:.5;}
+  .stars i.v{background:var(--violet);opacity:.45;}
+  .grid-floor{
+    position:fixed;left:0;right:0;bottom:0;height:30dvh;z-index:0;pointer-events:none;
+    background:
+      linear-gradient(to top, rgba(139,107,255,.14), transparent 78%),
+      repeating-linear-gradient(to right, rgba(139,107,255,.11) 0 1px, transparent 1px 74px),
+      repeating-linear-gradient(to top, rgba(139,107,255,.11) 0 1px, transparent 1px 48px);
+    transform:perspective(430px) rotateX(50deg);
+    transform-origin:bottom center;
+    opacity:.45;
+  }
+  body.calm .slide{animation:none !important;}
+  body.calm .bit{display:none !important;}
+  body.calm .hero-badge{animation:none !important;}
+  @media (prefers-reduced-motion: reduce){
+    .slide,.hero-badge{animation:none !important;}
+    *{transition-duration:.01ms !important;}
+  }
+
+  /* ---------- каркас ---------- */
+  .bar{height:6px;background:rgba(255,255,255,.07);flex:0 0 auto;position:relative;z-index:3;}
+  .bar-fill{height:100%;width:0%;
+    background:repeating-linear-gradient(90deg, var(--gold) 0 13px, #FFE27A 13px 17px);
+    transition:width .35s steps(8);box-shadow:0 0 10px rgba(255,204,51,.5);}
+
+  .stage{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    display:flex;align-items:flex-start;justify-content:center;
+    padding:32px 22px 28px;position:relative;z-index:1;}
+  .slide{width:100%;max-width:900px;animation:rise .4s cubic-bezier(.22,1,.36,1);}
+  @keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+  .nav{flex:0 0 auto;display:flex;align-items:center;gap:10px;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    border-top:2px solid var(--line);background:rgba(11,7,22,.82);
+    backdrop-filter:blur(10px);position:relative;z-index:3;}
+  .nav button{
+    font-family:var(--f-body);font-size:.95rem;color:var(--text);
+    background:var(--panel);border:1.5px solid var(--line);border-radius:6px;
+    min-height:44px;padding:0 16px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.5);}
+  .nav button:hover:not(:disabled){border-color:var(--gold);color:var(--gold);}
+  .nav button:disabled{opacity:.35;cursor:default;}
+  .calm-btn{font-size:.82rem;padding:0 12px;min-height:34px;box-shadow:none !important;}
+  .calm-btn[aria-pressed="true"]{border-color:var(--gold);color:var(--gold);}
+
+  :where(button,[tabindex]):focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+  /* ---------- типографика ---------- */
+  h1{font-family:var(--f-head);font-weight:700;line-height:1.15;margin:0 0 14px;
+    font-size:clamp(1.6rem, 1.25rem + 1.7vw, 2.4rem);}
+  h2{font-family:var(--f-head);font-weight:700;line-height:1.2;margin:0 0 12px;
+    font-size:clamp(1.35rem, 1.1rem + 1.2vw, 1.85rem);}
+  h3{font-family:var(--f-head);font-weight:700;font-size:1.12rem;color:var(--gold);margin:0 0 8px;}
+  p{margin:0 0 10px;}
+  .kicker{font-family:var(--f-mono);font-size:.82rem;color:var(--violet);
+    letter-spacing:.08em;margin-bottom:8px;text-transform:uppercase;}
+  .kicker::before{content:"\25AE  ";color:var(--gold);}
+  .lead{color:var(--dim);max-width:66ch;margin-bottom:18px;}
+  b.hl{color:var(--gold);}
+
+  /* ---------- титул ---------- */
+  .hero{min-height:min(72dvh,640px);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;gap:4px;}
+  .hero-badge{width:clamp(88px,20vw,128px);height:auto;margin-bottom:16px;
+    animation:glow 4.5s ease-in-out infinite;}
+  @keyframes glow{0%,100%{opacity:.85;}50%{opacity:1;}}
+  .hero-sup{font-family:var(--f-mono);font-size:clamp(.76rem,2vw,.92rem);
+    letter-spacing:.3em;color:var(--dim);}
+  .hero-title{font-family:var(--f-head);font-weight:700;letter-spacing:.02em;
+    font-size:clamp(2.4rem,9vw,4.8rem);line-height:1;margin:6px 0 10px;color:var(--gold);}
+  .hero-sub{font-family:var(--f-body);color:var(--violet);max-width:32ch;
+    font-size:clamp(1rem,3vw,1.2rem);margin-bottom:26px;}
+  .start{font-family:var(--f-body);font-size:1.05rem;font-weight:700;
+    background:linear-gradient(180deg,#FFDE6B 0%,var(--gold) 60%,#D9A81C 100%);
+    color:#241800;border:0;border-radius:8px;
+    min-height:52px;padding:0 34px;cursor:pointer;
+    box-shadow:0 5px 0 #6b4f00, 0 0 22px rgba(255,204,51,.3);}
+  .start:hover{filter:brightness(1.06);}
+  .start:active{transform:translateY(3px);box-shadow:0 2px 0 #6b4f00;}
+
+  /* ---------- карта ---------- */
+  .map{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:11px;margin:16px 0 18px;}
+  .tile{background:var(--panel);border:1.5px solid var(--line);border-left:4px solid var(--violet);
+    border-radius:7px;padding:13px 15px;text-align:left;cursor:pointer;
+    font-family:var(--f-body);color:var(--text);font-size:1rem;min-height:44px;
+    box-shadow:0 3px 0 rgba(0,0,0,.45);transition:border-color .15s, background .15s;}
+  .tile:hover{background:var(--panel-2);border-left-color:var(--gold);}
+  .tile b{display:block;font-family:var(--f-head);font-size:1.05rem;margin-bottom:3px;}
+  .tile span{color:var(--dim);font-size:.9rem;line-height:1.45;display:block;}
+
+  /* ---------- блоки правил ---------- */
+  .rule{background:var(--panel);border:1.5px solid var(--line);border-radius:8px;
+    padding:15px 17px;margin-bottom:12px;box-shadow:0 3px 0 rgba(0,0,0,.45);}
+  .rule .ex{font-family:var(--f-mono);font-size:.94rem;color:var(--violet);
+    line-height:1.8;margin:8px 0 0;}
+  u{text-decoration:none;color:var(--gold);font-weight:700;}
+  .steps{margin:0;padding-left:1.25em;}
+  .steps li{margin-bottom:9px;}
+  .trap{background:var(--red-bg);border:1.5px solid rgba(255,124,143,.4);
+    border-left:4px solid var(--red);border-radius:8px;padding:14px 16px;margin-top:12px;
+    font-size:1rem;}
+  .trap b{color:var(--red);}
+  .memo{background:rgba(255,204,51,.1);border:1.5px dashed rgba(255,204,51,.45);
+    border-radius:8px;padding:11px 14px;margin-top:10px;font-size:.98rem;}
+  .memo b{color:var(--gold);}
+
+  /* ---------- упражнения ---------- */
+  .instr{color:var(--dim);margin-bottom:14px;max-width:64ch;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:10px;margin-bottom:14px;}
+  .card{background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:12px 13px;
+    box-shadow:0 3px 0 rgba(0,0,0,.4);}
+  .phrase{font-family:var(--f-mono);font-size:1.02rem;line-height:1.5;margin-bottom:10px;}
+  .phrase .gap{color:var(--gold);font-weight:700;font-size:1.12em;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{font-family:var(--f-body);font-size:.98rem;font-weight:700;color:var(--text);
+    background:transparent;border:1.5px solid var(--dim);border-radius:7px;
+    min-height:44px;padding:0 15px;cursor:pointer;}
+  .chip:hover:not(:disabled){border-color:var(--gold);}
+  .chip.on{background:var(--violet);color:#12082C;border-color:var(--violet);}
+  .chip:disabled{cursor:default;opacity:.5;}
+  .chip.on:disabled{opacity:1;}
+  .card.ok{border-color:var(--green);background:var(--green-bg);}
+  .card.no{border-color:var(--red);background:var(--red-bg);}
+  .card.na{border-color:var(--amber);background:var(--amber-bg);}
+  .why{font-size:.98rem;line-height:1.55;margin-top:10px;padding-top:9px;
+    border-top:1px solid var(--line);color:var(--text);}
+  .why .fix{font-family:var(--f-mono);color:var(--green);font-weight:700;}
+  .flag{font-size:.84rem;font-family:var(--f-mono);margin-top:7px;}
+  .flag.na{color:var(--amber);}
+
+  /* ---------- футер упражнения ---------- */
+  .foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;}
+  .btn{font-family:var(--f-body);font-size:1rem;font-weight:700;border-radius:8px;
+    min-height:46px;padding:0 20px;cursor:pointer;border:1.5px solid transparent;}
+  .btn.main{background:linear-gradient(180deg,#FFDE6B 0%,var(--gold) 60%,#D9A81C 100%);
+    color:#241800;box-shadow:0 4px 0 #6b4f00;}
+  .btn.main:active{transform:translateY(2px);box-shadow:0 2px 0 #6b4f00;}
+  .btn.ghost{background:transparent;color:var(--text);border-color:var(--line);
+    box-shadow:0 3px 0 rgba(0,0,0,.45);}
+  .btn.ghost:hover{border-color:var(--gold);}
+  .score{font-family:var(--f-mono);font-size:.95rem;color:var(--dim);}
+  .score b.g{color:var(--green);} .score b.r{color:var(--red);} .score b.a{color:var(--amber);}
+
+  /* ---------- сортировка ---------- */
+  .pool{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;margin-bottom:14px;
+    padding:10px;border:1.5px dashed var(--line);border-radius:8px;}
+  .buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:10px;margin-bottom:14px;}
+  .bucket{background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:11px 12px;
+    cursor:pointer;min-height:96px;box-shadow:0 3px 0 rgba(0,0,0,.4);}
+  .bucket:hover{border-color:var(--gold);}
+  .bucket h4{font-family:var(--f-head);font-size:1rem;margin:0 0 8px;color:var(--gold);}
+  .bucket .row{display:flex;flex-wrap:wrap;gap:6px;}
+  .tok{font-family:var(--f-mono);font-size:.94rem;color:var(--text);
+    background:rgba(255,255,255,.07);border:1.5px solid var(--line);border-radius:7px;
+    min-height:40px;padding:0 12px;cursor:pointer;}
+  .tok:hover:not(:disabled){border-color:var(--gold);}
+  .tok.sel{border-color:var(--gold);background:rgba(255,204,51,.18);}
+  .tok.ok{border-color:var(--green);background:var(--green-bg);}
+  .tok.no{border-color:var(--red);background:var(--red-bg);}
+  .tok:disabled{cursor:default;}
+  .fixlist{margin-top:10px;font-size:.96rem;line-height:1.65;}
+  .fixlist span{font-family:var(--f-mono);color:var(--green);}
+
+  /* ---------- флеш-карты ---------- */
+  .flash{background:var(--panel);border:1.5px solid var(--line);border-radius:12px;
+    min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:9px;padding:24px 18px;text-align:center;cursor:pointer;margin-bottom:12px;
+    box-shadow:0 4px 0 rgba(0,0,0,.5);}
+  .flash .fw{font-family:var(--f-mono);font-size:clamp(1.2rem,4.6vw,1.7rem);font-weight:700;}
+  .flash .fw .gap{color:var(--gold);}
+  .flash .fh{color:var(--violet);font-size:.98rem;line-height:1.5;max-width:40ch;}
+  .flash .tap{color:var(--dim);font-size:.84rem;font-family:var(--f-mono);}
+  .flash-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .flash-nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+  /* ---------- ЕГЭ ---------- */
+  .ege-q{background:var(--panel);border:1.5px solid var(--line);border-radius:8px;
+    padding:14px 16px;margin-bottom:14px;font-size:1rem;box-shadow:0 3px 0 rgba(0,0,0,.4);}
+  .rows{display:flex;flex-direction:column;gap:9px;margin-bottom:14px;}
+  .erow{display:flex;gap:12px;align-items:flex-start;text-align:left;
+    background:var(--panel);border:1.5px solid var(--line);border-radius:8px;
+    padding:12px 14px;cursor:pointer;min-height:48px;color:var(--text);
+    box-shadow:0 3px 0 rgba(0,0,0,.4);}
+  .erow:hover:not(:disabled){border-color:var(--gold);}
+  .erow.on{border-color:var(--gold);background:rgba(255,204,51,.13);}
+  .erow.ok{border-color:var(--green);background:var(--green-bg);}
+  .erow.no{border-color:var(--red);background:var(--red-bg);}
+  .erow.miss{border-color:var(--amber);background:var(--amber-bg);}
+  .erow:disabled{cursor:default;}
+  .enum{font-family:var(--f-mono);font-weight:700;color:var(--violet);flex:0 0 auto;}
+  .ewords{font-size:1rem;line-height:1.65;}
+  .ewords .ew{font-family:var(--f-mono);font-weight:700;color:var(--gold);}
+  .ekey{font-size:.96rem;color:var(--text);margin-top:6px;line-height:1.55;
+    padding-top:7px;border-top:1px solid var(--line);}
+  .ekey .fix{font-family:var(--f-mono);color:var(--green);font-weight:700;}
+
+  /* ---------- финал ---------- */
+  .gauges{display:flex;gap:26px;flex-wrap:wrap;justify-content:flex-start;margin:6px 0 20px;}
+  .gauge{text-align:center;}
+  .gauge svg{width:clamp(122px,32vw,152px);height:auto;}
+  .gauge .lab{font-size:.9rem;color:var(--dim);margin-top:5px;}
+  .topics{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+  .topic{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+    background:var(--panel);border:1.5px solid var(--line);border-radius:8px;padding:11px 14px;
+    border-left:4px solid var(--dim);}
+  .topic.bad{border-left-color:var(--red);}
+  .topic.mid{border-left-color:var(--amber);}
+  .topic.good{border-left-color:var(--green);}
+  .topic .tn{flex:1 1 auto;min-width:150px;}
+  .topic .tv{font-family:var(--f-mono);font-size:.95rem;color:var(--dim);}
+  .topic button{font-family:var(--f-body);font-size:.92rem;color:var(--text);
+    background:transparent;border:1.5px solid var(--line);border-radius:7px;
+    min-height:40px;padding:0 13px;cursor:pointer;}
+  .topic button:hover{border-color:var(--gold);}
+  .note{background:var(--panel);border:1.5px solid var(--line);border-left:4px solid var(--gold);
+    border-radius:8px;padding:15px 17px;font-size:.98rem;}
+  .copied{color:var(--green);font-size:.94rem;font-family:var(--f-mono);}
+  .copybox{width:100%;margin-top:10px;font-family:var(--f-mono);font-size:.9rem;
+    background:var(--panel-solid);color:var(--text);border:1.5px solid var(--line);
+    border-radius:8px;padding:10px;min-height:150px;}
+
+  /* ---------- оглавление ---------- */
+  .nav-mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;}
+  .toc-btn{background:transparent;border:1.5px solid var(--line);border-radius:6px;
+    color:var(--dim);font-family:var(--f-mono);font-size:.84rem;
+    padding:0 14px;min-height:40px;cursor:pointer;white-space:nowrap;}
+  .toc-btn:hover{border-color:var(--gold);color:var(--gold);}
+  .toc-overlay{position:fixed;inset:0;z-index:40;background:rgba(6,3,15,.92);display:none;
+    align-items:center;justify-content:center;padding:20px;}
+  .toc-overlay.open{display:flex;}
+  .toc-panel{background:var(--panel-solid);border:2px solid var(--line);border-radius:10px;
+    width:min(760px,100%);max-height:86dvh;display:flex;flex-direction:column;
+    box-shadow:0 24px 70px rgba(0,0,0,.7);}
+  .toc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 18px;border-bottom:1.5px solid var(--line);}
+  .toc-head h2{margin:0;font-size:1.2rem;color:var(--gold);}
+  .toc-close{background:transparent;border:1.5px solid var(--line);color:var(--text);border-radius:7px;
+    min-height:40px;padding:0 15px;cursor:pointer;font-family:var(--f-body);font-weight:700;font-size:.94rem;}
+  .toc-close:hover{border-color:var(--gold);color:var(--gold);}
+  .toc-body{overflow-y:auto;padding:10px 12px 16px;-webkit-overflow-scrolling:touch;}
+  .toc-group{font-family:var(--f-mono);font-size:.8rem;letter-spacing:.1em;color:var(--violet);
+    font-weight:700;margin:14px 6px 6px;}
+  .toc-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:transparent;
+    border:1.5px solid transparent;border-radius:7px;color:var(--text);font-family:var(--f-body);
+    font-size:.96rem;padding:9px 10px;min-height:44px;cursor:pointer;}
+  .toc-item:hover{border-color:var(--line);background:var(--panel);}
+  .toc-item.current{border-color:var(--gold);background:rgba(255,204,51,.12);}
+  .toc-num{font-family:var(--f-mono);font-size:.84rem;color:var(--dim);min-width:26px;}
+  .toc-name{flex:1;line-height:1.4;}
+  .toc-tag{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.05em;color:var(--dim);
+    border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap;}
+  .toc-score{font-family:var(--f-mono);font-size:.84rem;min-width:48px;text-align:right;}
+
+  .bit{position:fixed;width:6px;height:6px;pointer-events:none;z-index:60;
+    animation:bitOut .45s ease-out forwards;}
+  @keyframes bitOut{to{transform:translate(var(--dx),var(--dy));opacity:0;}}
+
+  /* ---------- телефон ---------- */
+  @media (max-width:620px){
+    .stage{padding:22px 15px 20px;}
+    .grid{grid-template-columns:1fr;}
+    .map{grid-template-columns:1fr;}
+    .buckets{grid-template-columns:1fr;}
+    .gauges{gap:16px;justify-content:center;}
+    .toc-tag{display:none;}
+    .toc-panel{max-height:90dvh;}
+    .grid-floor{height:22dvh;}
+  }
+  @media (max-width:400px){
+    .stage{padding:18px 12px 18px;}
+    .nav{padding-left:10px;padding-right:10px;gap:7px;}
+    .nav button{padding:0 12px;font-size:.9rem;}
+    .rule,.card,.erow{padding-left:12px;padding-right:12px;}
+    .phrase{font-size:.98rem;}
+  }
+</style>
+</head>
+<body>
+  <div class="fx stars" id="stars"></div>
+  <div class="grid-floor"></div>
+
+  <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+  <div class="toc-overlay" id="tocOverlay" role="dialog" aria-modal="true" aria-label="Оглавление">
+    <div class="toc-panel">
+      <div class="toc-head"><h2>Оглавление</h2><button class="toc-close" id="tocClose" type="button">Закрыть</button></div>
+      <div class="toc-body" id="tocBody"></div>
+    </div>
+  </div>
+  <main class="stage" id="stage"></main>
+  <nav class="nav">
+    <button id="prevBtn" type="button">← Назад</button>
+    <div class="nav-mid">
+      <button class="toc-btn" id="counter" type="button" aria-haspopup="dialog"></button>
+      <button class="calm-btn" id="calmBtn" type="button" aria-pressed="false">Спокойный режим</button>
+    </div>
+    <button id="nextBtn" type="button">Далее →</button>
+  </nav>
+<script>
+/* ==================== ДАННЫЕ ====================
+   Все примеры взяты из файлов проекта: презентация-интенсив по орфографии,
+   «Экспресс-зачёты по орфографии», демоверсия ЕГЭ 2027.
+   S = слитно, R = раздельно.                                              */
+
+const S = "слитно", R = "раздельно";
+
+/* --- Блок 1: глаголы и деепричастия --- */
+const P_VERB = [
+ {t:"чрезвычайно (НЕ)годуя", a:S, full:"НЕгодуя", why:"Без НЕ не употребляется: слова «годовать» нет."},
+ {t:"вчера его (НЕ)было дома", a:R, full:"НЕ было", why:"Глагол. С глаголами НЕ пишется раздельно."},
+ {t:"учитель продолжал (НЕ)доумевать", a:S, full:"НЕдоумевать", why:"Без НЕ не употребляется."},
+ {t:"(НЕ)навидеть ложь и лицемерие", a:S, full:"НЕнавидеть", why:"Без НЕ не употребляется."},
+ {t:"сразу (НЕ)взлюбить соседа", a:S, full:"НЕвзлюбить", why:"Без НЕ не употребляется: «взлюбить» отдельно не живёт."},
+ {t:"(НЕ)успев поесть, выбежал", a:R, full:"НЕ успев", why:"Деепричастие — раздельно."},
+ {t:"читать (НЕ)отвлекаясь", a:R, full:"НЕ отвлекаясь", why:"Деепричастие — раздельно."},
+ {t:"трудиться (НЕ)покладая рук", a:R, full:"НЕ покладая рук", why:"Фразеологизм: пишется раздельно, хотя «покладая» отдельно не встречается. Запомнить."},
+ {t:"всем (НЕ)поздоровится", a:R, full:"НЕ поздоровится", why:"Глагол «поздоровится» существует, поэтому раздельно. Сравните: мне НЕздоровится — слитно."},
+ {t:"уж (НЕ)обессудьте", a:R, full:"НЕ обессудьте", why:"Ловушка: без НЕ форма не употребляется, но пишется раздельно. Словарное исключение."},
+ {t:"(НЕ)преминуть напомнить", a:R, full:"НЕ преминуть", why:"Та же ловушка, что и «не обессудьте»: раздельно, хотя без НЕ слово не живёт."},
+ {t:"(НЕ)волить ребёнка", a:S, full:"НЕволить", why:"Без НЕ не употребляется."}
+];
+
+/* --- Блок 2: НЕДО- или НЕ ДО- --- */
+const P_NEDO = [
+ {t:"в войну (НЕ)доедавшие люди", a:S, full:"НЕДОедавшие", why:"Приставка НЕДО-: ели меньше нормы. Неполнота действия."},
+ {t:"(НЕ)доедать вчерашнее", a:R, full:"НЕ ДОедать", why:"Частица НЕ + приставка ДО-: не доводит еду до конца."},
+ {t:"(НЕ)доглядел за ребёнком", a:S, full:"НЕДОглядел", why:"НЕДО-: глядел недостаточно внимательно."},
+ {t:"(НЕ)доглядел фильм и ушёл", a:R, full:"НЕ ДОглядел", why:"Смотрел, но не до конца — действие оборвано."},
+ {t:"(НЕ)досмотрел за больным", a:S, full:"НЕДОсмотрел", why:"НЕДО-: присматривал плохо, ниже нормы."},
+ {t:"(НЕ)досмотрел выступление", a:R, full:"НЕ ДОсмотрел", why:"Выступление шло, но он ушёл раньше конца."},
+ {t:"мне (НЕ)достаёт смелости", a:S, full:"НЕДОстаёт", why:"НЕДОстаёт = не хватает. Слитно."},
+ {t:"(НЕ)доставать до верхней полки", a:R, full:"НЕ ДОставать", why:"Здесь буквально «не дотягиваться»: рука не доходит до полки."},
+ {t:"(НЕ)досчитаться бойца", a:S, full:"НЕДОсчитаться", why:"НЕДОсчитаться = обнаружить нехватку. Слитно."},
+ {t:"(НЕ)досчитать до ста", a:R, full:"НЕ ДОсчитать", why:"Считал, но счёт не доведён до конца."},
+ {t:"(НЕ)долить треть стакана", a:S, full:"НЕДОлить", why:"НЕДО-: налито меньше положенного."},
+ {t:"(НЕ)добежав до финиша", a:R, full:"НЕ ДОбежав", why:"Бежал, но до финиша не добрался: действие прервано."}
+];
+
+/* --- Блок 3: причастия --- */
+const P_PRICH = [
+ {t:"(НЕ)замерзающие жидкости", a:S, full:"НЕзамерзающие", why:"Полное причастие без зависимых слов и без других причин раздельности."},
+ {t:"на (НЕ)освещённом небе", a:S, full:"НЕосвещённом", why:"Полное причастие, зависимых слов нет."},
+ {t:"(НЕ)угомонный мальчик", a:S, full:"НЕугомонный", why:"Без НЕ не употребляется."},
+ {t:"(НЕ)опознанный объект", a:S, full:"НЕопознанный", why:"Полное причастие без зависимых слов."},
+ {t:"(НЕ)долеченная простуда", a:S, full:"НЕдолеченная", why:"Полное причастие без зависимых слов."},
+ {t:"(НЕ)просохшая трава", a:S, full:"НЕпросохшая", why:"Полное причастие без зависимых слов."},
+ {t:"игра (НЕ)начата", a:R, full:"НЕ начата", why:"Краткое причастие — всегда раздельно."},
+ {t:"ещё (НЕ)очищенную воду", a:R, full:"НЕ очищенную", why:"Есть зависимое слово «ещё»."},
+ {t:"(НЕ)сданная в аренду дача", a:R, full:"НЕ сданная", why:"Есть зависимые слова «в аренду»."},
+ {t:"(НЕ)раскрытая книга, а рабочая тетрадь", a:R, full:"НЕ раскрытая", why:"Противопоставление с союзом А."},
+ {t:"никем (НЕ)замеченный разведчик", a:R, full:"НЕ замеченный", why:"Рядом слово с НИ-: оно усиливает отрицание."},
+ {t:"(НЕ)указанных в договоре сроков", a:R, full:"НЕ указанных", why:"Есть зависимые слова «в договоре»."}
+];
+
+/* --- Сортировка 1: почему раздельно --- */
+const SORT_WHY_R = {
+ buckets:["Противопоставление с А","Зависимое слово","Краткая форма"],
+ items:[
+  {t:"(не)прямой, а извилистый путь", b:"Противопоставление с А"},
+  {t:"(не)случайно, а закономерно", b:"Противопоставление с А"},
+  {t:"(не)написанный, а распечатанный", b:"Противопоставление с А"},
+  {t:"(не)радостно, а тревожно", b:"Противопоставление с А"},
+  {t:"(не)сданная в аренду дача", b:"Зависимое слово"},
+  {t:"ещё (не)очищенная вода", b:"Зависимое слово"},
+  {t:"(не)умевший плавать", b:"Зависимое слово"},
+  {t:"(не)дочитанная до конца книга", b:"Зависимое слово"},
+  {t:"костюм (не)сшит", b:"Краткая форма"},
+  {t:"(не)доставлено в срок", b:"Краткая форма"},
+  {t:"двери (не)закрыты", b:"Краткая форма"},
+  {t:"молоко (не)выпито", b:"Краткая форма"}
+ ]
+};
+
+/* --- Блок 4: прилагательные, существительные, наречия на -О/-Е --- */
+const P_ADJ = [
+ {t:"(НЕ)большая группа", a:S, full:"НЕбольшая", why:"Есть синоним без НЕ: небольшая = маленькая."},
+ {t:"меняться (НЕ)значительно", a:S, full:"НЕзначительно", why:"Наречие на -О с синонимом без НЕ: незначительно = слабо."},
+ {t:"визит (НЕ)другов", a:S, full:"НЕдругов", why:"Существительное с синонимом без НЕ: недруг = враг."},
+ {t:"(НЕ)честность участника", a:S, full:"НЕчестность", why:"Синоним без НЕ: нечестность = обман."},
+ {t:"говорил (НЕ)громко, но выразительно", a:S, full:"НЕгромко", why:"Союз НО противопоставления не даёт: раздельность включает только союз А."},
+ {t:"крайне (НЕ)вежлив", a:S, full:"НЕвежлив", why:"«Крайне» — наречие меры и степени, отрицание оно не усиливает."},
+ {t:"никому (НЕ)известный остров", a:R, full:"НЕ известный", why:"Рядом слово с НИ-: оно усиливает отрицание."},
+ {t:"далеко (НЕ)обычный подарок", a:R, full:"НЕ обычный", why:"«Далеко не» — усилитель отрицания."},
+ {t:"это ничуть (НЕ)сложно", a:R, full:"НЕ сложно", why:"«Ничуть» — слово с НИ-, усиливает отрицание."},
+ {t:"чтение (НЕ)обязанность, а право", a:R, full:"НЕ обязанность", why:"Противопоставление с союзом А."},
+ {t:"он (НЕ)умный, а ловкий", a:R, full:"НЕ умный", why:"Противопоставление с союзом А."},
+ {t:"(НЕ)кошачья миска", a:R, full:"НЕ кошачья", why:"Притяжательное прилагательное: с НЕ пишется раздельно."}
+];
+
+/* --- Блок 5: краткие формы, слова на -МЫЙ, сравнительная степень --- */
+const P_KRAT = [
+ {t:"(НЕ)истощимый на выдумку", a:S, full:"НЕистощимый", why:"Прилагательное на -МЫЙ, зависимые слова написание не меняют."},
+ {t:"результаты (НЕ)досягаемы", a:S, full:"НЕдосягаемы", why:"Краткое прилагательное пишется как полное: недосягаемый — недосягаемы."},
+ {t:"промокод (НЕ)действителен", a:S, full:"НЕдействителен", why:"Краткое прилагательное с полной формой «недействительный» — слитно."},
+ {t:"оправдания (НЕ)лепы", a:S, full:"НЕлепы", why:"Без НЕ не употребляется."},
+ {t:"большего он (НЕ)достоин", a:S, full:"НЕдостоин", why:"Краткое прилагательное пишется как полное: недостойный — недостоин."},
+ {t:"(НЕ)рад встрече", a:R, full:"НЕ рад", why:"Краткое прилагательное, у которого нет полной формы: «радый» не употребляется."},
+ {t:"(НЕ)горазд учиться", a:R, full:"НЕ горазд", why:"Краткое прилагательное без полной формы — раздельно."},
+ {t:"(НЕ)должен сомневаться", a:R, full:"НЕ должен", why:"Краткое прилагательное без полной формы. Сравните с «недостоин» — там полная форма есть."},
+ {t:"оценка отнюдь (НЕ)справедлива", a:R, full:"НЕ справедлива", why:"«Отнюдь не» — усилитель отрицания."},
+ {t:"(НЕ)выше нормы", a:R, full:"НЕ выше", why:"Сравнительная степень — раздельно."},
+ {t:"уделять занятиям (НЕ)меньше часа", a:R, full:"НЕ меньше", why:"Сравнительная степень: не меньше, не больше, не хуже, не стройнее."},
+ {t:"говорить (НЕ)менее громко", a:R, full:"НЕ менее громко", why:"Сравнительная степень со словом «менее» — тоже раздельно."}
+];
+
+/* --- Блок 6: местоимения, числительные, наречия не на -О/-Е --- */
+const P_PRON = [
+ {t:"(НЕ)где присесть", a:S, full:"НЕгде", why:"Отрицательное наречие, НЕ под ударением — слитно."},
+ {t:"(НЕ)кого пригласить", a:S, full:"НЕкого", why:"Отрицательное местоимение без предлога, НЕ под ударением."},
+ {t:"(НЕ)когда отдыхать", a:S, full:"НЕкогда", why:"Отрицательное наречие, НЕ под ударением."},
+ {t:"(НЕ)чем помочь", a:S, full:"НЕчем", why:"Отрицательное местоимение без предлога."},
+ {t:"(НЕ)что пугающее", a:S, full:"НЕчто", why:"Неопределённое местоимение: приставка НЕ- без ударения."},
+ {t:"(НЕ)кто таинственный", a:S, full:"НЕкто", why:"Неопределённое местоимение — слитно."},
+ {t:"(НЕ)(с)чем сравнивать", a:R, full:"НЕ с чем", why:"Между НЕ и местоимением встал предлог — пишем в три слова."},
+ {t:"(НЕ)каждому дано", a:R, full:"НЕ каждому", why:"Все остальные местоимения, кроме отрицательных и неопределённых, — раздельно."},
+ {t:"нас (НЕ)четверо", a:R, full:"НЕ четверо", why:"Числительное — всегда раздельно."},
+ {t:"(НЕ)первый раз", a:R, full:"НЕ первый", why:"Числительное — раздельно. Сюда же «не раз», «не один»."},
+ {t:"сделать (НЕ)по-русски", a:R, full:"НЕ по-русски", why:"Наречие не на -О/-Е — раздельно."},
+ {t:"родиться (НЕ)здесь", a:R, full:"НЕ здесь", why:"Наречие не на -О/-Е — раздельно."}
+];
+
+/* --- Блок 7: НИ слитно и раздельно --- */
+const P_NI = [
+ {t:"(НИ)кто иной не смог", a:S, full:"НИкто иной", why:"Оборот без «как» и со сказуемым при отрицании: НИкто иной не… — слитно."},
+ {t:"(НИ)сколько не бояться", a:S, full:"НИсколько", why:"Отрицательное наречие без предлога — слитно."},
+ {t:"(НИ)чем не объяснить", a:S, full:"НИчем", why:"Отрицательное местоимение без предлога — слитно."},
+ {t:"(НИ)куда не стремиться", a:S, full:"НИкуда", why:"Отрицательное наречие — слитно."},
+ {t:"(НИ)как не понять", a:S, full:"НИкак", why:"Отрицательное наречие — слитно."},
+ {t:"(НИ)где не бывал", a:S, full:"НИгде", why:"Отрицательное наречие — слитно."},
+ {t:"(НЕ)кто иной, как отец", a:R, full:"НЕ кто иной, как", why:"Оборот с «как»: НЕ кто иной, как… — раздельно и через НЕ."},
+ {t:"(НИ)разу не встречал", a:R, full:"НИ разу", why:"Запомнить: ни разу, ни один — раздельно."},
+ {t:"(НИ)один не поддержал", a:R, full:"НИ один", why:"Запомнить: ни один (= никто) — раздельно."},
+ {t:"(НИ)(о)чём не переживай", a:R, full:"НИ о чём", why:"Предлог разрывает отрицательное местоимение."},
+ {t:"(НИ)(к)чему не прийти", a:R, full:"НИ к чему", why:"Предлог разрывает отрицательное местоимение."},
+ {t:"метаться (НИ)туда (НИ)сюда", a:R, full:"НИ туда НИ сюда", why:"Устойчивый оборот: раздельно и без запятой."}
+];
+
+/* --- Сортировка 2: почему слитно --- */
+const SORT_WHY_S = {
+ buckets:["Без НЕ не употребляется","Есть синоним без НЕ","Приставка НЕДО-"],
+ items:[
+  {t:"невзрачный", b:"Без НЕ не употребляется"},
+  {t:"невзгоды", b:"Без НЕ не употребляется"},
+  {t:"небылица", b:"Без НЕ не употребляется"},
+  {t:"неугомонный", b:"Без НЕ не употребляется"},
+  {t:"недруг (= враг)", b:"Есть синоним без НЕ"},
+  {t:"неправда (= ложь)", b:"Есть синоним без НЕ"},
+  {t:"недорогое (= дешёвое)", b:"Есть синоним без НЕ"},
+  {t:"ненастный (= пасмурный)", b:"Есть синоним без НЕ"},
+  {t:"недосыпать", b:"Приставка НЕДО-"},
+  {t:"недооценка", b:"Приставка НЕДО-"},
+  {t:"недосолить", b:"Приставка НЕДО-"},
+  {t:"кошка недокормлена", b:"Приставка НЕДО-"}
+ ]
+};
+
+/* --- Блок 8: часть речи решает --- */
+const P_TRAP = [
+ {t:"(НЕ)смотря на проблемы", a:S, full:"НЕСМОТРЯ на", why:"Производный предлог = «вопреки проблемам». Глаза ни при чём."},
+ {t:"(НЕ)смотря на меня", a:R, full:"НЕ смотря", why:"Деепричастие = «не глядя на меня»."},
+ {t:"(НЕ)взирая на трудности", a:S, full:"НЕВЗИРАЯ на", why:"Производный предлог = «вопреки трудностям»."},
+ {t:"(НЕ)взирая на нас", a:R, full:"НЕ взирая", why:"Деепричастие = «не глядя на нас»."},
+ {t:"(НЕ)спешно подниматься", a:S, full:"НЕспешно", why:"Наречие на -О с синонимом без НЕ: неспешно = медленно."},
+ {t:"идти (НЕ)спеша", a:R, full:"НЕ спеша", why:"Деепричастие — раздельно."},
+ {t:"(НЕ)медленно начать работу", a:S, full:"НЕмедленно", why:"Наречие на -О с синонимом без НЕ: немедленно = сразу."},
+ {t:"(НЕ)медля с ответом", a:R, full:"НЕ медля", why:"Деепричастие — раздельно."},
+ {t:"(НЕ)зачем тратить время впустую", a:S, full:"НЕзачем", why:"Отрицательное наречие, НЕ под ударением: незачем = нет смысла."},
+ {t:"тут (НЕ)(за)чем укрыться", a:R, full:"НЕ за чем", why:"Здесь местоимение «чем» с предлогом «за»: укрыться не за чем — нет предмета."},
+ {t:"(НЕ)хотя отвечать", a:S, full:"НЕХОТЯ", why:"Наречие-исключение: пишется слитно. Деепричастия «хотя» в этом значении нет — сравните с «не шутя»."},
+ {t:"угрожать (НЕ)шутя", a:R, full:"НЕ шутя", why:"Деепричастие «шутя» существует: угрожал, не шутя. Раздельно."}
+];
+
+/* --- Итоговая практика (16) --- */
+const P_FINAL = [
+ {t:"(НЕ)избежность потерь", a:S, full:"НЕизбежность", why:"Без НЕ не употребляется."},
+ {t:"бежать (НЕ)легко, но мне по силам", a:S, full:"НЕлегко", why:"Союз НО противопоставления не даёт — слитно."},
+ {t:"отнюдь (НЕ)известный автор", a:R, full:"НЕ известный", why:"«Отнюдь не» — усилитель отрицания."},
+ {t:"(НЕ)мудрено заблудиться", a:S, full:"НЕмудрено", why:"Наречие на -О с синонимом без НЕ: немудрено = легко."},
+ {t:"(НЕ)замёрзший ручей", a:S, full:"НЕзамёрзший", why:"Полное причастие без зависимых слов."},
+ {t:"ничуть (НЕ)сомневавшийся в себе", a:R, full:"НЕ сомневавшийся", why:"«Ничуть» — слово с НИ-, усиливает отрицание."},
+ {t:"(НЕ)освещённый солнцем уголок", a:R, full:"НЕ освещённый", why:"Есть зависимое слово «солнцем»."},
+ {t:"(НЕ)помнивший правил", a:R, full:"НЕ помнивший", why:"Есть зависимое слово «правил»."},
+ {t:"вовсе (НЕ)впечатлённый представлением", a:R, full:"НЕ впечатлённый", why:"«Вовсе не» — усилитель отрицания."},
+ {t:"(НЕ)приметна в тени", a:S, full:"НЕприметна", why:"Краткое прилагательное пишется как полное: неприметный — неприметна."},
+ {t:"отличаться (НЕ)доверчивостью", a:S, full:"НЕдоверчивостью", why:"Существительное с синонимом без НЕ: недоверчивость = подозрительность."},
+ {t:"(НЕ)простое, но важное решение", a:S, full:"НЕпростое", why:"Союз НО противопоставления не даёт."},
+ {t:"(НЕ)вмешивающийся в споры", a:R, full:"НЕ вмешивающийся", why:"Есть зависимые слова «в споры»."},
+ {t:"(НЕ)приехавший вовремя", a:R, full:"НЕ приехавший", why:"Есть зависимое слово «вовремя»."},
+ {t:"(НЕ)сдержать слово", a:R, full:"НЕ сдержать", why:"Глагол — раздельно."},
+ {t:"(НЕ)ожиданно прийти", a:S, full:"НЕожиданно", why:"Без НЕ не употребляется."}
+];
+
+/* --- Флеш-карты: то, что берётся только памятью --- */
+const FLASH = [
+ {t:"трудиться (НЕ)покладая рук", full:"НЕ покладая рук", why:"Фразеологизм — раздельно, хотя «покладая» без НЕ не живёт."},
+ {t:"уж (НЕ)обессудьте", full:"НЕ обессудьте", why:"Раздельно. Та же логика, что у «не преминуть»: форма без НЕ не употребляется, но пишется в два слова."},
+ {t:"(НЕ)преминуть напомнить", full:"НЕ преминуть", why:"Раздельно."},
+ {t:"(НЕ)хотя отвечать", full:"НЕХОТЯ", why:"Слитно: это наречие, а не деепричастие."},
+ {t:"угрожать (НЕ)шутя", full:"НЕ шутя", why:"Раздельно: деепричастие «шутя» существует."},
+ {t:"идти (НЕ)спеша", full:"НЕ спеша", why:"Раздельно — деепричастие. Но «неспешно» — слитно: это наречие."},
+ {t:"(НЕ)медля с ответом", full:"НЕ медля", why:"Раздельно — деепричастие. Но «немедленно» — слитно: это наречие."},
+ {t:"мне (НЕ)достаёт смелости", full:"НЕДОстаёт", why:"Слитно = не хватает."},
+ {t:"(НЕ)доставать до верхней полки", full:"НЕ ДОставать", why:"Раздельно: рука буквально не дотягивается."},
+ {t:"мне (НЕ)здоровится", full:"НЕздоровится", why:"Слитно: слова «здоровится» нет. Но «НЕ поздоровится» — раздельно."},
+ {t:"(НЕ)раз, (НЕ)один", full:"НЕ раз, НЕ один", why:"Раздельно."},
+ {t:"(НИ)разу, (НИ)один", full:"НИ разу, НИ один", why:"Раздельно, но уже с НИ: ни разу = никогда, ни один = никто."},
+ {t:"(НЕ)кто иной, как отец", full:"НЕ кто иной, как", why:"Раздельно и через НЕ — в обороте есть «как»."},
+ {t:"(НИ)кто иной не смог", full:"НИкто иной", why:"Слитно и через НИ — «как» нет, есть отрицание при сказуемом."},
+ {t:"добиться во что бы то (НИ)стало", full:"во что бы то НИ стало", why:"Устойчивый оборот, всё раздельно."},
+ {t:"(НИ)туда (НИ)сюда, (НИ)взад (НИ)вперёд", full:"НИ туда НИ сюда, НИ взад НИ вперёд", why:"Устойчивые обороты: раздельно и без запятой."}
+];
+
+/* --- Задания формата ЕГЭ ---
+   mode:"R" — условие на РАЗДЕЛЬНО, mode:"S" — на СЛИТНО.
+   sep:true означает, что в этом предложении слово пишется раздельно.
+   Номера верных ответов считает скрипт, они нигде не записаны руками.   */
+const EGE = [
+ {mode:"R", src:"демоверсия ЕГЭ 2027", rows:[
+   {s:"Если я по лаю определяю, что пёс нисколько {w}, я смело открываю калитку.",
+    w:"(НЕ)ОБОЗЛЁН", sep:true, full:"НЕ ОБОЗЛЁН", why:"Краткое причастие, да ещё со словом «нисколько»."},
+   {s:"Закрытые шлюзы высоко подняли воду, образовав {w}, но глубокий затон.",
+    w:"(НЕ)ШИРОКИЙ", sep:false, full:"НЕШИРОКИЙ", why:"Союз НО противопоставления не даёт: неширокий = узкий."},
+   {s:"Дно Байкала далеко {w} и представляет собой систему подводных хребтов.",
+    w:"(НЕ)РОВНОЕ", sep:true, full:"НЕ РОВНОЕ", why:"«Далеко не» — усилитель отрицания."},
+   {s:"В 1836 году состоялось знакомство Фредерика Шопена и Жорж Санд, но тогда ещё ничто {w} будущей любви композитора и известной писательницы.",
+    w:"(НЕ)ПРЕДВЕЩАЛО", sep:true, full:"НЕ ПРЕДВЕЩАЛО", why:"Глагол — раздельно."},
+   {s:"{w} перед дождём, хотя ещё и не набежали тучи, чувствуется нежное дыхание влаги.",
+    w:"(НЕ)ЗАДОЛГО", sep:false, full:"НЕЗАДОЛГО", why:"Наречие «незадолго» пишется слитно."}
+ ]},
+ {mode:"S", src:"демоверсия ЕГЭ 2027", rows:[
+   {s:"Наш сосед никогда не заботился {w}, кроме себя.",
+    w:"(НИ)(О)КОМ", sep:true, full:"НИ О КОМ", why:"Предлог разрывает отрицательное местоимение."},
+   {s:"{w} сути правил коммуникации, люди пользуются ими каждый день.",
+    w:"(НЕ)ОСОЗНАВАЯ", sep:true, full:"НЕ ОСОЗНАВАЯ", why:"Деепричастие — раздельно."},
+   {s:"Самостоятельно осваивать технологию обработки металла и получать профессию кузнеца – очень {w} занятие.",
+    w:"(НЕ)ПРОСТОЕ", sep:false, full:"НЕПРОСТОЕ", why:"«Очень» — наречие меры и степени, отрицание не усиливает: непростое = сложное."},
+   {s:"Я не любитель романтических комедий и лёгких мелодрам, поэтому фильм я так и {w} до конца.",
+    w:"(НЕ)ДОСМОТРЕЛ", sep:true, full:"НЕ ДОСМОТРЕЛ", why:"Смотрел, но не до конца: частица НЕ и приставка ДО-."},
+   {s:"Стоит выйти на крыльцо, как осень начнёт дышать в лицо горьким запахом первого тонкого льда, сковавшего {w} воды.",
+    w:"(НЕ)ПОДВИЖНЫЕ", sep:false, full:"НЕПОДВИЖНЫЕ", why:"Прилагательное с синонимом без НЕ: неподвижные = застывшие."}
+ ]},
+ {mode:"R", src:"«Экспресс-зачёты по орфографии»", rows:[
+   {s:"Может, это ничем {w} человек, но в трудный момент именно он проявил мужество.",
+    w:"(НЕ)ВЫДАЮЩИЙСЯ", sep:true, full:"НЕ ВЫДАЮЩИЙСЯ", why:"Рядом слово с НИ- — «ничем»."},
+   {s:"Учитель {w} предупреждал нас о необходимости внимательно читать формулировку задания.",
+    w:"(НЕ)РАЗ", sep:true, full:"НЕ РАЗ", why:"Запомнить: не раз, не один — раздельно."},
+   {s:"Поначалу роман показался {w}, но постепенно сюжет захватил меня неожиданными поворотами.",
+    w:"(НЕ)ИНТЕРЕСНЫМ", sep:false, full:"НЕИНТЕРЕСНЫМ", why:"Союз НО противопоставления не даёт: неинтересный = скучный."},
+   {s:"Доклад молодого исследователя оказался вовсе {w}, наоборот, живым, содержательным и понятным даже дилетантам.",
+    w:"(НЕ)СКУЧНЫМ", sep:true, full:"НЕ СКУЧНЫМ", why:"«Вовсе не» — усилитель отрицания."},
+   {s:"Учёные обнаружили {w} вид растения в труднодоступном районе гор.",
+    w:"(НЕ)ИЗУЧЕННЫЙ", sep:false, full:"НЕИЗУЧЕННЫЙ", why:"Полное причастие без зависимых слов."}
+ ]},
+ {mode:"S", src:"«Экспресс-зачёты по орфографии»", rows:[
+   {s:"Для успешной подготовки к экзамену надо ежедневно уделять занятиям {w} часа.",
+    w:"(НЕ)МЕНЬШЕ", sep:true, full:"НЕ МЕНЬШЕ", why:"Сравнительная степень — раздельно."},
+   {s:"{w} оставил на столе конверт без подписи и тихо ушёл, не сказав ни слова.",
+    w:"(НЕ)КТО", sep:false, full:"НЕКТО", why:"Неопределённое местоимение: приставка НЕ- без ударения."},
+   {s:"До сих пор {w} механизм издавал резкий скрип при каждом движении.",
+    w:"(НЕ)СМАЗАННЫЙ", sep:true, full:"НЕ СМАЗАННЫЙ", why:"Есть зависимые слова «до сих пор»."},
+   {s:"{w}, но очень содержательное выступление учёного вызвало большой интерес у слушателей.",
+    w:"(НЕ)ДОЛГОЕ", sep:false, full:"НЕДОЛГОЕ", why:"Союз НО противопоставления не даёт: недолгое = короткое."},
+   {s:"На душе было {w}, а тревожно, потому что результаты экзамена должны были объявить уже на следующий день.",
+    w:"(НЕ)РАДОСТНО", sep:true, full:"НЕ РАДОСТНО", why:"Противопоставление с союзом А."}
+ ]}
+];
+/* ==================== СЛАЙДЫ ==================== */
+
+const SLIDES = [
+ {k:"title", type:"title"},
+ {k:"map", type:"map"},
+
+ {k:"r-verb", type:"rule", sec:"Глаголы и деепричастия", kicker:"Блок 1 · глаголы и деепричастия",
+  title:"НЕ с глаголами и деепричастиями",
+  lead:"Самое простое правило задания — и самый длинный список исключений к нему.",
+  blocks:[
+   {h:"Раздельно — почти всегда", p:"Глаголы и деепричастия пишутся с НЕ раздельно, других условий проверять не нужно.",
+    ex:"<u>не</u> брать · <u>не</u> был · <u>не</u> зная · <u>не</u> спеша · <u>не</u> успев · <u>не</u> сдержать слово"},
+   {h:"Слитно — если без НЕ не употребляется", p:"Закройте НЕ рукой: если остатка в языке нет, пишем слитно.",
+    ex:"<u>не</u>годовать · <u>не</u>доумевать · <u>не</u>взлюбить · <u>не</u>взвидеть света · <u>не</u>волить · деепричастия <u>не</u>годуя, <u>не</u>доумевая"},
+   {h:"Третий случай — приставка НЕДО-", p:"Она тоже даёт слитное написание, но заслуживает отдельного разбора: им занимаемся на следующем слайде."}
+  ],
+  trap:"<b>Три пары-обманки.</b> Фразеологизм <u>не</u> покладая рук пишется раздельно, хотя «покладая» сам по себе не живёт; так же ведут себя <u>не</u> обессудьте и <u>не</u> преминуть. И ещё одна пара: мне <u>не</u>здоровится (слитно, слова «здоровится» нет) — но ему <u>не</u> поздоровится (раздельно, «поздоровится» существует)."},
+ {k:"p-verb", type:"practice", sec:"Глаголы и деепричастия", back:"r-verb",
+  title:"Практика: глаголы и деепричастия",
+  instr:"Для каждого сочетания выберите написание. Проверка идёт в два шага: сначала вы увидите только счёт, ответы откроются после второй попытки.",
+  items:P_VERB},
+
+ {k:"r-nedo", type:"rule", sec:"Приставка НЕДО-", kicker:"Блок 2 · НЕДО- или НЕ ДО-",
+  title:"НЕДО- или НЕ ДО-: решает смысл",
+  lead:"Буквы одинаковые, а написаний два. Отличаются они тем, что именно случилось с действием.",
+  blocks:[
+   {h:"Приставка НЕДО- — слитно", p:"Действие выполнено <b class=\"hl\">ниже нормы</b>: мало, плохо, меньше, чем нужно. Часто подставляется «не хватает».",
+    ex:"<u>недо</u>едали в войну · <u>недо</u>глядел за ребёнком · <u>недо</u>смотрел за больным · <u>недо</u>стаёт смелости · <u>недо</u>считаться бойца · <u>недо</u>солить · <u>недо</u>лить треть стакана"},
+   {h:"Частица НЕ и приставка ДО- — раздельно", p:"Действие нормальное, но <b class=\"hl\">оборвано на середине</b>: начал и не закончил.",
+    ex:"<u>не</u> доедать вчерашнее · <u>не</u> доглядел фильм и ушёл · <u>не</u> досмотрел выступление · <u>не</u> досчитать до ста · <u>не</u> добежав до финиша"}
+  ],
+  memo:"<b>Вопрос-ключ:</b> «мало, плохо, ниже нормы?» — слитно. «Бросил на середине, потом мог бы закончить?» — раздельно.",
+  trap:"<b>Самая частая пара на экзамене.</b> В голодные годы крестьяне <u>недо</u>едали (ели мало) — ребёнок <u>не</u> доедал кашу (оставлял часть). И вторая: мне <u>недо</u>стаёт смелости (не хватает) — <u>не</u> доставать до верхней полки (рука не дотягивается)."},
+ {k:"p-nedo", type:"practice", sec:"Приставка НЕДО-", back:"r-nedo",
+  title:"Практика: НЕДО- или НЕ ДО-",
+  instr:"Смотрите на весь контекст: он и подсказывает смысл. Одно и то же слово в разных предложениях пишется по-разному.",
+  items:P_NEDO},
+
+ {k:"r-prich", type:"rule", sec:"Причастия", kicker:"Блок 3 · причастия",
+  title:"НЕ с причастиями: три причины раздельности",
+  lead:"У причастия по умолчанию слитное написание. Раздельным его делают ровно три обстоятельства — и их нужно проверять по порядку.",
+  blocks:[
+   {h:"Раздельно", p:"Достаточно одной из трёх причин.",
+    ol:["<b>Противопоставление с союзом А:</b> <span class=\"ex\"><u>не</u> раскрытая книга, а рабочая тетрадь; <u>не</u> написанный, а распечатанный</span>",
+        "<b>Есть зависимое слово:</b> <span class=\"ex\"><u>не</u> сданная в аренду дача; ещё <u>не</u> очищенная вода; <u>не</u> указанных в договоре сроков</span>",
+        "<b>Краткая форма:</b> <span class=\"ex\">игра <u>не</u> начата; двери <u>не</u> закрыты; <u>не</u> доставлено в срок</span>"]},
+   {h:"Слитно", p:"Полное причастие без зависимых слов и без двух других причин. Плюс те, что без НЕ не употребляются.",
+    ex:"<u>не</u>замерзающие жидкости · на <u>не</u>освещённом небе · <u>не</u>опознанный объект · <u>не</u>долеченная простуда · <u>не</u>угомонный мальчик"}
+  ],
+  trap:"<b>Что считать зависимым словом.</b> «Ещё» — считается: ещё <u>не</u> распустившийся цветок пишется раздельно. А наречия меры и степени (очень, крайне, весьма, почти, абсолютно) — нет: очень <u>не</u>простое занятие остаётся слитным. И отдельно: слово с НИ- рядом (никем, ничем, ничуть) всегда даёт раздельное написание — никем <u>не</u> замеченный."},
+ {k:"p-prich", type:"practice", sec:"Причастия", back:"r-prich",
+  title:"Практика: НЕ с причастиями",
+  instr:"Проверьте три причины раздельности по очереди. Не нашли ни одной — пишите слитно.",
+  items:P_PRICH},
+ {k:"s-why-r", type:"sort", sec:"Причастия", back:"r-prich",
+  title:"Разложите по причинам раздельного написания",
+  instr:"Все двенадцать сочетаний пишутся раздельно. Нажмите на слово, затем на карточку с причиной.",
+  data:SORT_WHY_R},
+
+ {k:"r-adj", type:"rule", sec:"Прилагательные, существительные, наречия на -О/-Е", kicker:"Блок 4 · -О и -Е",
+  title:"НЕ с прилагательными, существительными и наречиями на -О/-Е",
+  lead:"У этих трёх частей речи правило общее, поэтому и разбираем их вместе.",
+  blocks:[
+   {h:"Слитно", p:"Слово без НЕ не употребляется; или подбирается синоним без НЕ; или рядом стоит наречие меры и степени.",
+    ex:"<u>не</u>взрачный, <u>не</u>былица · <u>не</u>друг (= враг), <u>не</u>правда (= ложь), <u>не</u>большая группа (= маленькая), <u>не</u>значительно (= слабо) · крайне <u>не</u>вежлив, очень <u>не</u>простое занятие"},
+   {h:"Раздельно", p:"Любое из четырёх условий.",
+    ol:["<b>Противопоставление с союзом А:</b> <span class=\"ex\">чтение <u>не</u> обязанность, а право; <u>не</u> умный, а ловкий</span>",
+        "<b>Усилитель отрицания:</b> далеко не, вовсе не, отнюдь не <span class=\"ex\">далеко <u>не</u> обычный подарок; вовсе <u>не</u> скучный доклад</span>",
+        "<b>Слово с НИ- рядом:</b> <span class=\"ex\">никому <u>не</u> известный остров; ничуть <u>не</u> сложно</span>",
+        "<b>Относительное или притяжательное прилагательное:</b> <span class=\"ex\"><u>не</u> шерстяной шарф; <u>не</u> кошачья миска; <u>не</u> барсучья нора</span>"]}
+  ],
+  trap:"<b>Союз НО — не противопоставление.</b> Раздельность включает только союз А. Поэтому говорил <u>не</u>громко, но выразительно; река <u>не</u>глубокая, но холодная; <u>не</u>долгое, но содержательное выступление — всё слитно. Экзамен проверяет эту пару почти каждый год."},
+ {k:"p-adj", type:"practice", sec:"Прилагательные, существительные, наречия на -О/-Е", back:"r-adj",
+  title:"Практика: -О и -Е",
+  instr:"Алгоритм: без НЕ не живёт или есть синоним — слитно; союз А, усилитель отрицания, слово с НИ-, относительное или притяжательное — раздельно.",
+  items:P_ADJ},
+
+ {k:"r-krat", type:"rule", sec:"Краткие формы и сравнительная степень", kicker:"Блок 5 · краткие формы",
+  title:"Слова на -МЫЙ, краткие формы и сравнительная степень",
+  lead:"Здесь ученики теряют больше всего баллов: слова выглядят как причастия, а ведут себя как прилагательные.",
+  blocks:[
+   {h:"Слова на -МЫЙ — это прилагательные", p:"Выглядят как причастия, но ведут себя как прилагательные: обычные зависимые слова написание не меняют.",
+    ex:"<u>не</u>истощимый на выдумку · <u>не</u>отъемлемый · <u>не</u>победимый · <u>не</u>зыблемый"},
+   {h:"Краткие прилагательные пишутся как полные", p:"Есть полная форма — сохраняем её написание.",
+    ex:"<u>не</u>досягаемый → результаты <u>не</u>досягаемы · <u>не</u>действительный → промокод <u>не</u>действителен · <u>не</u>достойный → большего он <u>не</u>достоин · <u>не</u>приметный → <u>не</u>приметна в тени"},
+   {h:"Краткие прилагательные без полной формы — раздельно", p:"Полной формы в современном языке нет, слово работает сказуемым.",
+    ex:"<u>не</u> рад · <u>не</u> готов · <u>не</u> должен · <u>не</u> горазд · <u>не</u> намерен · <u>не</u> обязан · <u>не</u> склонен"},
+   {h:"Сравнительная степень — раздельно", p:"Любая форма со значением «больше или меньше, чем».",
+    ex:"<u>не</u> выше нормы · <u>не</u> меньше часа · <u>не</u> хуже других · <u>не</u> стройнее всех · <u>не</u> менее громко"}
+  ],
+  trap:"<b>Различайте краткое причастие и краткое прилагательное.</b> Краткое причастие всегда раздельно: двери <u>не</u> закрыты, <u>не</u> доставлено в срок, кошка <u>не</u> обучена командам. Краткое прилагательное идёт за полной формой: шаги очень <u>не</u>смелы, оправдания <u>не</u>лепы. Проверка: причастие можно развернуть в «который не…» (двери, которые не закрыли)."},
+ {k:"p-krat", type:"practice", sec:"Краткие формы и сравнительная степень", back:"r-krat",
+  title:"Практика: краткие формы и -МЫЙ",
+  instr:"Сначала определите, есть ли у слова полная форма, и только потом решайте.",
+  items:P_KRAT},
+
+ {k:"r-pron", type:"rule", sec:"Местоимения, числительные, наречия", kicker:"Блок 6 · местоимения и числительные",
+  title:"НЕ с местоимениями, числительными и наречиями не на -О/-Е",
+  lead:"Здесь правило короткое, а ловушка одна — предлог.",
+  blocks:[
+   {h:"Слитно", p:"Отрицательные и неопределённые местоимения и наречия. В отрицательных под ударением пишется НЕ, без ударения — НИ.",
+    ex:"<u>не</u>кого пригласить · <u>не</u>чем помочь · <u>не</u>где присесть · <u>не</u>когда отдыхать · <u>не</u>зачем спорить · <u>не</u>кто, <u>не</u>что, <u>не</u>который, <u>не</u>сколько"},
+   {h:"Раздельно", p:"Четыре случая.",
+    ol:["<b>Внутрь встал предлог:</b> <span class=\"ex\"><u>не</u> с чем сравнивать; <u>не</u> к кому обратиться; <u>не</u> за чем укрыться</span>",
+        "<b>Все прочие местоимения:</b> <span class=\"ex\"><u>не</u> каждому дано; <u>не</u> тебе предначертано; <u>не</u> такой, как все; <u>не</u> ваш</span>",
+        "<b>Числительные — без исключений:</b> <span class=\"ex\">нас <u>не</u> четверо; <u>не</u> первый раз; <u>не</u> пятого числа; <u>не</u> раз, <u>не</u> один</span>",
+        "<b>Наречия не на -О/-Е:</b> <span class=\"ex\"><u>не</u> здесь, <u>не</u> сегодня, <u>не</u> по-русски, <u>не</u> вблизи, <u>не</u> вдвоём</span>"]}
+  ],
+  trap:"<b>НЕЗАЧЕМ и НЕ ЗА ЧЕМ — оба написания существуют.</b> <u>Не</u>зачем тратить время впустую — это отрицательное наречие со значением «нет смысла». Тут <u>не</u> за чем укрыться — это местоимение «чем» с предлогом «за»: нет предмета, за которым можно спрятаться. Решает смысл предложения, а не внешний вид слова."},
+ {k:"p-pron", type:"practice", sec:"Местоимения, числительные, наречия", back:"r-pron",
+  title:"Практика: местоимения, числительные, наречия",
+  instr:"Проверьте по очереди: есть ли внутри предлог, какая это часть речи, оканчивается ли наречие на -О/-Е.",
+  items:P_PRON},
+
+ {k:"r-ni", type:"rule", sec:"Слитное и раздельное НИ", kicker:"Блок 7 · частица НИ",
+  title:"НИ: слитно и раздельно",
+  lead:"Правило почти зеркальное правилу для НЕ с местоимениями, но список раздельных случаев свой.",
+  blocks:[
+   {h:"Слитно", p:"Отрицательные местоимения и наречия без предлога.",
+    ex:"<u>ни</u>кто, <u>ни</u>чем, <u>ни</u>какой · <u>ни</u>где, <u>ни</u>куда, <u>ни</u>как, <u>ни</u>сколько, <u>ни</u>чуть, <u>ни</u>откуда"},
+   {h:"Раздельно", p:"Три случая.",
+    ol:["<b>Предлог внутри:</b> <span class=\"ex\"><u>ни</u> о чём не переживай; <u>ни</u> к чему не прийти; <u>ни</u> у кого не спросил</span>",
+        "<b>Запомнить:</b> <span class=\"ex\"><u>ни</u> разу (= никогда), <u>ни</u> один (= никто)</span>",
+        "<b>Устойчивые обороты, внутри них запятая не ставится:</b> <span class=\"ex\"><u>ни</u> туда <u>ни</u> сюда · <u>ни</u> взад <u>ни</u> вперёд · во что бы то <u>ни</u> стало</span>"]}
+  ],
+  trap:"<b>Пара оборотов-двойников.</b> Если в обороте есть слово «как», пишем через НЕ и раздельно: это <u>не</u> кто иной, как отец; это <u>не</u> что иное, как ошибка. Если «как» нет, а дальше идёт отрицание, — через НИ и слитно: <u>ни</u>кто иной не смог; <u>ни</u>что иное его не занимало."},
+ {k:"p-ni", type:"practice", sec:"Слитное и раздельное НИ", back:"r-ni",
+  title:"Практика: НИ слитно или раздельно",
+  instr:"Ищите предлог внутри слова и проверяйте, нет ли перед вами устойчивого оборота.",
+  items:P_NI},
+ {k:"s-why-s", type:"sort", sec:"Слитное и раздельное НИ", back:"r-ni",
+  title:"Разложите по причинам слитного написания",
+  instr:"Все двенадцать слов пишутся слитно. Определите, какое именно правило здесь работает.",
+  data:SORT_WHY_S},
+
+ {k:"r-trap", type:"rule", sec:"Часть речи решает", kicker:"Блок 8 · ловушки",
+  title:"Одинаковые буквы — разные слова",
+  lead:"Последний блок теории — пары, в которых написание зависит только от части речи. Правило тут не поможет, поможет подстановка.",
+  blocks:[
+   {h:"Предлог или деепричастие", p:"Подставьте «вопреки»: получилось — предлог, пишем слитно. Речь буквально о взгляде — деепричастие, раздельно.",
+    ex:"<u>не</u>смотря на проблемы (= вопреки) — <u>не</u> смотря на меня (= не глядя)<br><u>не</u>взирая на трудности (= вопреки) — <u>не</u> взирая на нас (= не глядя)"},
+   {h:"Наречие или деепричастие", p:"Наречие отвечает на вопрос «как?» и пишется слитно, деепричастие обозначает добавочное действие и пишется раздельно.",
+    ex:"<u>не</u>спешно подниматься — идти <u>не</u> спеша<br><u>не</u>медленно начать — <u>не</u> медля с ответом<br><u>не</u>хотя отвечать — угрожать <u>не</u> шутя"},
+   {h:"Наречие или местоимение с предлогом", p:"Внутри слова может прятаться предлог — тогда слово распадается на три части.",
+    ex:"<u>не</u>зачем спорить — <u>не</u> за чем укрыться"}
+  ],
+  trap:"<b>Обратите внимание на «нехотя».</b> Оно выглядит как деепричастие и стоит рядом с «не спеша», но пишется слитно: деепричастия «хотя» в этом значении в языке нет. Это слово придётся просто запомнить — оно есть во флеш-картах следующего слайда."},
+ {k:"p-trap", type:"practice", sec:"Часть речи решает", back:"r-trap",
+  title:"Практика: часть речи решает",
+  instr:"В каждой паре одни и те же буквы. Определяйте часть речи подстановкой, а не на глаз.",
+  items:P_TRAP},
+
+ {k:"flash", type:"flash", sec:"Исключения", back:"r-trap",
+  title:"Флеш-карты: что берётся только памятью",
+  instr:"Сначала вспомните написание сами, потом нажмите на карточку и проверьте себя. Оценка здесь ваша собственная, в общий процент она не идёт.",
+  items:FLASH},
+
+ {k:"p-final", type:"practice", sec:"Итоговая практика", back:"map",
+  title:"Итоговая практика: всё вместе",
+  instr:"Шестнадцать сочетаний из всех блоков вперемешку. Часть речи и правило придётся определять самому.",
+  items:P_FINAL},
+
+ {k:"ege-intro", type:"egeIntro"},
+ ...EGE.map((q,i)=>({k:"ege"+(i+1), type:"ege", sec:"Формат ЕГЭ", back:"ege-intro",
+   title:"Задание "+(i+1)+" из "+EGE.length, data:q})),
+
+ {k:"final", type:"final"}
+];
+
+const IDX = {}; SLIDES.forEach((s,i)=>IDX[s.k]=i);
+
+/* верные ответы ЕГЭ считаются из данных, а не записаны руками */
+EGE.forEach(q=>{
+  q.right = q.rows.map((r,i)=>({r,i}))
+    .filter(x => q.mode === "R" ? x.r.sep : !x.r.sep)
+    .map(x => x.i);
+});
+
+/* ==================== СОСТОЯНИЕ ==================== */
+
+const STORE = "zad13_v1";
+let ST = {ans:{}, ph:{}, fr:{}, fl:{}, first:{}, cur:0, max:0, calm:false};
+
+try{
+  const raw = localStorage.getItem(STORE);
+  if(raw) ST = Object.assign(ST, JSON.parse(raw));
+  if(!ST.first) ST.first = {};
+}catch(e){}
+
+function save(){
+  try{ localStorage.setItem(STORE, JSON.stringify(ST)); }catch(e){}
+}
+
+/* порядок карточек перемешивается при каждой загрузке страницы */
+const ORD = {};
+function shuffled(n){
+  const a = Array.from({length:n},(_,i)=>i);
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+SLIDES.forEach(s=>{
+  if(s.items) ORD[s.k] = shuffled(s.items.length);
+  else if(s.data && s.data.items) ORD[s.k] = shuffled(s.data.items.length);
+});
+
+const A = k => (ST.ans[k] || (ST.ans[k] = {}));
+const PH = k => ST.ph[k] || 0;
+const FR = k => ST.fr[k] || [];
+
+/* ==================== ПОДСЧЁТ ==================== */
+
+function scoreOf(s){
+  const k = s.k, ph = PH(k);
+  if(ph === 0) return null;
+  const ans = A(k);
+
+  if(s.type === "practice"){
+    let r=0,w=0,e=0;
+    s.items.forEach((it,i)=>{
+      const v = ans[i];
+      if(v === undefined || v === null) e++;
+      else if(v === it.a) r++;
+      else w++;
+    });
+    return {r,w,e,t:s.items.length};
+  }
+  if(s.type === "sort"){
+    let r=0,w=0,e=0;
+    s.data.items.forEach((it,i)=>{
+      const v = ans[i];
+      if(!v) e++; else if(v === it.b) r++; else w++;
+    });
+    return {r,w,e,t:s.data.items.length};
+  }
+  if(s.type === "ege"){
+    const sel = (ans.sel || []).slice().sort((a,b)=>a-b);
+    if(!sel.length) return {r:0,w:0,e:1,t:1};
+    const right = s.data.right.slice().sort((a,b)=>a-b);
+    const hit = sel.length === right.length && sel.every((v,i)=>v === right[i]);
+    return {r:hit?1:0, w:hit?0:1, e:0, t:1};
+  }
+  if(s.type === "flash"){
+    const st = ST.fl[k] || {rat:{}};
+    const known = Object.values(st.rat).filter(v=>v==="know").length;
+    const rated = Object.keys(st.rat).length;
+    if(!rated) return null;
+    return {r:known, w:rated-known, e:s.items.length-rated, t:s.items.length, self:true};
+  }
+  return null;
+}
+
+/* диагностика строится по ПЕРВОЙ проверке: после исправлений счёт
+   всегда близок к ста процентам и слабые темы перестают быть видны */
+function baseScore(s){
+  if(s.type === "flash") return scoreOf(s);
+  return ST.first[s.k] || null;
+}
+
+function allScores(){
+  const bySec = {};
+  SLIDES.forEach(s=>{
+    if(!s.sec) return;
+    const sc = baseScore(s);
+    if(!sc) return;
+    const b = bySec[s.sec] || (bySec[s.sec] = {r:0,w:0,e:0,t:0,self:false,back:s.back||s.k});
+    b.r+=sc.r; b.w+=sc.w; b.e+=sc.e; b.t+=sc.t;
+    if(sc.self) b.self = true;
+  });
+  return bySec;
+}
+
+/* ==================== УТИЛИТЫ ==================== */
+
+const esc = t => String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+/* подсвечиваем (НЕ) и (НИ) вместе с предлогом внутри: (НЕ)(С)ЧЕМ */
+function gaps(t){
+  return esc(t).replace(/\((?:НЕ|НИ|не|ни|С|с|К|к|У|у|О|о|ЗА|за)\)/g, m => '<span class="gap">'+m+'</span>');
+}
+
+function scoreLine(sc){
+  if(!sc) return "";
+  let out = '<span class="score">Верно <b class="g">'+sc.r+'</b>';
+  if(sc.w) out += ' · неверно <b class="r">'+sc.w+'</b>';
+  if(sc.e) out += ' · не отвечено <b class="a">'+sc.e+'</b>';
+  out += ' из '+sc.t+'</span>';
+  return out;
+}
+
+function bits(el){
+  if(document.body.classList.contains("calm")) return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const rc = el.getBoundingClientRect();
+  const cx = rc.left+rc.width/2, cy = rc.top+rc.height/2;
+  const cols = ["#FFCC33","#A78BFF"];
+  for(let i=0;i<5;i++){
+    const ang = (i/5)*Math.PI*2 + Math.random()*.4, dist = 18+Math.random()*12;
+    const d = document.createElement("div");
+    d.className = "bit";
+    d.style.background = cols[i%2];
+    d.style.left = cx+"px"; d.style.top = cy+"px";
+    d.style.setProperty("--dx", Math.cos(ang)*dist+"px");
+    d.style.setProperty("--dy", Math.sin(ang)*dist+"px");
+    document.body.appendChild(d);
+    d.addEventListener("animationend", ()=>d.remove());
+  }
+}
+
+/* ==================== РЕНДЕР ==================== */
+
+const stage = document.getElementById("stage");
+const barFill = document.getElementById("barFill");
+const counter = document.getElementById("counter");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const calmBtn = document.getElementById("calmBtn");
+
+function head(s){
+  return (s.kicker ? '<div class="kicker">'+s.kicker+'</div>' : '') +
+         '<h1>'+s.title+'</h1>' +
+         (s.lead ? '<p class="lead">'+s.lead+'</p>' : '');
+}
+
+let RESTORE = null;
+function render(i){
+  const s = SLIDES[i];
+  const keepScroll = stage.scrollTop;
+  const el = document.createElement("div");
+  el.className = "slide";
+  stage.innerHTML = ""; stage.appendChild(el);
+  ({title:rTitle, map:rMap, rule:rRule, practice:rPractice,
+    sort:rSort, flash:rFlash, egeIntro:rEgeIntro, ege:rEge, final:rFinal})[s.type](el, s);
+  stage.scrollTop = keepScroll;
+  if(RESTORE){
+    const t = stage.querySelector(RESTORE);
+    if(t && t.focus) t.focus({preventScroll:true});
+    RESTORE = null;
+  }
+}
+
+/* --- титул --- */
+function rTitle(el){
+  el.innerHTML = `
+    <div class="hero">
+      <svg class="hero-badge" viewBox="0 0 96 96" aria-hidden="true" shape-rendering="crispEdges">
+        <rect x="6" y="6" width="84" height="84" fill="none" stroke="#A78BFF" stroke-width="4"/>
+        <rect x="14" y="14" width="68" height="68" fill="none" stroke="#FFCC33" stroke-width="2"/>
+        <rect x="24" y="30" width="10" height="36" fill="#FFCC33"/>
+        <rect x="34" y="42" width="10" height="12" fill="#FFCC33"/>
+        <rect x="44" y="30" width="10" height="36" fill="#FFCC33"/>
+        <rect x="62" y="30" width="10" height="36" fill="#A78BFF"/>
+      </svg>
+      <div class="hero-sup">ЕГЭ по русскому языку</div>
+      <div class="hero-title">Задание 13</div>
+      <div class="hero-sub">Правописание НЕ и НИ</div>
+      <button class="start" type="button" id="startBtn">Начать</button>
+    </div>`;
+  el.querySelector("#startBtn").addEventListener("click", ()=>go(1));
+}
+
+/* --- карта задания --- */
+function rMap(el){
+  const tiles = [
+    ["r-verb","Глаголы и деепричастия","Раздельно — и список слов, которые без НЕ не живут"],
+    ["r-nedo","Приставка НЕДО-","Недоедали в войну или не доедал кашу"],
+    ["r-prich","Причастия","Три причины раздельности и ловушка «ещё» против «очень»"],
+    ["r-adj","Прилагательные, существительные, наречия на -О/-Е","Синоним против союза А и усилителей отрицания"],
+    ["r-krat","Краткие формы и сравнительная степень","Не рад, не должен, не меньше часа, но недостоин"],
+    ["r-pron","Местоимения, числительные, наречия","Предлог разрывает слово: не с чем, ни о чём"],
+    ["r-ni","Слитное и раздельное НИ","Никто иной не… против не кто иной, как…"],
+    ["r-trap","Часть речи решает","Несмотря и не смотря, нехотя и не шутя"]
+  ];
+  el.innerHTML = `
+    <div class="kicker">Карта задания</div>
+    <h1>Что проверяет задание 13</h1>
+    <p class="lead">В задании пять предложений, в каждом одно выделенное слово вида (НЕ)ГРОМКО. Нужно указать <b class="hl">все</b> предложения, где НЕ или НИ пишется так, как требует условие, и записать их номера. Формулировок две, и они противоположны: в одном варианте ищут <b class="hl">раздельное</b> написание, в другом — <b class="hl">слитное</b>. Читать условие нужно каждый раз заново.</p>
+    <div class="map">${tiles.map(t=>`<button class="tile" type="button" data-k="${t[0]}"><b>${t[1]}</b><span>${t[2]}</span></button>`).join("")}</div>
+    <div class="trap"><b>Порядок действий.</b> Сначала определите часть речи выделенного слова — от неё зависит весь дальнейший разбор. Потом проверьте универсальное условие: употребляется ли слово без НЕ. И только после этого применяйте правило своей группы. Половина ошибок в задании 13 — это правило, применённое не к той части речи.</div>
+    <p class="lead" style="margin-top:16px;">Плитки работают как оглавление: нажмите на любую, чтобы перейти к нужному блоку.</p>`;
+  el.querySelectorAll(".tile").forEach(b=>b.addEventListener("click",()=>go(IDX[b.dataset.k])));
+}
+
+/* --- правило --- */
+function rRule(el, s){
+  const blocks = s.blocks.map(b=>{
+    let inner = '<h3>'+b.h+'</h3>';
+    if(b.p) inner += '<p>'+b.p+'</p>';
+    if(b.ol) inner += '<ol class="steps">'+b.ol.map(x=>'<li>'+x+'</li>').join("")+'</ol>';
+    if(b.ex) inner += '<p class="ex">'+b.ex+'</p>';
+    return '<div class="rule">'+inner+'</div>';
+  }).join("");
+  el.innerHTML = head(s) + blocks +
+    (s.memo ? '<div class="memo">'+s.memo+'</div>' : '') +
+    (s.trap ? '<div class="trap">'+s.trap+'</div>' : '');
+}
+
+/* --- практика «слитно или раздельно» --- */
+const OPTS = ["слитно","раздельно"];
+function rPractice(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), ord = ORD[k];
+
+  const cards = ord.map(i=>{
+    const it = s.items[i];
+    const v = ans[i];
+    let cls = "card", flag = "", why = "";
+    if(ph >= 1){
+      if(v === undefined) { cls += " na"; flag = '<div class="flag na">не отвечено</div>'; }
+      else if(v === it.a) cls += " ok";
+      else cls += " no";
+    }
+    if(ph === 2){
+      why = '<div class="why"><span class="fix">' + esc(it.full) + '</span> — ' + it.why + '</div>';
+    }
+    const live = (ph === 0) || (ph === 15 && !fr.includes(i));
+    const dis = live ? "" : " disabled";
+
+    const body = '<div class="phrase">' + gaps(it.t) + '</div>' +
+      '<div class="chips">' + OPTS.map(o=>
+        '<button type="button" class="chip '+(v===o?"on":"")+'" data-i="'+i+'" data-v="'+o+'"'+dis+'>'+o+'</button>'
+      ).join("") + '</div>';
+    return '<div class="'+cls+'">' + body + flag + why + '</div>';
+  }).join("");
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="grid">'+cards+'</div>' +
+    '<div class="foot" id="foot"></div>';
+
+  el.querySelectorAll("[data-v]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const i = +b.dataset.i;
+      if(ans[i] === b.dataset.v) delete ans[i]; else ans[i] = b.dataset.v;
+      RESTORE = '[data-i="'+i+'"][data-v="'+b.dataset.v+'"]';
+      save(); bits(b); render(ST.cur);
+    });
+  });
+  footer(el, s);
+}
+
+/* --- футер с двухшаговой проверкой --- */
+function footer(el, s){
+  const k = s.k, ph = PH(k), foot = el.querySelector("#foot");
+  const sc = scoreOf(s);
+  let html = "";
+  if(ph === 0){
+    html = '<button class="btn main" type="button" id="chk">Проверить</button>';
+  } else if(ph === 1){
+    html = '<button class="btn main" type="button" id="again">Ещё попытка</button>' + scoreLine(sc) +
+      '<div style="flex-basis:100%;color:var(--dim);font-size:.92rem;">Верные ответы закреплены, неверные и пропущенные открыты для правки. Правильные написания пока не показываем — вспоминайте.</div>';
+  } else if(ph === 15){
+    html = '<button class="btn main" type="button" id="chk">Проверить</button>' +
+      '<span class="score">Открыты только неверные и пропущенные позиции</span>';
+  } else {
+    html = scoreLine(sc) + '<button class="btn ghost" type="button" id="rst">Пройти заново</button>';
+  }
+  foot.innerHTML = html;
+  const chk = foot.querySelector("#chk"), ag = foot.querySelector("#again"), rst = foot.querySelector("#rst");
+  if(chk) chk.addEventListener("click", ()=>doCheck(s));
+  if(ag) ag.addEventListener("click", ()=>{ ST.ph[k] = 15; save(); render(ST.cur); });
+  if(rst) rst.addEventListener("click", ()=>{
+    ST.ans[k] = {}; ST.ph[k] = 0; ST.fr[k] = [];
+    delete ST.first[k]; if(ST.fl[k]) delete ST.fl[k];
+    save(); render(ST.cur);
+  });
+}
+
+function doCheck(s){
+  const k = s.k, ph = PH(k);
+  if(ph === 15){ ST.ph[k] = 2; save(); render(ST.cur); return; }
+
+  const ans = A(k);
+  const frozen = [];
+  let pending = 0;
+
+  if(s.type === "practice"){
+    s.items.forEach((it,i)=>{ (ans[i] === it.a) ? frozen.push(i) : pending++; });
+  } else if(s.type === "sort"){
+    s.data.items.forEach((it,i)=>{ (ans[i] === it.b) ? frozen.push(i) : pending++; });
+  } else if(s.type === "ege"){
+    const sel = ans.sel || [];
+    sel.forEach(r=>{ if(s.data.right.includes(r)) frozen.push(r); });
+    const done = sel.length === s.data.right.length && s.data.right.every(r=>sel.includes(r));
+    pending = done ? 0 : 1;
+  }
+
+  ST.fr[k] = frozen;
+  ST.ph[k] = pending === 0 ? 2 : 1;
+  if(!ST.first[k]){
+    const sc = scoreOf(s);
+    if(sc) ST.first[k] = {r:sc.r, w:sc.w, e:sc.e, t:sc.t};
+  }
+  save(); render(ST.cur);
+}
+
+/* --- сортировка --- */
+let SEL = null;
+function rSort(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), ord = ORD[k], D = s.data;
+  const live = (ph === 0 || ph === 15);
+
+  const tok = i=>{
+    const it = D.items[i];
+    let cls = "tok";
+    if(ph >= 1 && ans[i]) cls += (ans[i] === it.b) ? " ok" : " no";
+    if(SEL === i) cls += " sel";
+    const movable = live && !fr.includes(i);
+    return '<button type="button" class="'+cls+'" data-t="'+i+'"'+(movable?"":" disabled")+'>'+esc(it.t)+'</button>';
+  };
+
+  const pool = ord.filter(i=>!ans[i]).map(tok).join("") ||
+               '<span style="color:var(--dim);font-size:.92rem;">Все слова разложены</span>';
+
+  const buckets = D.buckets.map(b=>{
+    const inside = ord.filter(i=>ans[i] === b).map(tok).join("");
+    return '<div class="bucket" data-b="'+esc(b)+'"><h4>'+esc(b)+'</h4><div class="row">'+inside+'</div></div>';
+  }).join("");
+
+  let fix = "";
+  if(ph === 2){
+    const wrong = D.items.map((it,i)=>({it,i})).filter(x=>ans[x.i] !== x.it.b);
+    fix = wrong.length
+      ? '<div class="fixlist"><b>Верное распределение:</b><br>' +
+        wrong.map(x=>esc(x.it.t)+' → <span>'+esc(x.it.b)+'</span>').join("<br>") + '</div>'
+      : '<div class="fixlist">Все слова разложены верно.</div>';
+  }
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="pool">'+pool+'</div>' +
+    '<div class="buckets">'+buckets+'</div>' +
+    fix + '<div class="foot" id="foot"></div>';
+
+  if(live){
+    el.querySelectorAll("[data-t]").forEach(b=>b.addEventListener("click",()=>{
+      SEL = (SEL === +b.dataset.t) ? null : +b.dataset.t;
+      render(ST.cur);
+    }));
+    el.querySelectorAll(".bucket").forEach(b=>b.addEventListener("click",(ev)=>{
+      if(ev.target.closest("[data-t]")) return;
+      if(SEL === null) return;
+      ans[SEL] = b.dataset.b; SEL = null; save(); render(ST.cur);
+    }));
+  }
+  footer(el, s);
+  const ag = el.querySelector("#again");
+  if(ag){
+    ag.addEventListener("click", ()=>{
+      D.items.forEach((it,i)=>{ if(!FR(k).includes(i)) delete ans[i]; });
+      save();
+    }, true);
+  }
+}
+
+/* --- флеш-карты --- */
+function rFlash(el, s){
+  const k = s.k;
+  const st = ST.fl[k] || (ST.fl[k] = {pos:0, rat:{}, flip:false});
+  const ord = ORD[k];
+  const i = ord[st.pos];
+  const it = s.items[i];
+  const rated = Object.keys(st.rat).length;
+  const known = Object.values(st.rat).filter(v=>v==="know").length;
+
+  const face = st.flip
+    ? '<div class="fw">'+esc(it.full)+'</div><div class="fh">'+it.why+'</div>'
+    : '<div class="fw">'+gaps(it.t)+'</div><div class="tap">нажмите, чтобы проверить себя</div>';
+
+  el.innerHTML = head(s) +
+    '<p class="instr">'+s.instr+'</p>' +
+    '<div class="flash" id="fcard">'+face+'</div>' +
+    '<div class="flash-btns">' +
+      '<button class="btn main" type="button" id="know">Знаю</button>' +
+      '<button class="btn ghost" type="button" id="rev">Повторю</button>' +
+    '</div>' +
+    '<div class="flash-nav">' +
+      '<button class="btn ghost" type="button" id="fp">← Назад</button>' +
+      '<span class="score">Карточка '+(st.pos+1)+' из '+s.items.length+' · отмечено '+rated+' · знаю '+known+'</span>' +
+      '<button class="btn ghost" type="button" id="fn">Вперёд →</button>' +
+    '</div>' +
+    (rated === s.items.length ? '<div class="foot" style="margin-top:14px;"><button class="btn ghost" type="button" id="frst">Пройти заново</button></div>' : '');
+
+  el.querySelector("#fcard").addEventListener("click", ()=>{ st.flip = !st.flip; save(); render(ST.cur); });
+  const rate = v => { st.rat[i] = v; st.flip = false; if(st.pos < s.items.length-1) st.pos++; save(); render(ST.cur); };
+  el.querySelector("#know").addEventListener("click", ()=>rate("know"));
+  el.querySelector("#rev").addEventListener("click", ()=>rate("review"));
+  el.querySelector("#fp").addEventListener("click", ()=>{ st.pos = Math.max(0, st.pos-1); st.flip=false; save(); render(ST.cur); });
+  el.querySelector("#fn").addEventListener("click", ()=>{ st.pos = Math.min(s.items.length-1, st.pos+1); st.flip=false; save(); render(ST.cur); });
+  const f2 = el.querySelector("#frst");
+  if(f2) f2.addEventListener("click", ()=>{ delete ST.fl[k]; save(); render(ST.cur); });
+}
+
+/* --- формат ЕГЭ --- */
+function rEgeIntro(el){
+  el.innerHTML = `
+    <div class="kicker">Формат ЕГЭ</div>
+    <h1>Четыре задания так, как они стоят в варианте</h1>
+    <p class="lead">Дальше — четыре задания в точной формулировке экзамена: два на раздельное написание и два на слитное. Предложения взяты из демоверсии ЕГЭ 2027 года и «Экспресс-зачётов».</p>
+    <div class="rule"><h3>Три вещи, на которых теряют балл</h3>
+      <ol class="steps">
+        <li><b>Формулировок две.</b> «Пишется РАЗДЕЛЬНО» и «пишется СЛИТНО» встречаются одинаково часто. Привычка искать всегда одно и то же стоит целого задания.</li>
+        <li><b>Верных предложений несколько.</b> Обычно два или три. Нашли одно и пошли дальше — потеряли балл.</li>
+        <li><b>Части речи в задании перемешаны.</b> В одном задании могут стоять причастие, деепричастие, местоимение и наречие — и к каждому своё правило.</li>
+      </ol>
+    </div>
+    <div class="trap"><b>Как отвечать.</b> Разбирайте каждое предложение отдельно и отмечайте подходящие. Ответ на экзамене записывается цифрами подряд, без пробелов и запятых; порядок цифр значения не имеет.</div>`;
+}
+
+function rEge(el, s){
+  const k = s.k, ph = PH(k), ans = A(k), fr = FR(k), D = s.data;
+  const sel = ans.sel || (ans.sel = []);
+  const live = (ph === 0 || ph === 15);
+  const want = D.mode === "R";
+
+  const rows = D.rows.map((row, ri)=>{
+    const on = sel.includes(ri);
+    let cls = "erow" + (on ? " on" : "");
+    if(ph === 1 && on) cls = "erow " + (D.right.includes(ri) ? "ok" : "no");
+    if(ph === 2){
+      if(D.right.includes(ri)) cls = "erow " + (on ? "ok" : "miss");
+      else cls = "erow" + (on ? " no" : "");
+    }
+    const shown = (ph === 2) ? '<span class="ew">'+esc(row.full)+'</span>' : '<span class="ew">'+esc(row.w)+'</span>';
+    const text = esc(row.s).replace("{w}", shown);
+    const key = (ph === 2)
+      ? '<div class="ekey"><span class="fix">'+esc(row.full)+'</span> — '+row.why+'</div>'
+      : "";
+    const movable = live && !fr.includes(ri);
+    return '<button type="button" class="'+cls+'" data-r="'+ri+'"'+(movable?"":" disabled")+'>' +
+      '<span class="enum">'+(ri+1)+')</span><span class="ewords">'+text+key+'</span></button>';
+  }).join("");
+
+  let verdict = "";
+  if(ph === 2){
+    const nums = D.right.map(r=>r+1).join("");
+    verdict = '<div class="memo" style="margin-bottom:14px;"><b>Ответ: '+nums+'</b></div>';
+  }
+
+  const q = want
+    ? 'Укажите варианты ответов, в которых НЕ с выделенным словом пишется <b class="hl">РАЗДЕЛЬНО</b>. Запишите номера ответов.'
+    : 'Укажите варианты ответов, в которых НЕ (НИ) с выделенным словом пишется <b class="hl">СЛИТНО</b>. Запишите номера ответов.';
+
+  el.innerHTML =
+    '<div class="kicker">Формат ЕГЭ · '+s.title+'</div>' +
+    '<h1>Задание 13</h1>' +
+    '<div class="ege-q">'+q+'</div>' +
+    '<div class="rows">'+rows+'</div>' + verdict +
+    '<div class="foot" id="foot"></div>';
+
+  if(live){
+    el.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>{
+      const ri = +b.dataset.r, p = sel.indexOf(ri);
+      (p === -1) ? sel.push(ri) : sel.splice(p,1);
+      RESTORE = '[data-r="'+ri+'"]';
+      save(); render(ST.cur);
+    }));
+  }
+  footer(el, s);
+  const ag = el.querySelector("#again");
+  if(ag) ag.addEventListener("click", ()=>{
+    ans.sel = sel.filter(r=>FR(k).includes(r));
+    save();
+  }, true);
+}
+
+/* --- итоги --- */
+function gauge(pct, color, label, text){
+  const id = "g"+Math.random().toString(36).slice(2,8);
+  const r = 62, c = 72, top = c + r - (pct/100)*(2*r);
+  return '<div class="gauge"><svg viewBox="0 0 144 144">' +
+    '<defs><clipPath id="'+id+'"><rect x="10" y="10" width="124" height="124"/></clipPath></defs>' +
+    '<rect x="10" y="10" width="124" height="124" fill="rgba(255,255,255,.04)" stroke="rgba(167,139,255,.4)" stroke-width="2"/>' +
+    '<g clip-path="url(#'+id+')"><rect x="10" y="'+top+'" width="124" height="170" fill="'+color+'" opacity=".75"/></g>' +
+    '<rect x="10" y="10" width="124" height="124" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2"/>' +
+    '<text x="72" y="80" text-anchor="middle" font-family="PT Serif, serif" font-weight="700" font-size="25" fill="#EFEAFF">'+text+'</text>' +
+    '</svg><div class="lab">'+label+'</div></div>';
+}
+
+function rFinal(el){
+  const bySec = allScores();
+  const keys = Object.keys(bySec);
+
+  let R2=0, W2=0;
+  keys.forEach(x=>{ if(!bySec[x].self){ R2 += bySec[x].r; W2 += bySec[x].w; } });
+  const und = (R2+W2) ? Math.round(R2/(R2+W2)*100) : null;
+  const done = Math.round(((ST.max+1)/SLIDES.length)*100);
+
+  const list = keys.map(x=>{
+    const v = bySec[x];
+    const pct = (v.r+v.w) ? Math.round(v.r/(v.r+v.w)*100) : null;
+    return {name:x, v, pct};
+  }).sort((a,b)=>{
+    if(a.pct === null) return 1; if(b.pct === null) return -1;
+    return a.pct - b.pct;
+  });
+
+  const topics = list.length ? list.map(o=>{
+    const cls = o.pct === null ? "" : (o.pct < 60 ? " bad" : o.pct < 85 ? " mid" : " good");
+    const val = (o.pct === null ? "нет ответов" : o.pct + "%") +
+      (o.v.e ? " · пропущено " + o.v.e : "") + (o.v.self ? " · самооценка" : "");
+    return '<div class="topic'+cls+'"><span class="tn">'+esc(o.name)+'</span>' +
+      '<span class="tv">'+val+'</span>' +
+      '<button type="button" data-b="'+esc(o.v.back)+'">К теории</button></div>';
+  }).join("") : '<div class="topic"><span class="tn">Практика ещё не пройдена — вернитесь к упражнениям.</span></div>';
+
+  el.innerHTML =
+    '<div class="kicker">Итоги</div>' +
+    '<h1>Что получилось с заданием 13</h1>' +
+    '<p class="lead">Слева — сколько тренажёра пройдено. Справа — доля верных ответов <b class="hl">с первой попытки</b>: исправления после «Ещё попытки» в этот процент не идут, иначе слабые темы перестали бы быть видны. Флеш-карты в общий счёт не входят: там оценка ставится самостоятельно.</p>' +
+    '<div class="gauges">' +
+      gauge(done, "#A78BFF", "Пройдено", done+"%") +
+      (und === null ? gauge(0, "#3A2A6B", "Верных ответов", "—")
+                    : gauge(und, und >= 70 ? "#4ADE80" : "#FF7C8F", "Верных ответов", und+"%")) +
+    '</div>' +
+    '<h2>Темы на повторение</h2>' +
+    '<p class="lead">Сверху — то, что проседает сильнее всего. Тот же список с процентами есть в оглавлении: кнопка со счётчиком слайдов внизу экрана.</p>' +
+    '<div class="topics">'+topics+'</div>' +
+    '<div class="foot" style="margin-bottom:16px;">' +
+      '<button class="btn main" type="button" id="cp">Скопировать итог</button>' +
+      '<button class="btn ghost" type="button" id="clr">Очистить прогресс</button>' +
+      '<span id="cpmsg"></span>' +
+    '</div>' +
+    '<div class="note"><b>Что делать дальше.</b> Пройдите ещё раз флеш-карты, начав с отмеченных «Повторю»: порядок карточек меняется при каждом открытии страницы, запомнить расположение не выйдет. Если проседает блок «Часть речи решает», повторяйте его отдельно от остальных: там ошибается не память, а разбор предложения.</div>';
+
+  el.querySelectorAll("[data-b]").forEach(b=>b.addEventListener("click",()=>go(IDX[b.dataset.b])));
+  el.querySelector("#cp").addEventListener("click", ()=>copySummary(list, und, done));
+  el.querySelector("#clr").addEventListener("click", ()=>{
+    if(!confirm("Стереть все ответы и начать тренажёр заново?")) return;
+    ST.ans = {}; ST.ph = {}; ST.fr = {}; ST.fl = {}; ST.first = {}; ST.max = 0;
+    save(); render(ST.cur);
+  });
+}
+
+function copySummary(list, und, done){
+  const lines = ["Задание 13. Правописание НЕ и НИ — итог тренажёра",
+    "Пройдено: "+done+"%   Верных с первой попытки: "+(und === null ? "—" : und+"%"), ""];
+  if(!list.length) lines.push("Упражнения не пройдены.");
+  list.forEach(o=>{
+    const pct = o.pct === null ? "нет ответов" : o.pct+"%";
+    lines.push("• "+o.name+" — "+pct+" (верно "+o.v.r+", неверно "+o.v.w+
+      (o.v.e ? ", пропущено "+o.v.e : "")+")"+(o.v.self ? " [самооценка]" : ""));
+  });
+  const text = lines.join("\n");
+  const ok = ()=>{
+    const m = document.getElementById("cpmsg");
+    if(m){ m.className = "copied"; m.textContent = "Скопировано"; setTimeout(()=>{ m.textContent=""; }, 2500); }
+  };
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok, ()=>fallbackCopy(text, ok));
+      return;
+    }
+  }catch(e){}
+  fallbackCopy(text, ok);
+}
+
+function fallbackCopy(text, cb){
+  let copied = false;
+  try{
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    copied = document.execCommand("copy");
+    ta.remove();
+  }catch(e){}
+  if(copied){ cb(); return; }
+  showCopyBox(text);
+}
+
+function showCopyBox(text){
+  const foot = document.getElementById("cpmsg");
+  if(!foot) return;
+  if(document.getElementById("copybox")) return;
+  const ta = document.createElement("textarea");
+  ta.id = "copybox"; ta.className = "copybox"; ta.value = text; ta.readOnly = true;
+  foot.parentNode.appendChild(ta);
+  foot.className = "score";
+  foot.textContent = "Скопируйте текст вручную:";
+  ta.focus(); ta.select();
+}
+
+/* ==================== НАВИГАЦИЯ ==================== */
+
+function go(i){
+  SEL = null;
+  ST.cur = Math.max(0, Math.min(SLIDES.length-1, i));
+  ST.max = Math.max(ST.max, ST.cur);
+  save(); render(ST.cur); updateNav();
+  stage.scrollTop = 0;
+}
+
+function updateNav(){
+  prevBtn.disabled = ST.cur === 0;
+  nextBtn.disabled = ST.cur === SLIDES.length-1;
+  counter.textContent = "слайд " + (ST.cur+1) + " из " + SLIDES.length + "  \u25BE";
+  barFill.style.width = Math.round(((ST.cur+1)/SLIDES.length)*100) + "%";
+}
+
+/* ---------- оглавление ---------- */
+const tocOverlay = document.getElementById("tocOverlay");
+const tocBody = document.getElementById("tocBody");
+const TAGS = {title:"Начало", map:"Карта", rule:"Теория", practice:"Практика",
+  sort:"Практика", flash:"Карточки", egeIntro:"Формат ЕГЭ", ege:"Задание ЕГЭ", final:"Итог"};
+
+function slideName(s, i){
+  if(s.type === "title") return "Титульный слайд";
+  if(s.type === "map") return "Карта задания 13";
+  if(s.type === "egeIntro") return "Как устроены задания ЕГЭ";
+  if(s.type === "final") return "Итог и темы на повторение";
+  return s.title || TAGS[s.type] || ("Слайд " + (i+1));
+}
+
+function buildTOC(){
+  let html = "", lastSec = null;
+  SLIDES.forEach((s,i)=>{
+    const sec = s.sec || null;
+    if(sec && sec !== lastSec){ html += '<div class="toc-group">'+esc(sec)+'</div>'; lastSec = sec; }
+    if(!sec) lastSec = null;
+
+    const f = baseScore(s);
+    let score;
+    if(f){
+      const a = f.r + f.w;
+      const pct = a ? Math.round(f.r/a*100) : null;
+      const col = pct === null ? "var(--dim)" : (pct >= 80 ? "var(--green)" : (pct >= 55 ? "var(--amber)" : "var(--red)"));
+      score = '<span class="toc-score" style="color:'+col+'">'+(pct === null ? "—" : pct+"%")+'</span>';
+    } else {
+      score = '<span class="toc-score" style="color:var(--dim)">·</span>';
+    }
+    html += '<button type="button" class="toc-item'+(i === ST.cur ? " current" : "")+'" data-i="'+i+'">' +
+      '<span class="toc-num">'+(i+1)+'</span>' +
+      '<span class="toc-name">'+esc(slideName(s,i))+'</span>' +
+      '<span class="toc-tag">'+esc(TAGS[s.type] || "")+'</span>' + score + '</button>';
+  });
+  tocBody.innerHTML = html;
+  tocBody.querySelectorAll(".toc-item").forEach(b=>{
+    b.addEventListener("click", ()=>{ closeTOC(); go(+b.dataset.i); });
+  });
+  const cur = tocBody.querySelector(".toc-item.current");
+  if(cur && cur.scrollIntoView) setTimeout(()=>cur.scrollIntoView({block:"center"}), 0);
+}
+
+function openTOC(){ buildTOC(); tocOverlay.classList.add("open"); const c = tocBody.querySelector(".toc-item.current"); if(c && c.focus) c.focus({preventScroll:true}); }
+function closeTOC(){ tocOverlay.classList.remove("open"); if(counter.focus) counter.focus({preventScroll:true}); }
+counter.addEventListener("click", openTOC);
+document.getElementById("tocClose").addEventListener("click", closeTOC);
+tocOverlay.addEventListener("click", e=>{ if(e.target === tocOverlay) closeTOC(); });
+
+prevBtn.addEventListener("click", ()=>go(ST.cur-1));
+nextBtn.addEventListener("click", ()=>go(ST.cur+1));
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){ closeTOC(); return; }
+  if(tocOverlay.classList.contains("open")) return;
+  if(e.target && e.target.closest && e.target.closest("button,textarea")) return;
+  if(e.key === "ArrowRight") go(ST.cur+1);
+  if(e.key === "ArrowLeft") go(ST.cur-1);
+});
+
+function setCalm(on){
+  ST.calm = on;
+  document.body.classList.toggle("calm", on);
+  calmBtn.setAttribute("aria-pressed", on ? "true" : "false");
+  calmBtn.textContent = on ? "Движение выключено" : "Спокойный режим";
+  save();
+}
+calmBtn.addEventListener("click", ()=>setCalm(!ST.calm));
+setCalm(!!ST.calm);
+
+/* статичные пиксельные звёзды: фон не мигает и не движется */
+(function stars(){
+  const wrap = document.getElementById("stars");
+  if(!wrap) return;
+  for(let i=0;i<44;i++){
+    const b = document.createElement("i");
+    b.style.left = (Math.random()*100)+"%";
+    b.style.top = (Math.random()*72)+"%";
+    if(Math.random() > .62) b.className = "v";
+    wrap.appendChild(b);
+  }
+})();
+
+/* экспорт для автотестов */
+window.__t13 = {SLIDES, EGE, ORD, ST, go, render,
+  banks:{P_VERB,P_NEDO,P_PRICH,P_ADJ,P_KRAT,P_PRON,P_NI,P_TRAP,P_FINAL,FLASH,SORT_WHY_R,SORT_WHY_S}};
+
+go(ST.cur || 0);
+
+</script>
+</body>
+</html>
