@@ -13,7 +13,7 @@
    отсутствии — из памяти устройства.
    ------------------------------------------------------------------ */
 
-var VERSION = 'v1';
+var VERSION = 'v2';
 var CACHE = 'egesh-' + VERSION;
 
 var FILES = [
@@ -28,6 +28,7 @@ var FILES = [
   './zadanie10.html',
   './zadanie11.html',
   './zadanie12.html',
+  './zadanie13.html',
   './zadanie14.html',
   './zadanie15.html'
 ];
